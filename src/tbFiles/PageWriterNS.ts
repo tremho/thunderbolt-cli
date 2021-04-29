@@ -39,10 +39,10 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     copyUpdate(src,dest)
 
     const stub = `
-    import {getTheApp} from 'thunderbolt-framework/mobile'
+    import {AppCore} from 'thunderbolt-common'
     import * as activity from './${id}-logic'
     export function onNavigatedTo() {
-        getTheApp().launchActivity("${id}",activity) 
+        AppCore.getTheApp().launchActivity("${id}",activity) 
     }
     `
     src = path.join(srcpath, `${id}-page.tbpg`)

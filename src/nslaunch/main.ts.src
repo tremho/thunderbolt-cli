@@ -1,5 +1,5 @@
 const frontApp =  require('../tbAppFront')
-import {AppCore, setTheApp} from 'thunderbolt-framework/mobile'
+import {AppCore} from 'thunderbolt-common'
 //
 // Nativescript
 import { EventData, Page, Frame } from '@nativescript/core';
@@ -12,7 +12,7 @@ export function onLoaded(args: EventData) { // navigatedTo
     console.log('I think we have a frame here', page.frame)
 
     coreApp = new AppCore()
-    setTheApp(coreApp, page.frame)
+    AppCore.setTheApp(coreApp, page.frame)
     console.log('starting app...')
     coreApp.setupUIElements(frontApp).then(() => {
         // nothing to do here for mobile

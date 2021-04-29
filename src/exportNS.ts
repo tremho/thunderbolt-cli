@@ -49,7 +49,7 @@ function collectInfo() {
     }
     projName = info.projName
     projPath = info.projPath
-    tbxPath = path.resolve(info.packPath, '..', 'tbx')
+    tbxPath = path.resolve(info.packPath, '..', '..', 'thunderbolt-cli','src')
 }
 
 
@@ -106,22 +106,25 @@ function readProjPackage() {
 function migrateAppBack() {
     // read our tbAppBack source
     const tbAppSrcPath = pkgInfo.backMain || 'src/tbAppBack.ts'
-    // console.log('migrating '+ tbAppSrcPath+'...')
+    console.log('migrating '+ tbAppSrcPath+'...')
     let source = ""
     try {
         source = fs.readFileSync(path.join(projPath, tbAppSrcPath)).toString()
     } catch(e) {
         throw Error('Unable to read app file "'+tbAppSrcPath+'"')
     }
-    // find "thunderbolt-framework" in either an import or require line
+    // find "thunderbolt-desktop" in either an import or require line
     let lines = source.split('\n')
     for(let i=0; i<lines.length; i++) {
         const ln = lines[i]
-        let n = ln.indexOf('thunderbolt-framework')
+        let n = ln.indexOf('thunderbolt-desktop')
         if(n !== -1) {
+            console.log('found "thunderbolt-desktop"')
             if(ln.indexOf('import') !== -1 || ln.indexOf('require') !== -1) {
-                // change to "thunderbolt-framework/mobile"
-                lines[i] = ln.replace('thunderbolt-framework', 'thunderbolt-framework/mobile')
+                // change to "thunderbolt-mobile"
+                console.log('changing to "mobile"')
+                lines[i] = ln.replace('thunderbolt-desktop','thunderbolt-mobile')
+                console.log(lines[i])
             }
         }
     }
@@ -129,13 +132,12 @@ function migrateAppBack() {
     source = lines.join('\n')
     let dest = path.join(outPath, projName, 'app', 'tbAppBack.ts')
     try {
-        if(testForUpdate(source, dest)) {
-            console.log('migrating ', source)
-            if (fs.existsSync(dest)) {
-                fs.unlinkSync(dest)
-            }
-            fs.writeFileSync(dest, source)
+        if (fs.existsSync(dest)) {
+            fs.unlinkSync(dest)
         }
+        console.log('migrating ', source)
+        fs.writeFileSync(dest, source)
+
     } catch(e) {
         console.error('Unable to write '+dest)
         throw e
@@ -198,6 +200,10 @@ function migrateLaunch() {
         fs.mkdirSync(destPath)
     }
     let srcPath = path.join(tbxPath, 'nslaunch')
+    if(!fs.existsSync(srcPath)) {
+        console.error('CLI launch file templates not available -- check installation', srcPath)
+        throw Error
+    }
     copySourceFile(path.join(srcPath, 'main.ts.src'), path.join(destPath, 'main.ts'))
     copySourceFile(path.join(srcPath, 'main.xml.src'), path.join(destPath, 'main.xml'))
 }

@@ -12,6 +12,7 @@ let tbxPath:string,  // path to the tbx script itself. This establishes where fr
     fwCommonPath:string, // path to framework module in node_modules
     fwDesktopPath:string, // path to desktop framework module in node_modules
     fwMobilePath:string, // path to mobile framework module in node_modules
+    fwCliPath:string, // path to tbx command line module
     tbBuildSrc:string, // path to the framework 'src' folder
     fwcomp:string,  // path to the framework components folder tree
     appPages:string, // path to the app's pages folder
@@ -70,6 +71,7 @@ function resolvePaths() {
     fwCommonPath = path.resolve(path.join(modulesPath, 'thunderbolt-common'))
     fwDesktopPath = path.resolve(path.join(modulesPath, 'thunderbolt-desktop'))
     fwMobilePath = path.resolve(path.join(modulesPath, 'thunderbolt-mobile'))
+    fwCliPath = path.resolve(path.join(modulesPath, 'thunderbolt-cli'))
 
     // console.log('tbxPath', tbxPath)
     // console.log('cmd', cmd)
@@ -79,17 +81,20 @@ function resolvePaths() {
     // console.log('fwCommonPath', fwCommonPath)
     // console.log('fwDesktopPath', fwDesktopPath)
     // console.log('fwMobilePath', fwMobilePath)
+    // console.log('fwCliPath', fwCliPath)
 
     if(!fs.existsSync(fwCommonPath)) fwCommonPath = ''
     if(!fs.existsSync(fwDesktopPath)) fwDesktopPath = ''
     if(!fs.existsSync(fwMobilePath)) fwMobilePath = ''
+    if(!fs.existsSync(fwCliPath)) fwCliPath = ''
 
-    if(!fwCommonPath || !fwDesktopPath) {
+    if(!fwCommonPath || !fwDesktopPath || !fwCliPath) {
         let line1 = ac.red('missing framework modules\n')
-        let line2 = ac.blue('thunderbolt-common ')+ac.gray('and/or ')+ac.blue('thunderbolt-desktop\n')
-        let line3 = 'both must be installed\n'
-        let line4 = `use ${ac.bold('npm install thunderbolt-common thunderbolt-desktop')} to install these dependencies.`
-        console.error(line1+line2+line3+line4)
+        let line2 = ac.blue('thunderbolt-common ')+ac.gray('and/or ')+ac.blue('thunderbolt-desktop ')+ac.gray('and ')+ac.blue('thunderbolt-cli\n')
+        let line3 = 'all three must be installed\n'
+        let line4 = `try ${ac.bold('npm install')} to re-install standard set, or\n`
+        let line5 = `use ${ac.bold('npm install thunderbolt-common thunderbolt-desktop thunderbolt-cli')} to install these dependencies.`
+        console.error(line1+line2+line3+line4+line5)
         throw Error('import error')
     }
 
