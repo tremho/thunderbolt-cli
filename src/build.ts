@@ -2,6 +2,7 @@ import * as process from "process";
 import * as ac from "ansi-colors";
 import * as path from "path";
 import * as fs from "fs";
+import {Stats} from 'fs'
 import {gatherInfo} from './gatherInfo'
 import {createSMX} from './smx'
 import {makePageList} from "./mainPageList";
@@ -14,6 +15,15 @@ import UglifyJsPlugin from "uglifyjs-webpack-plugin";
 import * as tsc from 'node-typescript-compiler'
 import * as sass from 'sass'
 import {mkdirSync} from "fs";
+
+import * as riot from 'riot'
+// @ts-ignore
+import * as AppFront from 'Project/tbAppFront'
+// @ts-ignore
+import App from 'RiotMain/app.riot'
+// import {AppCore, setTheApp} from 'Framework/app-core/AppCore'
+// import registerGlobalComponents from 'BuildPack/register-global-components'
+
 
 // Variables resolved and used in build functions
 let tbxPath:string,  // path to the tbx script itself. This establishes where framework is within project node_modules space.
@@ -52,7 +62,7 @@ function readPackageInfoAtPath(directory:string):any {
  * renderer bundle
  */
 function doWebpackBuild() {
-    console.log('Framework mapped to ', tbBuildSrc)
+    // console.log('Framework mapped to ', tbBuildSrc)
     return new Promise(resolve => {
         console.log('packing...')
         const genDir = path.join(projPath, '.gen')
@@ -87,7 +97,6 @@ function doWebpackBuild() {
                     Components: path.join(srcDir, 'components'),
                     Pages: appPages,
                     Framework: tbBuildSrc,
-                    'thunderbolt-framework': path.join(tbBuildSrc, '..'),
                     BuildPack: packPath,
                     FrameworkComponents: fwcomp,
                     RiotMain: riotMain
@@ -313,19 +322,70 @@ export function doBuild() {
         frontMain = info.frontMain
         backMain = info.backMain
 
-        generateBuildEnvironment()
-        compileScss()
-        makeRiotComponents()
-        makePageList()
-        doWebpackBuild().then(() => {
-            createSMX()
-            mainAndExec()
-            summary()
-        })
+        if(info.buildFlags.clean) {
+            console.log('cleaning...')
+            doClean()
+        }
+
+        if(info.buildFlags.prepare) {
+            console.log('preparing...')
+            generateBuildEnvironment()
+            compileScss()
+            makeRiotComponents()
+            makePageList()
+        }
+        if(info.buildFlags.compile) {
+            doWebpackBuild().then(() => {
+                createSMX()
+                mainAndExec()
+                summary()
+            })
+        }
+
     } catch(e) {
         console.error(e)
         process.exit(-1)
     }
 
     console.log('')
+}
+
+function doClean() {
+    // get rid of all .riot (components and pages), get rid of .gen and build
+    let dirpath = path.join(projPath, 'src', 'components')
+    recurseDirectory(dirpath, (filepath, stats) => {
+        if(stats.isFile()) {
+            let ext = filepath.substring(filepath.lastIndexOf('.'))
+            if(ext === '.riot') {
+                fs.unlinkSync(filepath)
+            }
+        }
+    })
+    dirpath = path.join(projPath, 'src', 'pages')
+    recurseDirectory(dirpath, (filepath, stats) => {
+        if(stats.isFile()) {
+            let ext = filepath.substring(filepath.lastIndexOf('.'))
+            if(ext === '.riot') {
+                fs.unlinkSync(filepath)
+            }
+        }
+    })
+    dirpath = path.join(projPath, '.gen')
+    fs.rmdirSync(dirpath, {recursive:true})
+    dirpath = path.join(projPath, 'build')
+    fs.rmdirSync(dirpath, {recursive:true})
+}
+interface RecurseCB {
+    (filepath: string, stats: Stats): boolean|void;
+}
+function recurseDirectory(dirpath:string, callback:RecurseCB) {
+    fs.readdirSync(dirpath).forEach((file:string) => {
+        const fpath = path.join(dirpath, file)
+        const stat = fs.lstatSync(fpath)
+        if(callback && !callback(fpath, stat)) {
+            if (stat.isDirectory()) {
+                recurseDirectory(fpath, callback)
+            }
+        }
+    })
 }

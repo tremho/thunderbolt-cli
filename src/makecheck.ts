@@ -10,6 +10,7 @@ let exeStats:any
 
 function checkExecutable(projPath:string, projName:string) {
     const exePath = path.join(projPath, 'build', projName)
+    console.log('checking executable at ', exePath)
      if(!fs.existsSync(exePath)) {
          return true; // definitely need to build if it doesn't exist
      }

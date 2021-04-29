@@ -5,10 +5,12 @@ import {executeCommand} from "./execCmd"
 import * as path from 'path'
 
 export function doRun() {
+    console.log('do run...')
     let {projPath, projName} = gatherInfo()
     if(doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
-        // doBuild()
+        // console.warn('building disabled')
+        doBuild()
     }
     console.log('running...')
     executeCommand(path.join(projPath, 'build', projName), [], path.join(projPath, 'build'))

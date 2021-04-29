@@ -22,41 +22,70 @@ let tbxPath:string,  // path to the tbx script itself. This establishes where fr
     projDesc:string, // description of project from project package.json file
     projId:string, // the appid reverse dot.com format identifier for app publication
     frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
-    backMain:string  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
+    backMain:string,  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
+    clean: boolean, // true if we should remove any intermediate artifacts first
+    prepare:boolean, // true if we should create intermediate files from sources
+    compile: boolean // true if we should compile and bundle with webpack
 
 
 /**
  * Determine values of the path variables
  */
 function resolvePaths() {
-    console.log('paths = ', process.argv)
+    // console.log('paths = ', process.argv)
+    clean = false
+    prepare = compile = true
     tbxPath = process.argv[1]
     let cmd = process.argv[2]
-    projPath = path.resolve(process.argv[3])
+    if(cmd === 'build' || cmd === 'run') {
+        let i = 3
+        while(process.argv[i]) {
+            let val = process.argv[i].trim()
+            if(val === '--prepare') {
+                compile = false
+            }
+            else if(val === '--compile') {
+                prepare = false
+            }
+            else if(val === '--clean') {
+                clean = true
+            }
+            else if(val === '--clean-only') {
+                clean = true
+                compile = prepare = false
+            }
+            else if(val) {
+                projPath = val
+            }
+            i++
+        }
+        if(!compile && !prepare && !clean) {
+            compile = prepare = true
+        }
+    }
 
-    modulesPath = path.join(projPath, 'node_modules')
-    fwCommonPath = path.join(modulesPath, 'thunderbolt-common')
-    fwDesktopPath = path.join(modulesPath, 'thunderbolt-desktop')
-    fwMobilePath = path.join(modulesPath, 'thunderbolt-mobile')
+    projPath = path.resolve(projPath || '.')
 
-    console.log('tbxPath', tbxPath)
-    console.log('cmd', cmd)
-    console.log('projPath',projPath)
+    modulesPath = path.resolve(path.join(projPath, 'node_modules'))
+    fwCommonPath = path.resolve(path.join(modulesPath, 'thunderbolt-common'))
+    fwDesktopPath = path.resolve(path.join(modulesPath, 'thunderbolt-desktop'))
+    fwMobilePath = path.resolve(path.join(modulesPath, 'thunderbolt-mobile'))
 
-    console.log('modulesPath', modulesPath)
-    console.log('fwCommonPath', fwCommonPath)
-    console.log('fwDesktopPath', fwDesktopPath)
-    console.log('fwMobilePath', fwMobilePath)
+    // console.log('tbxPath', tbxPath)
+    // console.log('cmd', cmd)
+    // console.log('projPath',projPath)
+    //
+    // console.log('modulesPath', modulesPath)
+    // console.log('fwCommonPath', fwCommonPath)
+    // console.log('fwDesktopPath', fwDesktopPath)
+    // console.log('fwMobilePath', fwMobilePath)
 
     if(!fs.existsSync(fwCommonPath)) fwCommonPath = ''
     if(!fs.existsSync(fwDesktopPath)) fwDesktopPath = ''
     if(!fs.existsSync(fwMobilePath)) fwMobilePath = ''
 
-    // TODO: read package.info and validate we have an id.
-    // also validate we have an appback file and a pages directory
-
     if(!fwCommonPath || !fwDesktopPath) {
-        let line1 = ac.red('mising framework modules\n')
+        let line1 = ac.red('missing framework modules\n')
         let line2 = ac.blue('thunderbolt-common ')+ac.gray('and/or ')+ac.blue('thunderbolt-desktop\n')
         let line3 = 'both must be installed\n'
         let line4 = `use ${ac.bold('npm install thunderbolt-common thunderbolt-desktop')} to install these dependencies.`
@@ -64,15 +93,15 @@ function resolvePaths() {
         throw Error('import error')
     }
 
-    packPath = path.join(fwDesktopPath, 'buildPack')
+    packPath = path.resolve(path.join(fwDesktopPath, 'buildPack'))
 
-    buildPath = path.join(projPath, 'build', 'front')
+    buildPath = path.resolve(path.join(projPath, 'build', 'front'))
     // distPath = path.join(projPath, 'dist', 'front')
 
-    tbBuildSrc = path.resolve(path.join(packPath, '..', 'build', 'src'))
-    fwcomp = path.resolve(path.join(packPath, '..', 'src', 'components'))
+    tbBuildSrc = path.resolve(path.join(fwCommonPath, 'build'))
+    fwcomp = path.resolve(path.join(fwDesktopPath, 'src', 'components'))
     appPages = path.resolve(path.join(projPath, 'src', 'pages'))
-    riotMain = path.resolve(path.join(fwcomp, 'global', 'main'))
+    riotMain = path.resolve(path.join(projPath, '.gen')) // now in the .gen folder
 
     electronExecPath = path.join(fwDesktopPath, 'node_modules', 'electron',
         'dist', 'Electron.app', 'Contents','MacOS', 'Electron')
@@ -100,6 +129,10 @@ function readPackageInfoAtPath(directory:string):any {
     }
     const contents = fs.readFileSync(pkgFile).toString()
     const pkgJson = JSON.parse(contents)
+
+    // TODO: validate key aspects of the package.json file
+    // including existence of referenced files (appback, front)
+
     return pkgJson
 }
 
@@ -116,10 +149,10 @@ function getPackageJSONInfo() {
     projDesc = pkgJson.description || ''
     projId = pkgJson.projId || ''
 
-    console.log('project name = ', projName)
-    console.log('version = ', projVersion)
-    console.log('backMain = ', backMain)
-    console.log('frontMain = ', frontMain)
+    // console.log('project name = ', projName)
+    // console.log('version = ', projVersion)
+    // console.log('backMain = ', backMain)
+    // console.log('frontMain = ', frontMain)
 }
 
 export function gatherInfo() {
@@ -146,6 +179,11 @@ export function gatherInfo() {
         projDesc, // description of project from project package.json file
         projId, // the appid reverse dot.com format identifier for app publication
         frontMain, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
-        backMain  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
+        backMain,  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
+        buildFlags: {
+            clean,
+            prepare,
+            compile
+        }
     }
 }
