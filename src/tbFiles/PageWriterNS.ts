@@ -6,6 +6,9 @@ import * as path from 'path'
 
 export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:string) {
 
+
+    console.log('writing page from info', info)
+
     let xml = convert.js2xml(info.content, {compact:true, spaces: 4, ignoreComment:false, fullTagEmptyElement:false})
 
     let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatedTo="onNavigatedTo"\n`
@@ -15,7 +18,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     if(!info.noTitle) {
         out += `    <tb:TBPage title="${info.title}"`
 
-        if(!info.noBack) out += ' noBack = "true"'
+        if(info.noBack) out += ' noBack = "true"'
         if(info.menuId) out +=  ` menu-id="${info.menuId}"`
         if(info.toolbarId) out +=  ` toolbar-id="${info.toolbarId}"`
         if(info.indicatorsId) out +=  ` indicators-id="${info.indicatorsId}"`

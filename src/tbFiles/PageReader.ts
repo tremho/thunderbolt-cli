@@ -61,11 +61,13 @@ function readPage(filepath:string):PageInfo {
                 content += line.trim()
             }
             else if (state === ParsedState.page) {
+                console.log('@@@@@@@@@@@@@@@@@ parsing word', word)
                 if(word === 'no-title') {
                     info.noTitle = true
                 }
                 else if(word === 'no-back') {
                     info.noBack = true
+                    console.log('%%%%%%%%%%%%% noBack set to true ', info)
                 } else {
                     let parts = line.split('=',2)
                     let key = (parts[0] ||'').trim()

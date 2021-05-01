@@ -15,7 +15,8 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     while(parts[i]) {
         name += parts[i].charAt(0).toUpperCase()+parts[i++].substring(1).toLowerCase()
     }
-    let out = `module.exports.${name} = class extends CompnentBase {`
+    let out = `const {ComponentBase} = require('thunderbolt-mobile')\n`
+    out += `module.exports.${name} = class extends ComponentBase {`
     out += '\n    createControl() {\n        try {\n            '
     out += processContainer(info.layout)
 

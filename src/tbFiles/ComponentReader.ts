@@ -204,6 +204,7 @@ class ElementDefinition {
     children: ElementDefinition[]|undefined
 }
 
+const locals:string[] = []
 /**
  * Enumerate all the component files and read them into info blocks
  * then export them as the desired type
@@ -211,7 +212,6 @@ class ElementDefinition {
  * @param outType
  */
 export function enumerateAndConvert(dirpath:string, outType:string, outDir:string) {
-    const locals:string[] = []
     const files = fs.readdirSync(dirpath)
     files.forEach(file => {
         if(file.match(/.tbcm?$/)) {
@@ -223,6 +223,7 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
                 writeRiotFile(info, fileout)
             } else {
                 fileout += '-tb.js'
+                console.log("$$$$$ -- pushing to locals", fileout)
                 locals.push(fileout)
                 writeNativeScriptFile(info, fileout)
             }
@@ -230,25 +231,37 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
             let subdir = path.join(dirpath, file)
             let stat = fs.lstatSync(subdir)
             if(stat.isDirectory()) {
+                // console.log('recursing...')
                 enumerateAndConvert(subdir, outType, path.join(outDir, file))
             }
         }
     })
+    // console.log('>>>>> EnumerateAndConvert ', outType, dirpath)
     if(outType === 'nativescript') {
         let n = outDir.lastIndexOf('components')
         if(n === -1) throw(Error('Unexpected path passed for making tb-components: '+outDir))
         let dest = outDir.substring(0, n-1)
         dest = path.join(dest, 'components')
-        const tbcFile = path.join(dest, 'tb-components.js')
-        let tbc = 'const {componentsExport} = require(\'thunderbolt-mobile\')\n'
-        tbc += 'module.exports = componentsExport\n'
+        const tbcFile = path.join(dest, 'tb-components.ts')
+        let tbc = 'const {componentExport} = require(\'thunderbolt-mobile\')\n'
+        tbc += 'module.exports = componentExport\n'
         for(let i=0; i<locals.length; i++) {
             let f = locals[i]
-            let nm = f.substring(f.lastIndexOf('/')+1, f.lastIndexOf('-tb.js'))
-            nm = pascalCase(nm)
-            tbc += 'module.exports.'+nm+' = require(\''+f+'\')\n'
+            let act = '/app/components/'
+            let acn = f.lastIndexOf(act)
+            if(acn !== -1) {
+                acn += act.length
+                let lf = f.substring(acn)
+                let nmi = lf.lastIndexOf('/')+1
+                let nm = lf.substring(nmi, lf.lastIndexOf('-tb.js'))
+                nm = pascalCase(nm)
+                // console.log('>>>>>>>>>> adding local ', nm, lf)
+                tbc += `\nmodule.exports.${nm} = require('./${lf}').${nm}`
+            }
         }
-        if(!fs.existsSync(dest)) {
+        tbc += '\n'
+        // console.log('-------\n', tbc, '=========\n')
+        if (!fs.existsSync(dest)) {
             fs.mkdirSync(dest)
         }
         fs.writeFileSync(tbcFile, tbc)
