@@ -159,15 +159,16 @@ function checkAction(obj:any) {
             name: 'handleAction',
             method:
 `
+let action = this.com.getComponentAttribute('action')
 try {
       if(typeof this.onAction === 'function') {
           if(this.onAction(ev)) {
               return
           }
       }
-      this.com.getApp().callPageAction(this.props.action, ev)
+      this.com.getApp().callPageAction(action, ev)
     } catch(e) {
-      console.error("Error in action handler '"+this.props.action+"':", e)
+      console.error("Error in action handler '"+action+"':", e)
     }
 }                
 `
