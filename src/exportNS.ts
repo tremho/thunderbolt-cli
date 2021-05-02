@@ -93,7 +93,7 @@ function createNSProjectIfNotExist() {
 
 function readProjPackage() {
     let pkgjson = path.join(projPath, 'package.json')
-    console.log('reading package.json at '+pkgjson)
+    // console.log('reading package.json at '+pkgjson)
     try {
         const contents = fs.readFileSync(pkgjson).toString()
         pkgInfo = JSON.parse(contents)
@@ -106,7 +106,7 @@ function readProjPackage() {
 function migrateAppBack() {
     // read our tbAppBack source
     const tbAppSrcPath = pkgInfo.backMain || 'src/tbAppBack.ts'
-    console.log('migrating '+ tbAppSrcPath+'...')
+    // console.log('migrating '+ tbAppSrcPath+'...')
     let source = ""
     try {
         source = fs.readFileSync(path.join(projPath, tbAppSrcPath)).toString()
@@ -119,10 +119,10 @@ function migrateAppBack() {
         const ln = lines[i]
         let n = ln.indexOf('thunderbolt-desktop')
         if(n !== -1) {
-            console.log('found "thunderbolt-desktop"')
+            // console.log('found "thunderbolt-desktop"')
             if(ln.indexOf('import') !== -1 || ln.indexOf('require') !== -1) {
                 // change to "thunderbolt-mobile"
-                console.log('changing to "mobile"')
+                // console.log('changing to "mobile"')
                 lines[i] = ln.replace('thunderbolt-desktop','thunderbolt-mobile')
                 console.log(lines[i])
             }
@@ -135,14 +135,14 @@ function migrateAppBack() {
         if (fs.existsSync(dest)) {
             fs.unlinkSync(dest)
         }
-        console.log('migrating ', source)
+        // console.log('migrating ', source)
         fs.writeFileSync(dest, source)
 
     } catch(e) {
         console.error('Unable to write '+dest)
         throw e
     }
-    console.log('... okay')
+    // console.log('... okay')
 }
 
 function testForUpdate(src:string, dest:string) {

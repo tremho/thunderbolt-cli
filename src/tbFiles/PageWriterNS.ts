@@ -7,7 +7,7 @@ import * as path from 'path'
 export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:string) {
 
 
-    console.log('writing page from info', info)
+    // console.log('writing page from info', info)
 
     let xml = convert.js2xml(info.content, {compact:true, spaces: 4, ignoreComment:false, fullTagEmptyElement:false})
 
@@ -55,6 +55,8 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
         fs.writeFileSync(dest, stub)
         dest = path.join(outDir, `${id}-page.xml`)
         fs.writeFileSync(dest, out)
+    } else {
+        console.log(`skipping ${id}-page`)
     }
 }
 

@@ -26,8 +26,8 @@ let tbxPath:string,  // path to the tbx script itself. This establishes where fr
     backMain:string,  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
     clean: boolean, // true if we should remove any intermediate artifacts first
     prepare:boolean, // true if we should create intermediate files from sources
-    compile: boolean // true if we should compile and bundle with webpack
-
+    compile: boolean, // true if we should compile and bundle with webpack
+    verbose:boolean = false
 
 /**
  * Determine values of the path variables
@@ -112,18 +112,19 @@ function resolvePaths() {
         'dist', 'Electron.app', 'Contents','MacOS', 'Electron')
 
 
-    console.log('tbxPath = ', tbxPath)
-    console.log('projPath = ', projPath)
-    console.log('modulesPath = ', modulesPath)
-    console.log('fwCommonPath', fwCommonPath)
-    console.log('fwDesktopPath', fwDesktopPath)
-    console.log('packPath = ', packPath)
-    console.log('buildPath = ', buildPath)
-    console.log('tbBuildSrc = ', tbBuildSrc)
-    console.log('appPages = ', appPages)
-    console.log('riotMain = ', riotMain)
-    console.log('fwcomp = ', fwcomp)
-
+    if(verbose) {
+        console.log('tbxPath = ', tbxPath)
+        console.log('projPath = ', projPath)
+        console.log('modulesPath = ', modulesPath)
+        console.log('fwCommonPath', fwCommonPath)
+        console.log('fwDesktopPath', fwDesktopPath)
+        console.log('packPath = ', packPath)
+        console.log('buildPath = ', buildPath)
+        console.log('tbBuildSrc = ', tbBuildSrc)
+        console.log('appPages = ', appPages)
+        console.log('riotMain = ', riotMain)
+        console.log('fwcomp = ', fwcomp)
+    }
 }
 
 function readPackageInfoAtPath(directory:string):any {

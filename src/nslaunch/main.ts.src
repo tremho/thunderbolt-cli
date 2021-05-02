@@ -6,10 +6,10 @@ import { EventData, Page, Frame } from '@nativescript/core';
 
 let coreApp
 export function onLoaded(args: EventData) { // navigatedTo
-    console.log('launch/main onloaded')
+    // console.log('launch/main onloaded')
 
     let page:any = args.object
-    console.log('I think we have a frame here', page.frame)
+    // console.log('I think we have a frame here', page.frame)
 
     coreApp = new AppCore()
     AppCore.setTheApp(coreApp, page.frame)
@@ -19,7 +19,7 @@ export function onLoaded(args: EventData) { // navigatedTo
     })
 }
 export function onNavigatedTo() {
-    console.log('launch/main onnavigatedto')
-    console.log('we will now navigate to main-page')
+    // console.log('launch/main onnavigatedto')
+    // console.log('we will now navigate to main-page')
     coreApp.navigateToPage('main')
 }

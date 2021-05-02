@@ -223,7 +223,7 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
                 writeRiotFile(info, fileout)
             } else {
                 fileout += '-tb.js'
-                console.log("$$$$$ -- pushing to locals", fileout)
+                // console.log("$$$$$ -- pushing to locals", fileout)
                 locals.push(fileout)
                 writeNativeScriptFile(info, fileout)
             }

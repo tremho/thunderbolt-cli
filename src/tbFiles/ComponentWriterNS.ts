@@ -16,6 +16,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
         name += parts[i].charAt(0).toUpperCase()+parts[i++].substring(1).toLowerCase()
     }
     let out = `const {ComponentBase} = require('thunderbolt-mobile')\n`
+    out += `const {makeDiv, makeSpan, makeLabel} = require('thunderbolt-mobile').componentExport\n\n`
     out += `module.exports.${name} = class extends ComponentBase {`
     out += '\n    createControl() {\n        try {\n            '
     out += processContainer(info.layout)
@@ -89,7 +90,11 @@ function processContainer(container:any, name='container', level=0) {
         while(tag.charAt(tag.length-1).match(/[0-9]/)) {
             tag = tag.substring(0, tag.length-1)
         }
-        out += `${cname} = new ${mappedComponent(tag)}()\n`
+        if(tag === 'div' || tag === 'span') {
+            out += `${cname} = make${mappedComponent(tag)}()\n`
+        }  else {
+            out += `${cname} = new ${mappedComponent(tag)}()\n`
+        }
         out += ' '.repeat(indent)
     }
     let {atts, text} = findAttributesAndText(container)
@@ -105,9 +110,29 @@ function processContainer(container:any, name='container', level=0) {
         out += ' '.repeat(indent)
     }
     if(text) {
-        let tname = `${cname}_text`
-        out += `${tname} = new Label()\n`
+        text = text.trim()
+        if(text.charAt(0) === text.charAt(text.length-1)) {
+            if(text.charAt(0) === '"' || text.charAt(0) === "'") {
+                text = text.substring(1,text.length-1).trim()
+            }
+        }
+        out += '// processing '+text+'\n'
         out += ' '.repeat(indent)
+
+        let bname
+        if(text.charAt(0) === '$') {
+            bname = text.substring(1)
+        }
+
+        let tname = `${cname}_text`
+        out += `${tname} = makeLabel()\n`
+        out += ' '.repeat(indent)
+        if(bname) {
+            out += `${tname}.set('text', this.get('${bname}'))\n`
+            out += ' '.repeat(indent)
+            out += `this.localBinds.push([${tname}, '${bname}', 'text'])\n`
+            out += ' '.repeat(indent)
+        }
         out += `${cname}.addChild(${tname})\n`
         out += ' '.repeat(indent)
     }
