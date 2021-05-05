@@ -103,7 +103,7 @@ function processContainer(container:any, name='container', level=0) {
         let av = atts[i].value
         let em = checkAction(ak, av)
         if(em) {
-            out += `${cname}.on(\'${em}\', this.handleAction)\n`
+            out += `${cname}.on(\'${em}\', this.handleAction.bind(this))\n`
         } else {
             out += `${cname}.set('${ak}','${av}')\n`
         }

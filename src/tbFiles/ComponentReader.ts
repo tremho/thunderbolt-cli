@@ -159,7 +159,7 @@ function checkAction(obj:any) {
             name: 'handleAction',
             method:
 `
-let action = this.com.getComponentAttribute('action')
+let action = this.com.getComponentAttribute(null, 'action')
 try {
       if(typeof this.onAction === 'function') {
           if(this.onAction(ev)) {

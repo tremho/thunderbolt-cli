@@ -41,9 +41,44 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     let dest = path.join(outDir, `${id}-logic.ts`)
     copyUpdate(src,dest)
 
-    const stub = `
+/*
+    import {Observable} from 'thunderbolt-mobile'
     import {AppCore} from 'thunderbolt-common'
-    import * as activity from './${id}-logic'
+    import * as activity from './stack-test-logic'
+
+    const pageMethods = {
+        isVertical() {return this.bound.navInfo.context.type === 'vertical'},
+        isHorizontal() {return this.bound.navInfo.context.type === 'horizontal'}
+    }
+
+    export function onNavigatedTo() {
+        this.bindingContext = Observable.fromObject(AppCore.getTheApp().launchActivity("stack-test",activity, pageMethods))
+    }
+ */
+    let pageMethods = `
+    const pageMethods = {
+    `
+    let i = 0
+    const meths = Object.getOwnPropertyNames(info.methods)
+    meths.forEach(p => {
+        let code = info.methods[p]
+        if(i) pageMethods += '        '
+        pageMethods += `${p}() ${code}`
+        if(++i < meths.length) pageMethods += ','
+        pageMethods += '\n'
+    })
+    if(i) pageMethods += '    '
+    pageMethods += '}\n'
+
+    const stub = `
+    import {Observable} from 'thunderbolt-mobile'
+    import {AppCore} from 'thunderbolt-common'
+    import * as activity from './${id}-logic'    
+    ${pageMethods}
+    export function onLoaded(args) {
+        const page = args.object
+        page.bindingContext = Observable.fromObject(AppCore.getTheApp().setPageBindings("${id}",activity, pageMethods)) 
+    }    
     export function onNavigatedTo() {
         AppCore.getTheApp().launchActivity("${id}",activity) 
     }
