@@ -16,7 +16,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     out += `      actionBarHidden="true"\n`
     out += '>\n'
     if(!info.noTitle) {
-        out += `    <tb:TBPage title="${info.title}"`
+        out += `    <tb:TBPage id="${info.id}" title="${info.title}"`
 
         if(info.noBack) out += ' noBack = "true"'
         if(info.menuId) out +=  ` menu-id="${info.menuId}"`
