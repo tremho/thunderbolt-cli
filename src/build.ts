@@ -263,9 +263,67 @@ function generateBuildEnvironment() {
     }
 }
 
+function makeAppScss(appScss:string) {
+    // enumerate the scss file for .scss files
+    // (non-recursive.  folders may be used to import from by top-level scss files here.
+    // although prefix selection is not supported at that level)
+    const scssFolder = path.join(projPath, 'src', 'scss')
+
+    const imports:string[] = []
+    const files = fs.readdirSync(scssFolder)
+    for(let i=0; i<files.length; i++) {
+        const file = files[i]
+        if(file.substring(file.lastIndexOf('.')).toLowerCase().trim() === '.scss') {
+            const pfx = file.substring(file.indexOf('.') + 1, file.lastIndexOf('.'))
+            if (pfx === '.' || isDesktopPrefix(pfx)) {
+                imports.push('@import "./src/scss/' + file + '";')
+            }
+        }
+    }
+    const common = `
+    // Common theme variables defined by thunderbolt     
+    $normal-font:    Helvetica, sans-serif;
+    $primary-color: #333;
+    `
+    const commonScss = path.join(projPath, 'tb-vars.scss')
+    fs.writeFileSync(commonScss, common)
+
+    const theme1 = `
+    // Thunderbolt default styles
+    
+    @import "./tb-vars";    
+    
+    `
+    const theme2 = `
+    
+    body {
+      font: 100% $normal-font;
+      color: $primary-color;
+      cursor: auto;
+    }
+    .Label {
+      font-weight: bold;
+    }
+    .macos {}
+    .windows {}
+    .linux {}        
+    `
+
+    const theme = theme1 + imports.join('\n') + theme2
+    fs.writeFileSync(appScss, theme)
+
+}
+function isDesktopPrefix(pfx:string):boolean {
+    return (pfx === 'desktop'
+    || pfx === 'macos'
+    || pfx === 'windows'
+    || pfx === 'linux')
+}
+
 function compileScss() {
     const mainScss = 'app.scss'
-    const appScss = path.join(projPath, 'src', 'scss', mainScss)
+    const appScss = path.join(projPath, mainScss)
+    makeAppScss(appScss)
     if(!fs.existsSync(appScss)) {
         console.warn(`${ac.bgYellow('WARNING:')} missing ${ac.bold('app.scss')} file - no css will be generated.`)
         return;

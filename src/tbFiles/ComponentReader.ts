@@ -8,6 +8,7 @@ import * as convert from 'xml-js'
 import {ComponentInfo} from "./ComponentInfo";
 import {writeRiotFile} from "./ComponentWriterRiot";
 import {writeNativeScriptFile} from "./ComponentWriterNS";
+import {pascalCase} from "./CaseUtils";
 
 enum ParsedState {
     none,
@@ -267,12 +268,5 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
         }
         fs.writeFileSync(tbcFile, tbc)
     }
-}
-function pascalCase(name:string) {
-    let out = ''
-    name.split('-').forEach(p => {
-        out += p.charAt(0).toUpperCase()+p.substring(1).toLowerCase()
-    })
-    return out
 }
 

@@ -2,6 +2,8 @@ import {ComponentInfo} from "./ComponentInfo";
 // import * as convert from 'xml-js'
 import * as fs from 'fs'
 import * as path from 'path'
+import {pascalCase} from "./CaseUtils";
+import {translateScss} from "./MigrateScss";
 
 
 export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
@@ -19,6 +21,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     out += `const {makeDiv, makeSpan, makeLabel} = require('thunderbolt-mobile').componentExport\n\n`
     out += `module.exports.${name} = class extends ComponentBase {`
     out += '\n    createControl() {\n        try {\n            '
+    out += `this.className = "${pascalCase(info.id)}"\n            `
     out += processContainer(info.layout)
 
     out = out.trim()
@@ -32,6 +35,17 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
         fs.mkdirSync(destPath, {recursive: true})
     }
     fs.writeFileSync(pathname, out)
+
+    writeAssociatedStyle(pathname, info.id, info.scss)
+}
+
+function writeAssociatedStyle(compPath:string, compName:string, scss:string) {
+    // translate the scss file
+    console.log('translating component ', compName)
+    const className = pascalCase(compName)
+    const out = translateScss(scss, className)
+    const scssPath = compPath.substring(0, compPath.lastIndexOf('.'))+ '.scss'
+    fs.writeFileSync(scssPath, out)
 }
 
 function mappedComponent(tag: string) {

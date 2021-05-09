@@ -61,6 +61,7 @@ export function doNativeScript() {
         copySources()
         migrateAppBack()
         makeNativeScriptComponents()
+        migrateScss()
         migrateLaunch()
         npmInstall().then(() => {
             console.log('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName))
@@ -223,4 +224,80 @@ function makeNativeScriptComponents() {
     const pageDir = path.join(projPath, 'src', 'pages')
     dest = path.join(outPath, projName, 'app', 'pages')
     pageReader.enumerateAndConvert(pageDir, 'nativescript', dest)
+}
+
+function migrateScss() {
+    // translate from mobile-qualified scss files to the app/scss directory
+    // collect the imports into app.scss and write to app/app.scss
+    const scssSource = path.join(projPath, 'src', 'scss')
+    const scssDest = path.join(outPath, 'app', 'scss')
+    const appScss = path.join(outPath, 'app', 'app.scss')
+    const imports:string[] = []
+    importScss(scssSource, imports)
+    importScss(path.join(outPath, 'app', 'components'), imports)
+    const common = `
+    // Common theme variables defined by thunderbolt     
+    $normal-font:    Helvetica, sans-serif;
+    $primary-color: #333;
+    `
+    const commonScss = path.join(outPath, 'tb-vars.scss')
+    fs.writeFileSync(commonScss, common)
+
+    const theme1 = `
+        @import "../tb-vars";    
+
+        @import '@nativescript/theme/css/core.css';
+        @import '@nativescript/theme/css/default.css';
+    
+    `
+    const theme2 = `
+    
+    Page {
+      font: 100% $normal-font;
+      color: $primary-color;
+    }
+    .Label {
+      font-weight: bold;
+    }
+    
+    `
+
+    const theme = theme1 + imports.join('\n') + theme2
+    fs.writeFileSync(appScss, theme)
+
+}
+function isMobilePrefix(pfx:string):boolean {
+    return (pfx === 'mobile'
+        || pfx === 'ios'
+        || pfx === 'android')
+}
+
+function importScss(dirPath:string, imports:string[]) {
+    const files = fs.readdirSync(dirPath) || []
+    for(let i=0; i<files.length; i++) {
+        const file = files[i]
+        const fstat = fs.lstatSync(path.join(dirPath, file))
+        if(fstat.isDirectory()) {
+            importScss(path.join(dirPath, file), imports)
+        } else {
+            let lcd = 'app/'
+            let n = dirPath.indexOf(lcd)
+            if(n === -1) {
+                lcd = 'src/'
+                n = dirPath.indexOf(lcd)
+            }
+            if(n === -1) {
+                console.error('can\'t find common path in importScss', dirPath)
+                return
+            }
+            const relPath = dirPath.substring(n+lcd.length)
+
+            if (file.substring(file.lastIndexOf('.')).toLowerCase().trim() === '.scss') {
+                const pfx = file.substring(file.indexOf('.') + 1, file.lastIndexOf('.'))
+                if (pfx === '.' || isMobilePrefix(pfx)) {
+                    imports.push('@import "./'+relPath+'/' + file + '";')
+                }
+            }
+        }
+    }
 }
