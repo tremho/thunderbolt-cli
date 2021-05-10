@@ -230,17 +230,18 @@ function migrateScss() {
     // translate from mobile-qualified scss files to the app/scss directory
     // collect the imports into app.scss and write to app/app.scss
     const scssSource = path.join(projPath, 'src', 'scss')
-    const scssDest = path.join(outPath, 'app', 'scss')
-    const appScss = path.join(outPath, 'app', 'app.scss')
+    const scssDest = path.join(outPath, projName, 'app', 'scss')
+    const appScss = path.join(outPath, projName, 'app', 'app.scss')
     const imports:string[] = []
+    console.log('migrate Scss', scssSource, scssDest)
     importScss(scssSource, imports)
-    importScss(path.join(outPath, 'app', 'components'), imports)
+    importScss(path.join(outPath, projName, 'app', 'components'), imports)
     const common = `
     // Common theme variables defined by thunderbolt     
     $normal-font:    Helvetica, sans-serif;
     $primary-color: #333;
     `
-    const commonScss = path.join(outPath, 'tb-vars.scss')
+    const commonScss = path.join(outPath, projName, 'tb-vars.scss')
     fs.writeFileSync(commonScss, common)
 
     const theme1 = `
@@ -253,7 +254,8 @@ function migrateScss() {
     const theme2 = `
     
     Page {
-      font: 100% $normal-font;
+      font-size: 12; // = 1 em 
+      font: $normal-font;
       color: $primary-color;
     }
     .Label {
@@ -262,7 +264,7 @@ function migrateScss() {
     
     `
 
-    const theme = theme1 + imports.join('\n') + theme2
+    const theme = theme1 + '    '+imports.join('\n        ') + theme2
     fs.writeFileSync(appScss, theme)
 
 }
@@ -273,6 +275,7 @@ function isMobilePrefix(pfx:string):boolean {
 }
 
 function importScss(dirPath:string, imports:string[]) {
+    console.log('importScss', dirPath)
     const files = fs.readdirSync(dirPath) || []
     for(let i=0; i<files.length; i++) {
         const file = files[i]
