@@ -261,7 +261,9 @@ function migrateScss() {
     .Label {
       font-weight: bold;
     }
-    
+    .tb-toolbar[state='on'] {
+        background-color: red;
+    }
     `
 
     const theme = theme1 + '    '+imports.join('\n        ') + theme2
