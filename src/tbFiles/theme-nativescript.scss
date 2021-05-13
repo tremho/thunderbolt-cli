@@ -1,0 +1,176 @@
+@import './tb-vars';
+
+Page {
+  font: $normal-font;
+  .ns-android {
+    font-size: $android-em
+  }
+  .ns-ios {
+    font-size: $ios-em
+  }
+
+  color: $primary-color;
+  cursor: auto;
+}
+
+
+.title-bar {
+  border-bottom-color: cornflowerblue;
+  border-bottom-style: solid;
+  cursor: none;
+  background-color: #FCFEFF;
+  //border-bottom-width:0.2em;
+  //padding-bottom: 0.4em;
+  //margin-bottom: 0.5em;
+
+  .back-button {
+    display:inline-block;
+    cursor: pointer;
+    color: blue;
+    align-content: center;
+    justify-self: left;
+    //font-size: 0.75em;
+    //padding-right: 0.25em;
+  }
+  .menu-box {
+    border-width: 1px;
+    border-style: solid;
+    border-color: darkkhaki;
+    cursor: pointer;
+  }
+  .menu-popover {
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  .tool-bar {
+    vertical-alignment: middle;
+    background: aliceblue;
+    justify-content: space-between;
+
+    .tb-toolbutton {
+      border-width: 2px;
+      border-style: solid;
+      border-color: blue;
+
+      .tbIcon {
+      }
+      .tbLabel {
+        horizontal-alignment: center;
+        vertical-alignment: middle;
+        margin-left: 5px;
+      }
+    }
+  }
+  .indicator-bar {
+    background-color: aliceblue;
+
+    .tb-indicator {
+      border: 1px solid darkblue;
+      //border-radius:$em;
+      //height: 1em;
+      //width: 1em;
+
+    }
+
+  }
+
+  .title {
+    color: black;
+    overflow-x: hidden;
+    //font-size: 2.5em;
+    //padding-left: 0.5em;
+
+  }
+
+}
+
+.SimpleLabel {
+
+}
+.SimpleButton {
+
+}
+
+.ns-android {
+  .title-bar {
+    border-bottom-width:0.2 * $android-em;
+    padding-bottom: 0.4 * $android-em;
+    margin-bottom: 0.5 * $android-em;
+  }
+  .back-button {
+    font-size: 0.75 * $android-em;
+    padding-right: 0.25 * $android-em;
+  }
+  .menu-box {
+    width: $android-em;
+    height: $android-em;
+  }
+  .title {
+    font-size: 2.5 * $android-em;
+    padding-left: 0.5 * $android-em;
+  }
+  .tool-bar {
+    .tb-toolbutton {
+      .tbIcon {
+        width: 1.5 * $android-em;
+        height: 1.5 * $android-em;
+      }
+      .tbLabel {
+        horizontal-alignment: center;
+        vertical-alignment: middle;
+        margin-left: 5px;
+      }
+    }
+  }
+  .indicator-bar {
+    .tb-indicator {
+      border-radius:$android-em;
+      height: $android-em;
+      width: $android-em;
+    }
+  }
+}
+.ns-ios {
+  .title-bar {
+    border-bottom-width:0.2 * $ios-em;
+    padding-bottom: 0.4 * $ios-em;
+    margin-bottom: 0.5 * $ios-em;
+  }
+  .back-button {
+    font-size: 0.75 * $ios-em;
+    padding-right: 0.25 * $ios-em;
+  }
+  .menu-box {
+    width: $ios-em;
+    height: $ios-em;
+    margin-left: 8;
+    padding: 0;
+    padding-left: 1;
+    padding-bottom: 4;
+
+  }
+  .title {
+    font-size: 2.5 * $ios-em;
+    padding-left: 0.5 * $ios-em;
+  }
+  .tool-bar {
+    .tb-toolbutton {
+      .tbIcon {
+        width: 1.5 * $ios-em;
+        height: 1.5 * $ios-em;
+      }
+      .tbLabel {
+        margin-left: 5px;
+      }
+    }
+  }
+  .indicator-bar {
+    .tb-indicator {
+      border-radius:$ios-em;
+      height: $ios-em;
+      width: $ios-em;
+    }
+  }
+}
+

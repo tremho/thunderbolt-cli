@@ -1,0 +1,94 @@
+@import './tb-vars'; // All variables should be declared in theme-vars.scss, which is rendered as ./tb-vars.scss on build.
+
+// ------------ Overall
+// default style used by page
+// =============
+body {
+  font: 100% $normal-font;
+  color: $primary-color;
+  cursor: auto;
+}
+
+// ------------ Title Bar
+// definitions for the title bar and its components
+// =============
+.title-bar {
+  border-bottom: 0.2rem solid cornflowerblue;
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
+  cursor: none;
+
+  .back-button {
+    display:inline-block;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: blue;
+    align-content: center;
+    justify-self: left;
+    padding-right: 0.25rem;
+  }
+  .menu-box {
+    border: 1px solid darkkhaki;
+    cursor: pointer;
+  }
+  .menu-popover {
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  .tool-bar {
+    background: aliceblue;
+    justify-content: space-evenly;
+
+    .tb-toolbutton {
+      border: 2px solid blue;
+    }
+  }
+  .indicator-bar {
+    background-color: aliceblue;
+
+    .tb-indicator {
+      border: 1px solid darkblue;
+      border-radius:1rem;
+      height: 1rem;
+      width: 1rem;
+    }
+
+  }
+
+  .title {
+    font-size: 2.5rem;
+    color: black;
+    padding-left: 0.5rem;
+    overflow-x: hidden;
+  }
+
+}
+
+// ------------ Basic controls
+// styles applied to basic UI components
+// =============
+.SimpleLabel {
+
+}
+.SimpleButton {
+
+}
+
+// ------------ Layout containers
+// override definitions to tweak behaviors of layout containers
+// =============
+
+
+// ------------ Platform Styles
+// Platform specific redefinitions and adjustments to adapt theme to specific Desktop OS targets
+// =============
+.macos {
+
+}
+.windows {
+
+}
+.linux {
+
+}

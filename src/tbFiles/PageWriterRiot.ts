@@ -26,7 +26,7 @@ export function writeRiotPage(info:PageInfo, pathname:string) {
 
     <script>
       import pageComp from 'Framework/app-core/PageComp'
-      import * as activity from './${info.id}-page'
+      import * as activity from '../../src/pages/${info.id}-page'
       const pc =  Object.assign({}, pageComp)
       pc.activity = activity
 `
@@ -40,6 +40,13 @@ page += `      export default pc
     </script>
     `
     page += `</${info.id}-page>\n`
+
+    // New per ticket: https://github.com/tremho/thunderbolt-common/projects/1#card-60937753
+    pathname = pathname.replace('src/pages', '.gen/pages')
+    let dir = pathname.substring(0,pathname.lastIndexOf('/'))
+    if(!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, {recursive:true})
+    }
     fs.writeFileSync(pathname, page)
 }
 

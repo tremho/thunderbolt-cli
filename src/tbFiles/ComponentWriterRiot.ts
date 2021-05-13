@@ -29,6 +29,14 @@ export function writeRiotFile(info:ComponentInfo, pathname:string) {
     page += scriptInnards(info.methods, info.params)
     page += `</script>`
     page += `\n</${info.id}>\n`
+
+    // New per ticket: https://github.com/tremho/thunderbolt-common/projects/1#card-60937753
+    pathname = pathname.replace('src/', '.gen/')
+    let dir = pathname.substring(0,pathname.lastIndexOf('/'))
+    if(!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, {recursive:true})
+    }
+
     fs.writeFileSync(pathname, page)
 }
 

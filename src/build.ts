@@ -94,8 +94,6 @@ function doWebpackBuild() {
                     Project: srcDir,
                     Generated: genDir,
                     Assets: path.join(srcDir, 'assets'),
-                    Components: path.join(srcDir, 'components'),
-                    Pages: appPages,
                     Framework: tbBuildSrc,
                     BuildPack: packPath,
                     FrameworkComponents: fwcomp,
@@ -276,40 +274,28 @@ function makeAppScss(appScss:string) {
         if(file.substring(file.lastIndexOf('.')).toLowerCase().trim() === '.scss') {
             const pfx = file.substring(file.indexOf('.') + 1, file.lastIndexOf('.'))
             if (pfx === '.' || isDesktopPrefix(pfx)) {
-                imports.push('@import "./src/scss/' + file + '";')
+                imports.push('@import "../src/scss/' + file + '";')
             }
         }
     }
-    const common = `
-    // Common theme variables defined by thunderbolt     
-    $normal-font:    Helvetica, sans-serif;
-    $primary-color: #333;
-    `
-    const commonScss = path.join(projPath, 'tb-vars.scss')
-    fs.writeFileSync(commonScss, common)
 
-    const theme1 = `
+    const varSrc = path.join(modulesPath, 'thunderbolt-cli', 'src', 'tbFiles', 'theme-vars.scss')
+    const varDest = path.join(projPath, '.gen', 'tb-vars.scss')
+    fs.copyFileSync(varSrc, varDest)
+
+    const themeSrc = path.join(modulesPath, 'thunderbolt-cli', 'src', 'tbFiles', 'theme-desktop.scss')
+    const themeDest = path.join(projPath, '.gen', 'tb-theme.scss')
+    fs.copyFileSync(themeSrc, themeDest)
+
+    const theme = `
     // Thunderbolt default styles
     
-    @import "./tb-vars";    
+    @import "./tb-vars";
+    @import "./tb-theme";
     
     `
-    const theme2 = `
-    
-    body {
-      font: 100% $normal-font;
-      color: $primary-color;
-      cursor: auto;
-    }
-    .Label {
-      font-weight: bold;
-    }
-    .macos {}
-    .windows {}
-    .linux {}        
-    `
-
-    const theme = theme1 + imports.join('\n') + theme2
+    + imports.join('\n')
+    // console.log('writing '+appScss, theme)
     fs.writeFileSync(appScss, theme)
 
 }
@@ -321,14 +307,16 @@ function isDesktopPrefix(pfx:string):boolean {
 }
 
 function compileScss() {
+    // console.log('compileScss')
     const mainScss = 'app.scss'
-    const appScss = path.join(projPath, mainScss)
+    const appScss = path.join(projPath, '.gen', mainScss)
     makeAppScss(appScss)
     if(!fs.existsSync(appScss)) {
         console.warn(`${ac.bgYellow('WARNING:')} missing ${ac.bold('app.scss')} file - no css will be generated.`)
         return;
     }
     const appCss = path.join(buildPath, 'app.css')
+    // console.log('execute Sass from '+appScss+' to '+appCss)
     if(!fs.existsSync(buildPath)) {
         mkdirSync(buildPath, {recursive: true})
     }
@@ -347,6 +335,7 @@ function makeRiotComponents() {
     const componentsDir = path.join(projPath, 'src', 'components')
     componentReader.enumerateAndConvert(componentsDir, 'riot', componentsDir)
 
+    console.log('converting pages to riot')
     const pageDir = path.join(projPath, 'src', 'pages')
     pageReader.enumerateAndConvert(pageDir, 'riot', pageDir)
 }
@@ -410,25 +399,25 @@ export function doBuild() {
 
 function doClean() {
     // get rid of all .riot (components and pages), get rid of .gen and build
-    let dirpath = path.join(projPath, 'src', 'components')
-    recurseDirectory(dirpath, (filepath, stats) => {
-        if(stats.isFile()) {
-            let ext = filepath.substring(filepath.lastIndexOf('.'))
-            if(ext === '.riot') {
-                fs.unlinkSync(filepath)
-            }
-        }
-    })
-    dirpath = path.join(projPath, 'src', 'pages')
-    recurseDirectory(dirpath, (filepath, stats) => {
-        if(stats.isFile()) {
-            let ext = filepath.substring(filepath.lastIndexOf('.'))
-            if(ext === '.riot') {
-                fs.unlinkSync(filepath)
-            }
-        }
-    })
-    dirpath = path.join(projPath, '.gen')
+    // let dirpath = path.join(projPath, 'src', 'components')
+    // recurseDirectory(dirpath, (filepath, stats) => {
+    //     if(stats.isFile()) {
+    //         let ext = filepath.substring(filepath.lastIndexOf('.'))
+    //         if(ext === '.riot') {
+    //             fs.unlinkSync(filepath)
+    //         }
+    //     }
+    // })
+    // dirpath = path.join(projPath, 'src', 'pages')
+    // recurseDirectory(dirpath, (filepath, stats) => {
+    //     if(stats.isFile()) {
+    //         let ext = filepath.substring(filepath.lastIndexOf('.'))
+    //         if(ext === '.riot') {
+    //             fs.unlinkSync(filepath)
+    //         }
+    //     }
+    // })
+    let dirpath = path.join(projPath, '.gen')
     fs.rmdirSync(dirpath, {recursive:true})
     dirpath = path.join(projPath, 'build')
     fs.rmdirSync(dirpath, {recursive:true})

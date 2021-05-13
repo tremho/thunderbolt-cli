@@ -236,37 +236,24 @@ function migrateScss() {
     console.log('migrate Scss', scssSource, scssDest)
     importScss(scssSource, imports)
     importScss(path.join(outPath, projName, 'app', 'components'), imports)
-    const common = `
-    // Common theme variables defined by thunderbolt     
-    $normal-font:    Helvetica, sans-serif;
-    $primary-color: #333;
-    `
-    const commonScss = path.join(outPath, projName, 'tb-vars.scss')
-    fs.writeFileSync(commonScss, common)
 
-    const theme1 = `
-        @import "../tb-vars";    
+    const varSrc = path.join(tbxPath, 'tbFiles', 'theme-vars.scss')
+    const varDest = path.join(outPath, projName, 'tb-vars.scss')
+    fs.copyFileSync(varSrc, varDest)
 
+    const themeSrc = path.join(tbxPath, 'tbFiles', 'theme-nativescript.scss')
+    const themeDest = path.join(outPath, projName, 'tb-theme.scss')
+    fs.copyFileSync(themeSrc, themeDest)
+
+    const theme = `
         @import '@nativescript/theme/css/core.css';
         @import '@nativescript/theme/css/default.css';
     
-    `
-    const theme2 = `
+        @import "../tb-vars";    
+        @import "../tb-theme";
     
-    Page {
-      font-size: 12; // = 1 em 
-      font: $normal-font;
-      color: $primary-color;
-    }
-    .Label {
-      font-weight: bold;
-    }
-    .tb-toolbar[state='on'] {
-        background-color: red;
-    }
-    `
-
-    const theme = theme1 + '    '+imports.join('\n        ') + theme2
+        `
+        +imports.join('\n        ')
     fs.writeFileSync(appScss, theme)
 
 }

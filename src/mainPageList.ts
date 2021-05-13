@@ -4,12 +4,12 @@ import {Dirent} from "fs";
 const fs = require('fs')
 const path = require('path')
 
-let pages:string[], appRiotFile:string
+let pages:string, srcpages:string, appRiotFile:string
 
 export function makePageList() {
     const info = gatherInfo()
-    pages = path.resolve(path.join(info.projPath, 'src', 'pages'))
-    // appRiotFile = path.resolve(path.join(info.fwcomp, 'global', 'main', 'app.riot'))
+    pages = path.resolve(path.join(info.projPath, '.gen', 'pages'))
+    srcpages = path.resolve(path.join(info.projPath, 'src', 'pages'))
     const gen = path.resolve(path.join(info.projPath, '.gen'))
     if(!fs.existsSync(gen)) {
         fs.mkdirSync(gen)
@@ -59,8 +59,11 @@ function enumerateRiotPages() {
                 let di = pageName.indexOf('-page')
                 if(di !== -1) {
                     const pageId = pageName.substring(0, di)
-                    if(fs.existsSync(path.join(pages, pageName+'.ts'))) { // we must have a code page too
+                    if(fs.existsSync(path.join(srcpages, pageName+'.ts'))) { // we must have a code page too
                         pageOut.push(pageId)
+                    } else {
+                        console.error('Missing .ts code file for '+pageName)
+                        throw Error()
                     }
                 } else {
                     console.warn(`non-page .riot file "${name}" found in "pages" folder`)
@@ -68,6 +71,7 @@ function enumerateRiotPages() {
             }
         }
     })
+    console.log('pageList:', pageOut)
     return pageOut
 }
 function createAppRiot(pageList:any[] = []) {
@@ -78,6 +82,5 @@ function createAppRiot(pageList:any[] = []) {
     pagegen = pagegen.substring(0, pagegen.length-1) // take off the last \n
     let src = appRiotTemplate.replace('$$$PageList$$$', pagegen)
     fs.writeFileSync(appRiotFile, src)
-    console.log('app.riot written to ' + appRiotFile)
 }
 
