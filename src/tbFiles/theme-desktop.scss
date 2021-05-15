@@ -12,7 +12,42 @@ body {
 // ------------ Title Bar
 // definitions for the title bar and its components
 // =============
+
+// constrained - use responsive design to fit into narrow aspect
+.constrained {
+  .title-bar {
+    grid-template-columns: auto 3.2rem auto 2fr auto;
+    .tool-bar {
+      width: 5rem;
+      flex-wrap: wrap;
+      position: absolute;
+      top: 4px;
+      justify-content: flex-start;
+      background-color: unset;
+
+      .tb-toolbutton {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+    .title {
+      font-size: 2rem;
+    }
+  }
+}
+
+
+
+// Unconstrained
 .title-bar {
+  display: grid;
+  grid-template-columns: auto auto auto 2fr auto;
+  grid-template-areas: "back toolbar menu title indicators";
+  column-gap: 6px;
+  align-items: center;
+
+  height: 3rem;
+
   border-bottom: 0.2rem solid cornflowerblue;
   padding-bottom: 0.4rem;
   margin-bottom: 0.5rem;
@@ -29,6 +64,7 @@ body {
   }
   .menu-box {
     border: 1px solid darkkhaki;
+    margin-left: 6px;
     cursor: pointer;
   }
   .menu-popover {
@@ -39,9 +75,15 @@ body {
   .tool-bar {
     background: aliceblue;
     justify-content: space-evenly;
+    flex-direction: row;
 
     .tb-toolbutton {
       border: 2px solid blue;
+      height: 2rem;
+      width: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
   .indicator-bar {
@@ -60,7 +102,7 @@ body {
     font-size: 2.5rem;
     color: black;
     padding-left: 0.5rem;
-    overflow-x: hidden;
+    white-space: nowrap;
   }
 
 }
