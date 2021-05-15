@@ -1,7 +1,7 @@
 
 import {exec} from 'child_process'
 
-export function executeCommand(cmd:string, args:any[], cwd = ''):Promise<any> {
+export function executeCommand(cmd:string, args:any[], cwd = '', consolePass = false):Promise<any> {
   const out = {
     stdStr: '',
     errStr: '',
@@ -12,9 +12,11 @@ export function executeCommand(cmd:string, args:any[], cwd = ''):Promise<any> {
     const proc = exec(cmdstr, {cwd})
     if(proc.stdout) proc.stdout.on('data', data => {
       out.stdStr += data.toString()
+      if(consolePass) console.log(data.toString())
     })
     if(proc.stderr) proc.stderr.on('data', data => {
       out.errStr += data.toString()
+      if(consolePass) console.error(data.toString())
     })
     proc.on('error', error => {
       console.error(error)

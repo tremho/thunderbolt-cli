@@ -6,7 +6,6 @@ import {gatherInfo} from "./gatherInfo";
 import * as componentReader from './tbFiles/ComponentReader'
 import * as pageReader from "./tbFiles/PageReader";
 
-// let tnsPath
 let nsRoot:string
 
 /*
@@ -17,7 +16,7 @@ TODO: Change argument passing
 
 - use doctor for any advisories
 - check for identifing files
-- we'll do a tns create --ts --appid (appid) --template <our template> --path (outPath)
+- we'll do a ns create --ts --appid (appid) --template <our template> --path (outPath)
 
  */
 
@@ -69,8 +68,8 @@ export function doNativeScript() {
     })
 }
 
-function tns(...args:any) {
-    return executeCommand('tns', args, nsRoot)
+function ns(...args:any) {
+    return executeCommand('ns', args, nsRoot)
 }
 
 function createNSProjectIfNotExist() {
@@ -81,12 +80,12 @@ function createNSProjectIfNotExist() {
     }
     console.log('checking for Nativescript...')
 
-    return tns('doctor').then(whatever => {
+    return ns('doctor').then(whatever => {
         console.log('doctor command returns', whatever)
 
         console.log('creating ', projName)
 
-        return tns(`create ${projName} --appid ${appId} --template /Users/sohmert/tbd/tbns-template --path ${outPath}`).then(ret => {
+        return ns(`create ${projName} --appid ${appId} --template /Users/sohmert/tbd/tbns-template --path ${outPath}`).then(ret => {
             console.log(ret)
         })
     })

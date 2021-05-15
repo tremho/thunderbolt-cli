@@ -13,6 +13,6 @@ export function doRun() {
         doBuild()
     }
     console.log('running...')
-    executeCommand(path.join(projPath, 'build', projName), [], path.join(projPath, 'build'))
+    executeCommand(path.join(projPath, 'build', projName), [], path.join(projPath, 'build'),true)
     console.log('')
 }
