@@ -13,18 +13,21 @@ Page {
   cursor: auto;
 }
 
-
 .title-bar {
-  border-bottom-color: cornflowerblue;
-  border-bottom-style: solid;
+  //display: grid;
+  ////rows: "5*";
+  ////columns: "auto,auto,auto,*,auto";
+  ////grid-template-areas: "back toolbar menu title indicators";
+  //column-gap: 6px;
+  //align-items: center;
+
+  //border-bottom-color: cornflowerblue;
+  //border-bottom-style: solid;
   cursor: none;
   background-color: #FCFEFF;
-  //border-bottom-width:0.2em;
-  //padding-bottom: 0.4em;
-  //margin-bottom: 0.5em;
 
   .back-button {
-    display:inline-block;
+    display: inline-block;
     cursor: pointer;
     color: blue;
     align-content: center;
@@ -32,12 +35,14 @@ Page {
     //font-size: 0.75em;
     //padding-right: 0.25em;
   }
+
   .menu-box {
     border-width: 1px;
     border-style: solid;
     border-color: darkkhaki;
     cursor: pointer;
   }
+
   .menu-popover {
     background-color: white;
     border: 1px solid black;
@@ -55,6 +60,7 @@ Page {
 
       .tbIcon {
       }
+
       .tbLabel {
         horizontal-alignment: center;
         vertical-alignment: middle;
@@ -62,6 +68,7 @@ Page {
       }
     }
   }
+
   .indicator-bar {
     background-color: aliceblue;
 
@@ -97,6 +104,7 @@ Page {
     border-bottom-width:0.2 * $android-em;
     padding-bottom: 0.4 * $android-em;
     margin-bottom: 0.5 * $android-em;
+    height: 3 * $android-em;
   }
   .back-button {
     font-size: 0.75 * $android-em;
@@ -136,6 +144,7 @@ Page {
     border-bottom-width:0.2 * $ios-em;
     padding-bottom: 0.4 * $ios-em;
     margin-bottom: 0.5 * $ios-em;
+    height: 3 * $android-em;
   }
   .back-button {
     font-size: 0.75 * $ios-em;
