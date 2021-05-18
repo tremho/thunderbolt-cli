@@ -24,10 +24,12 @@
   border-bottom-width: 6px;
 }
 .ns-android .tb-title-bar {
-  margin-top:80px;
+  margin-top:50px;
+  padding-top: 0;
 }
 .ns-android .constrained .tb-title-bar {
   margin-top: 30px;
+  padding-top: 0px;
   padding-bottom: 6px;
   border-bottom-width: 2px;
 }
@@ -35,6 +37,15 @@
 .ns-android .constrained .tool-bar-container { // android only
   width: 100px;
 }
+
+// for android tiny, eliminate the toolbars completely
+.ns-android .tiny .tool-bar-container {
+  hidden: true;
+}
+.ns-android .tiny .menu-box {
+  margin-left: 10px
+}
+///
 
 .tool-bar {
   padding-right: 15px;
@@ -59,6 +70,13 @@
   margin: 1px;
   height: 30px;
 }
+.ns-android .tiny .tb-toolbutton {
+  width: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+  height: 20px;
+}
+
 .ns-ios .tb-toolbutton {
   width: $ios-em;
   height: 100%;
@@ -68,6 +86,10 @@
   height: 70px;
 }
 
+.ns-ios .tiny .tb-toolbutton {
+  width: 30px;
+  height: 30px;
+}
 
 .tbLabel {
   width: 100%;
@@ -92,12 +114,6 @@
   flex-direction: row-reverse;
   justify-content: space-around;
   align-content: flex-start;
-}
-.ns-android .indicator-bar {
-  height: 80px;
-}
-.ns-android .constrained .indicator-bar {
-  height: 30px;
 }
 .tb-indicator {
   width: 100%;
@@ -153,3 +169,4 @@
   padding-top: -5px;
   //font-size: $ios-em;
 }
+
