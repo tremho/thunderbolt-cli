@@ -13,13 +13,6 @@
 //
 //}
 
-.ns-ios {
-  .constrained {
-    .tb-toolbutton {
-      height: 40%;
-    }
-  }
-}
 
 .tb-title-bar {
   width: 100%;
@@ -40,10 +33,12 @@
 }
 
 .ns-android .constrained .tool-bar-container { // android only
-  width: 67px;
+  width: 100px;
 }
 
 .tool-bar {
+  padding-right: 15px;
+  padding-left: 15px;
   width: 100%;
   height: 100%;
   flex-direction: row;
@@ -69,8 +64,8 @@
   height: 100%;
 }
 .ns-ios .constrained .tb-toolbutton {
-  width: 90px;
-  height: 90px;
+  width: 70px;
+  height: 70px;
 }
 
 
@@ -85,5 +80,76 @@
 .title {
   font-size: 22px;
   font-weight: bold;
+  margin-left: 20px;
 }
 
+
+.indicator-bar {
+  padding: 0px;
+  height: 100%;
+  horizontal-alignment: right;
+  vertical-alignment:center;
+  flex-direction: row-reverse;
+  justify-content: space-around;
+  align-content: flex-start;
+}
+.ns-android .indicator-bar {
+  height: 80px;
+}
+.ns-android .constrained .indicator-bar {
+  height: 30px;
+}
+.tb-indicator {
+  width: 100%;
+  height: 100%;
+  border-radius:100%;
+  horizontal-alignment: center;
+  vertical-alignment: middle;
+
+  > StackLayout {
+    horizontal-alignment: center;
+    vertical-alignment: middle;
+  }
+}
+.ns-android .tb-indicator {
+}
+.ns-android .constrained .tb-indicator {
+  width: 29px;
+  height: 25px;
+  border-radius:25px;
+}
+.ns-ios .tb-indicator {
+  height: $ios-em * .75;
+  width: $ios-em * .75;
+  border-radius:$ios-em;
+}
+
+.menu-box {
+  border-color: darkkhaki;
+  border-width: 2.25px;
+  border-style: solid;
+  font-size: 20px;
+
+  horizontal-alignment: center;
+  vertical-alignment: middle;
+}
+.ns-android .menu-box {
+  font-size: 12px;
+  font-weight: bold;
+  padding-left: 6px;
+  padding-right: 6px;
+  border-width: 4px;
+  //font-size: 14px;
+  //height: $android-em * 2;
+}
+.ns-android .constrained .menu-box {
+  font-size: 10px;
+  font-weight: bold;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-width: 1px;
+}
+.ns-ios .menu-box {
+  padding-top: -5px;
+  //font-size: $ios-em;
+}
