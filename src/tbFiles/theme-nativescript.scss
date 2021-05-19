@@ -24,13 +24,18 @@
   border-bottom-width: 6px;
 }
 .ns-android .tb-title-bar {
-  margin-top:50px;
+  margin-top:80px;
   padding-top: 0;
 }
 .ns-android .constrained .tb-title-bar {
-  margin-top: 30px;
-  padding-top: 0px;
+  margin-top: 36px;
+  padding-top: 8px;
   padding-bottom: 6px;
+  border-bottom-width: 2px;
+}
+.ns-landscape .small .tb-title-bar { // special case for landscape mode small (android only)
+  margin-top: 36px;
+  padding-top: 8px;
   border-bottom-width: 2px;
 }
 
@@ -130,9 +135,12 @@
 .ns-android .tb-indicator {
 }
 .ns-android .constrained .tb-indicator {
-  width: 29px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border-radius:25px;
+  Label {
+    margin-top: -6px;
+  }
 }
 .ns-ios .tb-indicator {
   height: $ios-em * .75;
@@ -170,3 +178,62 @@
   //font-size: $ios-em;
 }
 
+.SimpleLabel {
+  font-size: 28px;
+  margin: 0;
+}
+.constrained .SimpleLabel {
+  font-size: 20px;
+}
+
+.SimpleButton {
+  //box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  Button {
+    border-color: black;
+    border-width: 2px;
+    border-radius: 50px;
+    background-color: aliceblue;
+    font-size: 17px;
+    font-weight: bold;
+  }
+}
+.constrained .SimpleButton {
+  Button {
+    font-size: 12px;
+  }
+}
+.tiny .SimpleButton {
+  Button {
+    font-size: 15px;
+    font-weight: bold;
+    border-width: 0.75px;
+  }
+}
+
+.tool-state-default {
+  background-color: yellowgreen;
+}
+.tool-state-off{
+  background-color: darkgray;
+}
+.tool-state-on {
+  background-color: red;
+}
+.indicator-state-default {
+  background-color: yellowgreen;
+}
+.indicator-state-off{
+  background-color: darkgray;
+}
+.indicator-state-on {
+  background-color: red;
+}
+
+
+// experimental, not part of theme definition
+.target {
+  color: black;
+  width:100px;
+  height: 100px;
+  background-color: yellow;
+}
