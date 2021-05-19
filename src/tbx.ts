@@ -11,15 +11,15 @@ import {doDoc} from "./doc"
 import {doTest} from "./test"
 import {doValidate} from "./validate"
 import {doNativeScript} from "./exportNS"
-const command = process.argv[2]
+const command = process.argv[2] || 'help'
 const args = process.argv.slice(3)
 
 function processCommand() {
+  printBanner(command)
   switch (command) {
     case 'init':
       return doInit()
     case 'help':
-      printBanner()
       return doHelp(args[0] || '')
     case 'build':
       return doBuild()
@@ -38,20 +38,20 @@ function processCommand() {
   }
 }
 
-function printBanner() {
+function printBanner(cmd:string) {
     let out = '  ' + ac.green('╭───────────────────────────────────────────────────────────────╮')+'\n'
        out += '  ' + ac.green('|                                                               |')+'\n'
        out += '  ' + ac.green('|                     Thunderbolt Framework                     |')+'\n'
        out += '  ' + ac.green('|                                                               |')+'\n'
-       out += '  ' + ac.green(`| ${ac.magenta(`version ${ac.gray(`1.0.0`)}`)}                                                 |`) +'\n'
-       out += '  ' + ac.green('|                                                               |')+'\n'
        out += '  ' + ac.green('╰───────────────────────────────────────────────────────────────╯')+'\n'
+       out += '  ' + ac.bold.green(cmd)
+       out += '\n'
 
        console.log(out)
 }
 
 function doUnknown(command:string) {
-  printBanner()
+  printBanner('Unknown Command')
   console.log(ac.red.bold(`Unrecognized command ${command || ''}`))
   console.log(ac.grey.dim('try'))
   console.log(ac.blue.dim('help, init, build, run, doc, validate, test, nativescript'))

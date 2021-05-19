@@ -41,7 +41,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
 
 function writeAssociatedStyle(compPath:string, compName:string, scss:string) {
     // translate the scss file
-    console.log('translating component ', compName)
+    // console.log('translating component ', compName)
     const className = pascalCase(compName)
     const out = translateScss(scss, className)
     const scssPath = compPath.substring(0, compPath.lastIndexOf('.'))+ '.scss'

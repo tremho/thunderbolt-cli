@@ -87,12 +87,12 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     src = path.join(srcpath, `${id}-page.tbpg`)
     dest = path.join(outDir, `${id}-page.ts`)
     if(testForUpdate(src,dest)) {
-        console.log(`exporting ${id}-page`)
+        // console.log(`exporting ${id}-page`)
         fs.writeFileSync(dest, stub)
         dest = path.join(outDir, `${id}-page.xml`)
         fs.writeFileSync(dest, out)
     } else {
-        console.log(`skipping ${id}-page`)
+        // console.log(`skipping ${id}-page`)
     }
 }
 
@@ -114,7 +114,7 @@ function testForUpdate(src:string, dest:string) {
 
 function copyUpdate(src:string,dest:string) {
     if(testForUpdate(src,dest)) {
-        console.log('copying ', src, dest)
+        // console.log('copying ', src, dest)
         const destdir = dest.substring(0, dest.lastIndexOf(path.sep))
         if(!fs.existsSync(destdir)) {
             fs.mkdirSync(destdir, {recursive: true})
@@ -122,7 +122,7 @@ function copyUpdate(src:string,dest:string) {
 
         fs.copyFileSync(src,dest)
     } else {
-        console.log('skipping ', src)
+        // console.log('skipping ', src)
     }
 }
 
