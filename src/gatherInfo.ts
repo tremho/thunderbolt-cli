@@ -83,10 +83,22 @@ function resolvePaths() {
     // console.log('fwMobilePath', fwMobilePath)
     // console.log('fwCliPath', fwCliPath)
 
-    if(!fs.existsSync(fwCommonPath)) fwCommonPath = ''
-    if(!fs.existsSync(fwDesktopPath)) fwDesktopPath = ''
-    if(!fs.existsSync(fwMobilePath)) fwMobilePath = ''
-    if(!fs.existsSync(fwCliPath)) fwCliPath = ''
+    if(!fs.existsSync(fwCommonPath)) {
+        console.log('fwCommonPath', fwCommonPath)
+        fwCommonPath = ''
+    }
+    if(!fs.existsSync(fwDesktopPath)) {
+        console.log('fwDesktopPath', fwDesktopPath)
+        fwDesktopPath = ''
+    }
+    if(!fs.existsSync(fwMobilePath)) {
+        console.log('fwMobilePath', fwMobilePath)
+        fwMobilePath = ''
+    }
+    if(!fs.existsSync(fwCliPath)) {
+        console.log('fwCliPath', fwCliPath)
+        fwCliPath = ''
+    }
 
     if(!fwCommonPath || !fwDesktopPath || !fwCliPath) {
         let line1 = ac.red('missing framework modules\n')
