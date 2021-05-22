@@ -7,7 +7,7 @@ export function writeRiotPage(info:PageInfo, pathname:string) {
 
     const layin = Object.assign({}, info.content)
     const xml = convert.js2xml(layin, {
-        compact:true,
+        compact:false,
         spaces: 4,
         attributeValueFn:riotProp
     })

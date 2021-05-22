@@ -80,7 +80,7 @@ function readPage(filepath:string):PageInfo {
                 }
             }
             try {
-                info.content = convert.xml2js(content, {compact: true})
+                info.content = convert.xml2js(content, {compact: false})
             } catch(e) {
                 console.error('Error reading '+filepath, e)
             }

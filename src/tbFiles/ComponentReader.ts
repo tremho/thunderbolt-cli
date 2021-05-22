@@ -120,7 +120,7 @@ function readComponent(filepath:string): ComponentInfo {
         sn = str.indexOf('\n', sn)
         let style = str.substring(sn+1, sen).trim()
         // now parse the xml
-        const xmlResult = convert.xml2js(layoutXml, {compact:true})
+        const xmlResult = convert.xml2js(layoutXml, {compact:false})
         info.layout = setupAction(xmlResult)
         for(let i=0; i<actionMethods.length; i++) {
             let am = actionMethods[i]
@@ -149,7 +149,8 @@ function setupAction(data:any) {
                 })
             }
         } else {
-            setupAction(data[p])
+            if(typeof data[p] === 'object') setupAction(data[p])
+            // else console.log('what is this ', typeof data[p], data[p])
         }
     })
     return data

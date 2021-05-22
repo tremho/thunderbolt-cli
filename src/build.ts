@@ -348,6 +348,7 @@ function summary() {
 
 export function doBuild() {
     console.log('building...')
+    let p;
     try {
         const info = gatherInfo()
         tbxPath = info.tbxPath
@@ -382,12 +383,14 @@ export function doBuild() {
             makePageList()
         }
         if(info.buildFlags.compile) {
-            doWebpackBuild().then(() => {
+            p =  doWebpackBuild().then(() => {
                 createSMX()
                 mainAndExec()
                 summary()
             })
         }
+
+        return Promise.resolve(p)
 
     } catch(e) {
         console.error(e)

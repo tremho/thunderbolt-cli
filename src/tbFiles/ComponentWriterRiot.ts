@@ -9,7 +9,7 @@ export function writeRiotFile(info:ComponentInfo, pathname:string) {
 
     const layin = Object.assign({}, info.layout)
     const xml = convert.js2xml(layin, {
-        compact:true,
+        compact:false,
         spaces: 4,
         attributeValueFn:riotProp,
         textFn:riotProp

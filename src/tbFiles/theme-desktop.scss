@@ -17,6 +17,9 @@ body {
 .constrained {
   .title-bar {
     grid-template-columns: auto 3.2rem auto 2fr auto;
+    padding-bottom: 1rem;
+    border-bottom-width: 0.15rem;
+
     .tool-bar {
       width: 5rem;
       flex-wrap: wrap;
@@ -111,10 +114,51 @@ body {
 // styles applied to basic UI components
 // =============
 .SimpleLabel {
-
+  font-size: 1em;
+  white-space: nowrap;
 }
-.SimpleButton {
+.constrained .SimpleLabel {
+  font-size: 0.8em;
+}
 
+.TextArea {
+  font-size: 1em;
+  overflow-y: scroll;
+}
+
+.SimpleButton {
+   button {
+    border-color: black;
+    border-width: 2px;
+    border-radius: 50px;
+    background-color: aliceblue;
+    font-size: 0.65em;
+    font-weight: bold;
+  }
+}
+.constrained .SimpleButton {
+  button {
+    font-size: 0.45em;
+  }
+}
+
+.tool-state-default {
+  background-color: yellowgreen;
+}
+.tool-state-off{
+  background-color: darkgray;
+}
+.tool-state-on {
+  background-color: red;
+}
+.indicator-state-default {
+  background-color: yellowgreen;
+}
+.indicator-state-off{
+  background-color: darkgray;
+}
+.indicator-state-on {
+  background-color: red;
 }
 
 // ------------ Layout containers
@@ -134,3 +178,4 @@ body {
 .linux {
 
 }
+

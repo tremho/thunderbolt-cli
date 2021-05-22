@@ -6,13 +6,19 @@ import * as path from 'path'
 
 export function doRun() {
     console.log('do run...')
-    let {projPath, projName} = gatherInfo()
-    if(doCheckIsBuildNeeded(projPath, projName)) {
+    let p:any
+    let {projPath, projName, buildFlags} = gatherInfo()
+    if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
-        // console.warn('building disabled')
-        doBuild()
+        p = doBuild()
     }
-    console.log('running...')
-    executeCommand(path.join(projPath, 'build', projName), [], path.join(projPath, 'build'),true)
+    console.log('waiting...')
+    return Promise.resolve(p).then(() => {
+        setTimeout(() => {
+            console.log('executing...')
+            executeCommand('./'+projName, [], path.join(projPath, 'build'),true)
+
+        }, (p !== undefined ? 5000: 1)) // wait 5 seconds if we did a build to allow shell to clear out
+    })
     console.log('')
 }

@@ -9,6 +9,7 @@ export function executeCommand(cmd:string, args:any[], cwd = '', consolePass = f
   }
   return  new Promise(resolve => {
     let cmdstr = cmd + ' ' + args.join(' ')
+    console.log('executing ', cmdstr, 'at', cwd)
     const proc = exec(cmdstr, {cwd})
     if(proc.stdout) proc.stdout.on('data', data => {
       out.stdStr += data.toString()

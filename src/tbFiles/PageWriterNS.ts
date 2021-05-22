@@ -10,7 +10,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
 
     // console.log('writing page from info', info)
 
-    let xml = convert.js2xml(info.content, {compact:true, spaces: 4, ignoreComment:false, fullTagEmptyElement:false})
+    let xml = convert.js2xml(info.content, {compact:false, spaces: 4, ignoreComment:false, fullTagEmptyElement:false})
 
     let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatedTo="onNavigatedTo"\n`
     out += `      xmlns:tb="~/components/tb-components"\n`
