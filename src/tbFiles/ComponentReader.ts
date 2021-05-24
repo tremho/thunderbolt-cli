@@ -10,6 +10,15 @@ import {writeRiotFile} from "./ComponentWriterRiot";
 import {writeNativeScriptFile} from "./ComponentWriterNS";
 import {pascalCase} from "./CaseUtils";
 
+/**
+ * N.B. 5/24/21 -- COMPACT IS TRUE
+ * Originally coded with js/xml convert using option compact:true, but then changed to compact:false because similar
+ * treatment for pages was not keeping the correct ordering of multiple mixed elements, so everything got changed to
+ * compact:false, which solved the page problem, but caused component conversion (Nativescript) to fail because
+ * the code there interprets the format directly.
+ * So because of that compact:true is in effect again for components (but not pages)
+ */
+
 enum ParsedState {
     none,
     component,
@@ -120,7 +129,7 @@ function readComponent(filepath:string): ComponentInfo {
         sn = str.indexOf('\n', sn)
         let style = str.substring(sn+1, sen).trim()
         // now parse the xml
-        const xmlResult = convert.xml2js(layoutXml, {compact:false})
+        const xmlResult = convert.xml2js(layoutXml, {compact:true})
         info.layout = setupAction(xmlResult)
         for(let i=0; i<actionMethods.length; i++) {
             let am = actionMethods[i]

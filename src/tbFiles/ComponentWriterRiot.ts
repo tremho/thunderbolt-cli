@@ -3,13 +3,23 @@ import {ComponentInfo} from "./ComponentInfo";
 import * as convert from 'xml-js'
 import * as fs from 'fs'
 
+
+/**
+ * N.B. 5/24/21 -- COMPACT IS TRUE
+ * Originally coded with js/xml convert using option compact:true, but then changed to compact:false because similar
+ * treatment for pages was not keeping the correct ordering of multiple mixed elements, so everything got changed to
+ * compact:false, which solved the page problem, but caused component conversion (Nativescript) to fail because
+ * the code there interprets the format directly.
+ * So because of that compact:true is in effect again for components (but not pages)
+ */
+
 let actMethods = {}
 
 export function writeRiotFile(info:ComponentInfo, pathname:string) {
 
     const layin = Object.assign({}, info.layout)
     const xml = convert.js2xml(layin, {
-        compact:false,
+        compact:true,
         spaces: 4,
         attributeValueFn:riotProp,
         textFn:riotProp

@@ -5,11 +5,21 @@ import * as path from 'path'
 import {pascalCase} from "./CaseUtils";
 import {translateScss} from "./MigrateScss";
 
+/**
+ * N.B. 5/24/21 -- COMPACT IS TRUE
+ * Originally coded with js/xml convert using option compact:true, but then changed to compact:false because similar
+ * treatment for pages was not keeping the correct ordering of multiple mixed elements, so everything got changed to
+ * compact:false, which solved the page problem, but caused component conversion (Nativescript) to fail because
+ * the code there interprets the format directly.
+ * So because of that compact:true is in effect again for components (but not pages)
+ */
 
 export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
 
-    // console.log('write NS component '+info.id)
-    // console.log(info)
+    console.log('write NS component '+info.id)
+    console.log(info)
+    console.log(JSON.stringify(info.layout, null, 2))
+    console.log("-------------")
 
     let parts = info.id.split('-')
     let name = ''
