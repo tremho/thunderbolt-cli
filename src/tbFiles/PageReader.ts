@@ -4,6 +4,7 @@ import * as convert from 'xml-js'
 import {PageInfo} from "./PageInfo";
 import {writeRiotPage} from "./PageWriterRiot";
 import {writeNativeScriptPage} from "./PageWriterNS";
+import * as ac from "ansi-colors";
 
 
 enum ParsedState {
@@ -82,7 +83,10 @@ function readPage(filepath:string):PageInfo {
             try {
                 info.content = convert.xml2js(content, {compact: false})
             } catch(e) {
-                console.error('Error reading '+filepath, e)
+                const pageName = filepath.substring(filepath.lastIndexOf('/')+1)
+                console.error(ac.bold.red('Error reading page ')+pageName+' at line '+(i+1)+":", e.message)
+                console.log(ac.bold.italic('offending line: ')+ac.bold.blue(line[i]))
+                throw Error()
             }
         }
     } catch(e) {
