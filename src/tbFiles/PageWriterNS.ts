@@ -4,13 +4,15 @@ import * as convert from 'xml-js'
 import * as fs from 'fs'
 import * as path from 'path'
 import {pascalCase} from './CaseUtils'
+import {translateScssExpression} from "./MigrateScss";
 
 export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:string) {
 
 
     // console.log('writing page from info', info)
 
-    let xml = convert.js2xml(info.content, {compact:false, spaces: 4, ignoreComment:false, fullTagEmptyElement:false})
+    let xml = convert.js2xml(info.content, {compact:false, spaces: 4, ignoreComment:false, fullTagEmptyElement:false,
+                                                    attributeValueFn: translateScssExpression})
 
     let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatedTo="onNavigatedTo"\n`
     out += `      xmlns:tb="~/components/tb-components"\n`

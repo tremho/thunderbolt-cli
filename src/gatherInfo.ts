@@ -84,15 +84,15 @@ function resolvePaths() {
     // console.log('fwCliPath', fwCliPath)
 
     if(!fs.existsSync(fwCommonPath)) {
-        console.log('fwCommonPath', fwCommonPath)
+        console.warn('fwCommonPath', fwCommonPath)
         fwCommonPath = ''
     }
     if(!fs.existsSync(fwDesktopPath)) {
-        console.log('fwDesktopPath', fwDesktopPath)
+        console.warn('fwDesktopPath', fwDesktopPath)
         fwDesktopPath = ''
     }
     if(!fs.existsSync(fwMobilePath)) {
-        console.log('fwMobilePath', fwMobilePath)
+        // console.log('fwMobilePath', fwMobilePath)
         fwMobilePath = ''
     }
     if(!fs.existsSync(fwCliPath)) {
