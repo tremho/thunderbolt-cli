@@ -16,10 +16,10 @@ import {translateScss} from "./MigrateScss";
 
 export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
 
-    console.log('write NS component '+info.id)
-    console.log(info)
-    console.log(JSON.stringify(info.layout, null, 2))
-    console.log("-------------")
+    // console.log('write NS component '+info.id)
+    // console.log(info)
+    // console.log(JSON.stringify(info.layout, null, 2))
+    // console.log("-------------")
 
     let parts = info.id.split('-')
     let name = ''
