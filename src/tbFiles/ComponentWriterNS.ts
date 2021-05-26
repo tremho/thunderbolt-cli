@@ -10,7 +10,7 @@ import {translateScss} from "./MigrateScss";
  * Originally coded with js/xml convert using option compact:true, but then changed to compact:false because similar
  * treatment for pages was not keeping the correct ordering of multiple mixed elements, so everything got changed to
  * compact:false, which solved the page problem, but caused component conversion (Nativescript) to fail because
- * the code there interprets the format directly.
+ * the code here interprets the format directly.
  * So because of that compact:true is in effect again for components (but not pages)
  */
 
