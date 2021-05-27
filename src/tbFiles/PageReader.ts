@@ -78,6 +78,10 @@ function readPage(filepath:string):PageInfo {
                     if(key === 'menu-id') info.menuId = value
                     if(key === 'toolbar-id') info.toolbarId = value
                     if(key === 'indicators-id') info.indicatorsId = value
+
+                    if(key === "orientationReload") {
+                        info.orientationReload = (value === 'true')
+                    }
                 }
             }
             try {

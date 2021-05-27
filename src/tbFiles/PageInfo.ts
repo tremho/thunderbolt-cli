@@ -10,4 +10,5 @@ export class PageInfo {
     content:any
     methods: any = new Object()
     params: any = new Object()
+    orientationReload:boolean = false
 }

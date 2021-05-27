@@ -25,6 +25,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
         if(info.menuId) out +=  ` menu-id="${info.menuId}"`
         if(info.toolbarId) out +=  ` toolbar-id="${info.toolbarId}"`
         if(info.indicatorsId) out +=  ` indicators-id="${info.indicatorsId}"`
+        if(info.orientationReload) out += ' reloadOnOrientationChange="true"'
 
         out += '>\n'
     }
