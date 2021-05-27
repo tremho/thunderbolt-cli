@@ -44,12 +44,16 @@ export function translateScss(scss:string, className:string):string {
             let prop = line.substring(0, di)
             let expression = line.substring(di + 1)
             let xexp = translateScssExpression(expression)
-            if(!xexp) xexp = expression
             line = prop + ': ' + xexp
         }
         if(indent) out += ' '.repeat(indent)
         out += line+'\n'
     })
+    // console.log("---------------")
+    // console.log(scss)
+    // console.log("------")
+    // console.log(out)
+    // console.log("==============")
     return out
 }
 
@@ -69,39 +73,40 @@ export function translateScssExpression(expression:string):string {
             }
             else break;
         }
-        if(!digs || isNaN(Number(digs))) {
+        let value:number|string = Number(digs)
+        if(!digs || isNaN(value)) {
             // console.log('passing through '+expression)
-            return expression
-        } // skip if no value
-
-        unit = exp.substring(i)
-        let hasSemicolon = (unit.charAt(unit.length-1) === ';')
-        if(hasSemicolon) unit = unit.substring(0, unit.length -1)
-        let value = Number(digs)
-        if (unit === 'px') unit = ''
-        else if (unit === 'em' || unit === 'rem') {
-            value *= emSize
-            unit = ''
-        } else if (unit === 'in') {
-            value *= 96 // pixels per inch per CSS
-            unit = ''
-        } else if (unit === 'pt') {
-            value *= 96 / 72 // one point is 1/72 inch
-            unit = ''
-        } else if (unit === 'pc') {
-            // pica is 12 points
-            value *= 12 * 96 / 72
-            unit = ''
-        } else if (unit === 'cm') {
-            // cm to inch to pixel
-            value *= 0.39370079 * 96
-            unit = ''
-        } else if (unit === 'mm') {
-            // mm to inch to pixel
-            value *= 0.039370079 * 96
-            unit = ''
+            value = '';
+            unit = exp
+        }  else {
+            unit = exp.substring(i)
+            let hasSemicolon = (unit.charAt(unit.length - 1) === ';')
+            if (hasSemicolon) unit = unit.substring(0, unit.length - 1)
+            if (unit === 'px') unit = ''
+            else if (unit === 'em' || unit === 'rem') {
+                value *= emSize
+                unit = ''
+            } else if (unit === 'in') {
+                value *= 96 // pixels per inch per CSS
+                unit = ''
+            } else if (unit === 'pt') {
+                value *= 96 / 72 // one point is 1/72 inch
+                unit = ''
+            } else if (unit === 'pc') {
+                // pica is 12 points
+                value *= 12 * 96 / 72
+                unit = ''
+            } else if (unit === 'cm') {
+                // cm to inch to pixel
+                value *= 0.39370079 * 96
+                unit = ''
+            } else if (unit === 'mm') {
+                // mm to inch to pixel
+                value *= 0.039370079 * 96
+                unit = ''
+            }
+            if (hasSemicolon) unit += ';'
         }
-        if(hasSemicolon) unit += ';'
         // console.log('converted '+expression+' to '+ value + unit)
         if (out) out += ' '
         out += value + unit

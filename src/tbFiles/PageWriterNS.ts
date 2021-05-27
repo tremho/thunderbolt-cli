@@ -86,6 +86,9 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
         AppCore.getTheApp().launchActivity("${id}",activity) 
     }
     `
+    //
+    // console.log(out)
+    //
     src = path.join(srcpath, `${id}-page.tbpg`)
     dest = path.join(outDir, `${id}-page.ts`)
     if(testForUpdate(src,dest)) {
