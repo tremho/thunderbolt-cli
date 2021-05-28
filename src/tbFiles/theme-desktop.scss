@@ -116,6 +116,7 @@ body {
 .SimpleLabel {
   font-size: 1em;
   white-space: nowrap;
+  overflow: hidden;
 }
 .constrained .SimpleLabel {
   font-size: 0.8em;
