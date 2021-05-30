@@ -6,6 +6,7 @@ import {executeCommand} from "./execCmd";
 import {gatherInfo} from "./gatherInfo";
 import * as componentReader from './tbFiles/ComponentReader'
 import * as pageReader from "./tbFiles/PageReader";
+import {translateScss} from "./tbFiles/MigrateScss";
 
 let nsRoot:string
 
@@ -291,7 +292,7 @@ function migrateScss() {
     const appScss = path.join(outPath, projName, 'app', 'app.scss')
     const imports:string[] = []
     // console.log('migrate Scss', scssSource, scssDest)
-    importScss(scssSource, imports)
+    importScss(scssSource, imports, scssDest)
     importScss(path.join(outPath, projName, 'app', 'components'), imports)
 
     const varSrc = path.join(tbxPath, 'tbFiles', 'theme-vars.scss')
@@ -320,14 +321,14 @@ function isMobilePrefix(pfx:string):boolean {
         || pfx === 'android')
 }
 
-function importScss(dirPath:string, imports:string[]) {
+function importScss(dirPath:string, imports:string[], destDir:string = dirPath) {
     // console.log('importScss', dirPath)
     const files = fs.readdirSync(dirPath) || []
     for(let i=0; i<files.length; i++) {
         const file = files[i]
         const fstat = fs.lstatSync(path.join(dirPath, file))
         if(fstat.isDirectory()) {
-            importScss(path.join(dirPath, file), imports)
+            importScss(path.join(dirPath, file), imports, path.join(destDir, file))
         } else {
             let lcd = 'app/'
             let n = dirPath.indexOf(lcd)
@@ -345,6 +346,22 @@ function importScss(dirPath:string, imports:string[]) {
                 const pfx = file.substring(file.indexOf('.') + 1, file.lastIndexOf('.'))
                 if (pfx === '.' || isMobilePrefix(pfx)) {
                     imports.push('@import "./'+relPath+'/' + file + '";')
+
+                    let srcScss = path.join(dirPath, file)
+                    // console.log('read from '+srcScss)
+                    try {
+                        const contents = fs.readFileSync(srcScss).toString()
+                        let converted = translateScss(contents, ':host')
+                        // console.log('converted scss', converted)
+                        let dest = path.join(destDir, file)
+                        // console.log('write to ', dest)
+                        fs.writeFileSync(dest, converted)
+                    } catch(e) {
+                        console.error(ac.bold.red('Error migrating '+srcScss), e)
+                        process.exit(-1)
+
+                    }
+
                 }
             }
         }

@@ -115,15 +115,24 @@ function stripQuotes(str:string) {
  */
 export function enumerateAndConvert(dirpath:string, outType:string, outDir:string) {
     const files = fs.readdirSync(dirpath)
+    let errs = 0;
     files.forEach(file => {
         if(file.match(/.tbpg?$/)) {
+            // console.log('reading page from ', file)
             const info = readPage(path.join(dirpath, file))
             let fileout = path.join(outDir, file.substring(0, file.lastIndexOf('.')))
+
+            let checkId = file.substring(0, file.indexOf('-page'))
+            if(checkId !== info.id) {
+                console.warn(ac.bold.yellow.bgBlack(`WARNING:  File name is ${file} but page ID is ${info.id}`))
+                errs++
+            }
 
             if(outType === 'riot') {
                 fileout += '.riot'
                 writeRiotPage(info,fileout)
             } else {
+                // console.log('about to write', file, info.id)
                 writeNativeScriptPage(info, dirpath, outDir)
             }
         } else {
@@ -134,4 +143,8 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
             }
         }
     })
+    if(errs) {
+        console.error(ac.bold.red('Please fix errors listed above before continuing'))
+        process.exit(-1)
+    }
 }

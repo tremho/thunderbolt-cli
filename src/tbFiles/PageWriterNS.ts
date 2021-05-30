@@ -141,14 +141,28 @@ function cleanup(xml:string) {
             if(line.charAt(1) !== '!') {
                 let n = line.indexOf(' ')
                 if(n === -1) n = line.indexOf('/>')
-                if (n === -1) n = line.length
+                if (n === -1) n = line.indexOf('>')
+                if(n === -1) n = line.length
                 let name = pascalCase(line.substring(1, n))
+                // console.log(name, line)
+                let lnout
                 if(name.charAt(0) === '/') {
                     name = pascalCase(line.substring(2, n))
-                    out += ' '.repeat(8)+ `</tb:${name}` + line.substring(n) + '\n'
+                    if(name === 'ScrollView') {
+                        lnout = ' '.repeat(8)+ `</StackLayout></tb:${name}` + line.substring(n) + '\n'
+                        // console.log("!!!!!!!!!!!!!-", lnout)
+                    } else {
+                        lnout = ' '.repeat(8)+ `</tb:${name}` + line.substring(n) + '\n'
+                    }
                 } else {
-                    out += ' '.repeat(8)+ `<tb:${name}` + line.substring(n) + '\n'
+                    if(name === 'ScrollView') {
+                        lnout = ' '.repeat(8) + `<tb:ScrollView` + line.substring(n) + '<StackLayout>\n'
+                        // console.log("!!!!!!!!!!!!!+", lnout)
+                    } else {
+                        lnout = ' '.repeat(8) + `<tb:${name}` + line.substring(n) + '\n'
+                    }
                 }
+                out += lnout
             } else {
                 out += ' '.repeat(8)+line+'\n'
             }
