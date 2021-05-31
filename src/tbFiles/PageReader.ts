@@ -89,8 +89,8 @@ function readPage(filepath:string):PageInfo {
             } catch(e) {
                 const pageName = filepath.substring(filepath.lastIndexOf('/')+1)
                 console.error(ac.bold.red('Error reading page ')+pageName+' at line '+(i+1)+":", e.message)
-                console.log(ac.bold.italic('offending line: ')+ac.bold.blue(line[i]))
-                throw Error()
+                console.log(ac.bold.italic('offending line: ')+ac.bold.blue(lines[i]))
+                process.exit(-1)
             }
         }
     } catch(e) {
