@@ -59,7 +59,7 @@ function readPage(filepath:string):PageInfo {
                 state = ParsedState.content
             }
             else if(state === ParsedState.content) {
-                content += line.trim()
+                content += line.trim() + ' '
             }
             else if (state === ParsedState.page) {
                 // console.log('@@@@@@@@@@@@@@@@@ parsing word', word)
