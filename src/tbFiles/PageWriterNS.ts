@@ -3,16 +3,35 @@ import {PageInfo} from "./PageInfo";
 import * as convert from 'xml-js'
 import * as fs from 'fs'
 import * as path from 'path'
-import {pascalCase} from './CaseUtils'
+import {pascalCase, dashToCamel} from './CaseUtils'
 import {translateScssExpression} from "./MigrateScss";
+
+function valueFix(value:string):string {
+
+    let cleaned
+    if(value.indexOf('&') !== -1) {
+        console.log('cleaning', value)
+        cleaned = value.replace(/&quot;/g, '"')  // convert quote back before converting amp
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;')
+        console.log('result:', cleaned)
+        return cleaned
+    }
+    return translateScssExpression(value)
+}
 
 export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:string) {
 
-
-    // console.log('writing page from info', info)
+    // console.log('writing page from info', JSON.stringify(info, null, 2))
 
     let xml = convert.js2xml(info.content, {compact:false, spaces: 4, ignoreComment:false, fullTagEmptyElement:false,
-                                                    attributeValueFn: translateScssExpression})
+                                                    attributeNameFn: dashToCamel,
+                                                    attributeValueFn: valueFix})
+
+    // console.log('converted to xml', xml)
 
     let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatedTo="onNavigatedTo"\n`
     out += `      xmlns:tb="~/components/tb-components"\n`

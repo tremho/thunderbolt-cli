@@ -52,11 +52,17 @@ export function doNativeScript() {
     collectInfo()
     readProjPackage()
     createNSProjectIfNotExist().then(() => {
+        // console.log('copySources')
         copySources()
+        // console.log('migrateAppBack')
         migrateAppBack()
+        // console.log('makeNativeScriptComponents')
         makeNativeScriptComponents()
+        // console.log('migrateScss')
         migrateScss()
+        // console.log('migrateLaunch')
         migrateLaunch()
+        // console.log('npm install')
         npmInstall().then(() => {
             console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
         })
@@ -109,7 +115,7 @@ function createNSProjectIfNotExist() {
 
         let p
         if(!existing) {
-            console.log(ac.bold.green('Creating nativescript export at '+nsRoot))
+            console.log(ac.bold.green('Creating new nativescript project export at '+nsRoot))
             p =  ns(`create ${projName} --appid ${appId} --template /Users/sohmert/tbd/tbns-template --path ${outPath}`).then(ret => {
                 if(ret.retcode) {
                     console.log(ac.bold.red('Error') + ': Unable to create Nativescript export')
@@ -131,7 +137,7 @@ function createNSProjectIfNotExist() {
                 })
             })
         } else {
-            console.log(ac.green('Updating nativescript export at '+nsRoot))
+            console.log(ac.green('Updating existing nativescript export at '+nsRoot))
         }
 
         return Promise.resolve(p).then(() => {
@@ -277,10 +283,12 @@ function makeNativeScriptComponents() {
     const componentsDir = path.join(projPath, 'src', 'components')
     let dest = path.join(outPath, projName, 'app', 'components')
 
+    console.log('. components...')
     componentReader.enumerateAndConvert(componentsDir, 'nativescript', dest)
 
     const pageDir = path.join(projPath, 'src', 'pages')
     dest = path.join(outPath, projName, 'app', 'pages')
+    console.log('. pages...')
     pageReader.enumerateAndConvert(pageDir, 'nativescript', dest)
 }
 

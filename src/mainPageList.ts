@@ -71,7 +71,7 @@ function enumerateRiotPages() {
             }
         }
     })
-    console.log('pageList:', pageOut)
+    // console.log('pageList:', pageOut)
     return pageOut
 }
 function createAppRiot(pageList:any[] = []) {

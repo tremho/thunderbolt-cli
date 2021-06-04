@@ -21,3 +21,16 @@ export function hyphenate(name:string) {
     }
     return out
 }
+export function dashToCamel(name:string):string {
+    if(name.indexOf('-') === -1) return name
+
+    let p = name.toLowerCase().split('-')
+    let i = 1
+    while(p[i]) {
+        p[i] = p[i].charAt(0).toUpperCase()+p[i].substring(1)
+        i++;
+    }
+    let out = p.join('')
+    // console.log('dashToCamel', name, out)
+    return out
+}
