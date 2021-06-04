@@ -183,11 +183,11 @@ function preproc(line:string):string {
             if (sn !== -1) {
                 let en = line.indexOf("}", sn)
                 if (en !== -1) {
-                    let sym = line.substring(sn + 2, en)
-                    let val = defines[sym]
+                    let sym = line.substring(sn + 2, en).trim()
+                    let val = defines[sym] ||''
                     // console.log(`looking for "${sym}" in`, defines, `got "${val}"`)
                     line = line.substring(0, sn) + val + line.substring(en + 1)
-                    // console.log('resulting line is', line)
+                    console.log('resulting line is', line)
                 }
             } else {
                 break
@@ -209,26 +209,34 @@ function parsePreproc(line:string):boolean {
     let iStmt = line.substring(line.indexOf('#') + 1).trim()
     let stmt = iStmt.toUpperCase()
     let ifWhat = ''
-    if (stmt === 'END IF' || stmt === 'ENDIF') {
+    if (stmt.substring(0,6) === 'END IF' || stmt.substring(0,5) === 'ENDIF') {
         inScope = true
     } else if (stmt.substring(0, 2) === 'IF') {
         ifWhat = iStmt.substring(3).trim()
     } else if(stmt.substring(0,4) === 'ELSE') {
         if(!inScope) {
-            ifWhat = iStmt.substring(5)
-            if (ifWhat.substring(0, 3) === 'IF ') {
-                ifWhat = ifWhat.substring(4)
+            ifWhat = iStmt.substring(5).trim()
+            if (ifWhat.substring(0, 3).toUpperCase() === 'IF ') {
+                ifWhat = ifWhat.substring(3).trim()
+            }
+            if (ifWhat.substring(0, 4).toUpperCase() === ' IF ') {
+                ifWhat = ifWhat.substring(4).trim()
             }
         }
         if(!ifWhat) inScope = !inScope
     } else if(stmt.substring(0,6) === 'DEFINE') {
         if(inScope) {
             let def = iStmt.substring(7)
-            let p = def.split('=')
-            let sym = p[0].trim()
-            let val = p[1].trim()
-            defines[sym] = val
-            // console.log(`added "${sym}=${val}`)
+            let eqn = def.indexOf('=')
+            if(eqn === -1) {
+                console.error('syntax error in preproc statement: no =', iStmt)
+            }
+            let sym = def.substring(0, eqn).trim()
+            if(sym) {
+                let val = def.substring(eqn+1).trim()
+                defines[sym] = val
+                console.log(`added "${sym}=${val}`)
+            }
         }
     }
     if(ifWhat) {
@@ -239,28 +247,36 @@ function parsePreproc(line:string):boolean {
         if(eqn !== -1) {
             operation = 'match'
             isWhat = ifWhat.substring(eqn+2).trim()
-            ifWhat = ifWhat.substring(0, eqn)
+            ifWhat = ifWhat.substring(0, eqn).trim()
         }
         if(ieq !== -1) {
             operation = 'diff'
             isWhat = ifWhat.substring(ieq+2).trim()
-            ifWhat = ifWhat.substring(0, ieq)
+            ifWhat = ifWhat.substring(0, ieq).trim()
         }
         switch(ifWhat) {
+            case 'desktop':
+            case 'Desktop':
             case 'DESKTOP':
                 inScope = procType === 'riot'
                 break
+            case 'mobile':
+            case 'Mobile':
             case 'MOBILE':
                 inScope = procType !== 'riot'
                 break
             case 'TRUE':
+            case 'True':
+            case 'true':
                 inScope = true
                 break;
             case 'FALSE':
+            case 'false':
+            case 'False':
                 inScope = false
                 break;
             default: {
-                let val = defines[ifWhat]
+                let val = defines[ifWhat] ||''
                 let match = val === isWhat
                 if(operation === 'match') {
                     inScope = match
@@ -271,7 +287,7 @@ function parsePreproc(line:string):boolean {
                 else {
                     inScope = val !== ''
                 }
-                // console.log(`comparing "${val}" to "${isWhat}" (${match}) ${operation}==${inScope}`)
+                console.log(`comparing "${val}" to "${isWhat}" (${match}) ${operation}==${inScope}`)
                 break
             }
         }
