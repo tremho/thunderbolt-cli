@@ -6,6 +6,11 @@ import {writeRiotPage} from "./PageWriterRiot";
 import {writeNativeScriptPage} from "./PageWriterNS";
 import * as ac from "ansi-colors";
 
+let debugOn = false
+
+let inScope = true
+let defines:any = {}
+let procType: string;
 
 enum ParsedState {
     none,
@@ -53,13 +58,21 @@ function readPage(filepath:string):PageInfo {
             const word = line.substring(0, wb).toLowerCase().trim()
             if(word === '#page') {
                 info.id = line.substring(wb+1).trim()
+
+                // console.log('----- processing ', info.id)
+                // debugOn = (info.id === 'grid-test-3')
+                // if(debugOn) console.log(`${lines.length} lines`)
+
                 state = ParsedState.page
             }
             else if(word === '#content') {
                 state = ParsedState.content
             }
             else if(state === ParsedState.content) {
-                content += line.trim() + ' '
+                let emit = preproc(line)
+                if(emit) {
+                    content += emit.trim() + ' '
+                }
             }
             else if (state === ParsedState.page) {
                 // console.log('@@@@@@@@@@@@@@@@@ parsing word', word)
@@ -85,13 +98,22 @@ function readPage(filepath:string):PageInfo {
                 }
             }
             try {
-                info.content = convert.xml2js(content, {compact: false})
+                // we do this repeatedly because we want to trap an error where it occurs, we do it for real after we get out of the loop
+                convert.xml2js(content, {compact: true}) // we can use compact for this fake parse
             } catch(e) {
                 const pageName = filepath.substring(filepath.lastIndexOf('/')+1)
                 console.error(ac.bold.red('Error reading page ')+pageName+' at line '+(i+1)+":", e.message)
                 console.log(ac.bold.italic('offending line: ')+ac.bold.blue(lines[i]))
                 process.exit(-1)
             }
+        }
+        try {
+            // this is the real conversion, but we can't isolate the line an error occurs on here
+            info.content = convert.xml2js(content, {compact: false})
+        } catch(e) {
+            const pageName = filepath.substring(filepath.lastIndexOf('/')+1)
+            console.error(ac.bold.red('Error processing page ')+pageName+":", e.message)
+            process.exit(-1)
         }
     } catch(e) {
         console.error(e)
@@ -119,6 +141,9 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
     files.forEach(file => {
         if(file.match(/.tbpg?$/)) {
             // console.log('reading page from ', file)
+            inScope = true
+            procType = outType
+            defines = {}
             const info = readPage(path.join(dirpath, file))
             let fileout = path.join(outDir, file.substring(0, file.lastIndexOf('.')))
 
@@ -147,4 +172,110 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
         console.error(ac.bold.red('Please fix errors listed above before continuing'))
         process.exit(-1)
     }
+}
+
+// Handle preprocessing
+function preproc(line:string):string {
+    let isPreproc = false
+    try {
+        do {
+            let sn = line.indexOf('#{')
+            if (sn !== -1) {
+                let en = line.indexOf("}", sn)
+                if (en !== -1) {
+                    let sym = line.substring(sn + 2, en)
+                    let val = defines[sym]
+                    // console.log(`looking for "${sym}" in`, defines, `got "${val}"`)
+                    line = line.substring(0, sn) + val + line.substring(en + 1)
+                    // console.log('resulting line is', line)
+                }
+            } else {
+                break
+            }
+        } while(true)
+        if(line.substring(0,4) == "<!--") {
+            isPreproc = (line.indexOf('#') !== -1)
+            let n = line.indexOf('-->')
+            if(n == -1) n = line.length;
+            inScope = parsePreproc(line.substring(4, n).trim())
+        }
+    } catch(e) {
+        console.error(e)
+        process.exit(-1)
+    }
+    return !isPreproc && inScope ? line : ''
+}
+function parsePreproc(line:string):boolean {
+    let iStmt = line.substring(line.indexOf('#') + 1).trim()
+    let stmt = iStmt.toUpperCase()
+    let ifWhat = ''
+    if (stmt === 'END IF' || stmt === 'ENDIF') {
+        inScope = true
+    } else if (stmt.substring(0, 2) === 'IF') {
+        ifWhat = iStmt.substring(3).trim()
+    } else if(stmt.substring(0,4) === 'ELSE') {
+        if(!inScope) {
+            ifWhat = iStmt.substring(5)
+            if (ifWhat.substring(0, 3) === 'IF ') {
+                ifWhat = ifWhat.substring(4)
+            }
+        }
+        if(!ifWhat) inScope = !inScope
+    } else if(stmt.substring(0,6) === 'DEFINE') {
+        if(inScope) {
+            let def = iStmt.substring(7)
+            let p = def.split('=')
+            let sym = p[0].trim()
+            let val = p[1].trim()
+            defines[sym] = val
+            // console.log(`added "${sym}=${val}`)
+        }
+    }
+    if(ifWhat) {
+        let operation = ''
+        let isWhat = ''
+        let eqn = ifWhat.indexOf('==')
+        let ieq = ifWhat.indexOf("!=")
+        if(eqn !== -1) {
+            operation = 'match'
+            isWhat = ifWhat.substring(eqn+2).trim()
+            ifWhat = ifWhat.substring(0, eqn)
+        }
+        if(ieq !== -1) {
+            operation = 'diff'
+            isWhat = ifWhat.substring(ieq+2).trim()
+            ifWhat = ifWhat.substring(0, ieq)
+        }
+        switch(ifWhat) {
+            case 'DESKTOP':
+                inScope = procType === 'riot'
+                break
+            case 'MOBILE':
+                inScope = procType !== 'riot'
+                break
+            case 'TRUE':
+                inScope = true
+                break;
+            case 'FALSE':
+                inScope = false
+                break;
+            default: {
+                let val = defines[ifWhat]
+                let match = val === isWhat
+                if(operation === 'match') {
+                    inScope = match
+                }
+                else if(operation === 'diff') {
+                    inScope = !match
+                }
+                else {
+                    inScope = val !== ''
+                }
+                // console.log(`comparing "${val}" to "${isWhat}" (${match}) ${operation}==${inScope}`)
+                break
+            }
+        }
+    }
+    // console.log(`Evaluated preproc statement "${stmt}", returning ${inScope}`)
+    return inScope
 }
