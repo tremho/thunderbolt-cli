@@ -385,6 +385,7 @@ export function doBuild() {
         if(info.buildFlags.compile) {
             p =  doWebpackBuild().then(() => {
                 createSMX()
+                copyAssets()
                 mainAndExec()
                 summary()
             })
@@ -398,6 +399,32 @@ export function doBuild() {
     }
 
     console.log('')
+}
+
+/**
+ * Copy all the files from src/assets to build/front/assets
+ *
+ * The assets are not going into the webpack bundle, which I suppose would be preferable, but
+ * with the exception of menudef.txt, it doesn't appear to be working. Not sure how to dynamically
+ * associate whatever webpack loader it has to the url.
+ * So this just moves it all under the webroot, where it will look for it the old-school way.
+ */
+function copyAssets() {
+    let src = path.join(projPath, 'src', 'assets')
+    let dest = path.join(buildPath, 'assets')
+    recurseDirectory(src, (filepath:string, stats:Stats) => {
+        if(stats.isDirectory()) {
+            let test = '/src/assets'
+            let fpb = filepath.substring(filepath.indexOf(test) + test.length)
+            dest = path.join(dest, fpb)
+        }
+        if(stats.isFile()) {
+            let base = filepath.substring(filepath.lastIndexOf('/') + 1)
+            let df = path.join(dest, base)
+            if(!fs.existsSync(dest)) fs.mkdirSync(dest, {recursive:true})
+            fs.copyFileSync(filepath, df)
+        }
+    })
 }
 
 function doClean() {
