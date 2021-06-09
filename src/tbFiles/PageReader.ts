@@ -103,7 +103,7 @@ function readPage(filepath:string):PageInfo {
             } catch(e) {
                 const pageName = filepath.substring(filepath.lastIndexOf('/')+1)
                 console.error(ac.bold.red('Error reading page ')+pageName+' at line '+(i+1)+":", e.message)
-                console.log(ac.bold.italic('offending line: ')+ac.bold.blue(lines[i]))
+                // console.log(ac.bold.italic('offending line: ')+ac.bold.blue(lines[i]))
                 process.exit(-1)
             }
         }
@@ -187,7 +187,7 @@ function preproc(line:string):string {
                     let val = defines[sym] ||''
                     // console.log(`looking for "${sym}" in`, defines, `got "${val}"`)
                     line = line.substring(0, sn) + val + line.substring(en + 1)
-                    console.log('resulting line is', line)
+                    // console.log('resulting line is', line)
                 }
             } else {
                 break
@@ -235,7 +235,7 @@ function parsePreproc(line:string):boolean {
             if(sym) {
                 let val = def.substring(eqn+1).trim()
                 defines[sym] = val
-                console.log(`added "${sym}=${val}`)
+                // console.log(`added "${sym}=${val}`)
             }
         }
     }
@@ -287,7 +287,7 @@ function parsePreproc(line:string):boolean {
                 else {
                     inScope = val !== ''
                 }
-                console.log(`comparing "${val}" to "${isWhat}" (${match}) ${operation}==${inScope}`)
+                // console.log(`comparing "${val}" to "${isWhat}" (${match}) ${operation}==${inScope}`)
                 break
             }
         }
