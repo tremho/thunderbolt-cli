@@ -19,6 +19,12 @@ enum ParsedState {
     methods
 }
 
+function sleep(secs:number) {
+    let ts = Date.now()
+    while(Date.now() - ts < secs*1000) {}
+    return
+}
+
 function readPage(filepath:string):PageInfo {
     const info = new PageInfo()
     let state = ParsedState.none
@@ -30,7 +36,38 @@ function readPage(filepath:string):PageInfo {
         for(let i = 0; i<lines.length; i++) {
             let line = lines[i]
             let cn = line.indexOf('//')
-            if (cn !== -1) line = line.substring(0, cn)
+            while (cn !== -1) {
+                let qrs = 0, qre = line.length;
+                let qss = -1
+                while(qss < line.length) {
+                    qrs = line.indexOf('"', qss + 1)
+                    if (qrs !== -1) {
+                        qre = line.indexOf('"', qrs+1)
+                        if(cn > qrs && cn < qre) cn = -1
+                        qss = qre
+                    } else qss = line.length;
+                }
+                if(cn !== -1) {
+                    let qrs = 0, qre = line.length;
+                    let qss = -1
+                    while(qss < line.length) {
+                        qrs = line.indexOf("'", qss + 1)
+                        if (qrs !== -1) {
+                            qre = line.indexOf("'", qrs+1)
+                            if(qre == -1) {
+                                qss = line.length;
+                                break;
+                            }
+                            if(cn > qrs && cn < qre) cn = -1
+                            qss = qre
+                        } else qss = line.length
+                    }
+                }
+                if(cn !== -1) {
+                    line = line.substring(0, cn)
+                }
+                cn = line.indexOf('//', qss+1)
+            }
             line = line.trim()
             if (!line.length) continue
 
