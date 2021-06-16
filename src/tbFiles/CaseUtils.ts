@@ -34,3 +34,18 @@ export function dashToCamel(name:string):string {
     // console.log('dashToCamel', name, out)
     return out
 }
+
+export function spaceCase(name:string):string {
+    let i = -1;
+    let out = ''
+    let upper = name.charAt(0) == name.charAt(0).toUpperCase()
+    while(++i < name.length) {
+        let c = name.charAt(i)
+        if( c === '_')  c = ''
+        let wasUpper = upper;
+        upper = c.toUpperCase() === c
+        if(upper && !wasUpper) out += ' '
+        out += c
+    }
+    return out
+}
