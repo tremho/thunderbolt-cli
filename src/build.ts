@@ -283,6 +283,10 @@ function makeAppScss(appScss:string) {
     const varDest = path.join(projPath, '.gen', 'tb-vars.scss')
     fs.copyFileSync(varSrc, varDest)
 
+    const fontSrc = path.join(modulesPath, 'thunderbolt-cli', 'src', 'tbFiles', 'theme-fonts.scss')
+    const fontDest = path.join(projPath, '.gen', 'tb-fonts.scss')
+    fs.copyFileSync(fontSrc, fontDest)
+    
     const themeSrc = path.join(modulesPath, 'thunderbolt-cli', 'src', 'tbFiles', 'theme-desktop.scss')
     const themeDest = path.join(projPath, '.gen', 'tb-theme.scss')
     fs.copyFileSync(themeSrc, themeDest)
@@ -291,6 +295,7 @@ function makeAppScss(appScss:string) {
     // Thunderbolt default styles
     
     @import "./tb-vars";
+    @import "./tb-fonts";
     @import "./tb-theme";
     
     `
@@ -385,6 +390,7 @@ export function doBuild() {
         }
         if(info.buildFlags.compile) {
             p =  doWebpackBuild().then(() => {
+                console.log('completing build...')
                 createSMX()
                 copyAssets()
                 mainAndExec()
@@ -412,18 +418,27 @@ export function doBuild() {
  */
 function copyAssets() {
     let src = path.join(projPath, 'src', 'assets')
-    let dest = path.join(buildPath, 'assets')
+    let rdest = path.join(buildPath, 'assets')
+    let dest = rdest
+    let test = '/src/assets'
     recurseDirectory(src, (filepath:string, stats:Stats) => {
+        let fpb = filepath.substring(filepath.indexOf(test) + test.length)
         if(stats.isDirectory()) {
-            let test = '/src/assets'
-            let fpb = filepath.substring(filepath.indexOf(test) + test.length)
-            dest = path.join(dest, fpb)
+            dest = path.join(rdest, fpb)
+            console.log('dest changes to ', dest)
         }
         if(stats.isFile()) {
-            let base = filepath.substring(filepath.lastIndexOf('/') + 1)
-            let df = path.join(dest, base)
-            if(!fs.existsSync(dest)) fs.mkdirSync(dest, {recursive:true})
-            fs.copyFileSync(filepath, df)
+            let df = path.join(rdest, fpb)
+            let pd = df.substring(0, df.lastIndexOf('/'))
+            if(!fs.existsSync(pd)) {
+                fs.mkdirSync(pd, {recursive:true})
+            }
+            try {
+                fs.copyFileSync(filepath, df)
+            } catch(e) {
+                console.error('Error copying asset', filepath, e.message)
+                process.exit(-1)
+            }
         }
     })
     // do same thing for fonts
@@ -485,130 +500,6 @@ function recurseDirectory(dirpath:string, callback:RecurseCB) {
 }
 
 let fontLoad = ''
-// let famToName = new Map<string, string[]>()
-// let nameToFam = new Map<string, string[]>()
-//
-// function mapFamName(famstr:string, fontName:string) {
-//     const split = famstr.split(',')
-//     split.forEach(fam => {
-//         fam = fam.trim()
-//         let names = famToName.get(fam) || []
-//         names.push(fontName)
-//         famToName.set(fam, names)
-//         let families = nameToFam.get(fontName) || []
-//         families.push(fam)
-//
-//     })
-// }
-//
-// const systemFontsMac = [
-//
-// ]
-// const systemFontsWindows = [
-//
-// ]
-// const systemFontsAndroid = [
-//     "serif",
-//     "sans-serif",
-//     "sans-serif-light",
-//     "sans-serif-medium",
-//     "sans-serif-black",
-//     "sans-serif-condensed",
-//     "monospace",
-//     "serif-monospace",
-//     "casual",
-//     "cursive",
-//     "sans-serif-smallcaps"
-//
-// ]
-// const systemFontsIOS = [
-//     "AcademyEngragedLetPlain",
-//     "AlNile",
-//     "AmericanTypewriter",
-//     "AppleColorEmoji",
-//     "AppleSDGothicNeo",
-//     "Arial",
-//     "ArialHebrew",
-//     "ArialRoundedMTBold",
-//     "Avenir",
-//     "Avenir Next",
-//     "Avenir Next Condensed",
-//     "BanglaSangamMN",
-//     "Baskerville",
-//     "BodoniOrnamentsITCTT",
-//     "BodoniSvtyTwoITCTT",
-//     "BodoniSvtyTwoOSITCTT",
-//     "BodoniSvtyTwoSCCTT",
-//     "BradleyHandITCTT",
-//     "ChalkboardSE",
-//     "Chalkduster",
-//     "Cochin",
-//     "Copperplate",
-//     "Courier",
-//     "Courier New",
-//     "DBLCDTemp",
-//     "DINAlternate",
-//     "DINCondensed",
-//     "Damascus",
-//     "DevanagariSangamMN",
-//     "Didot",
-//     "DiwanMishafi",
-//     "EuphemiaUCAS",
-//     "Farah",
-//     "Futura",
-//     "Geeza Pro",
-//     "Georgia",
-//     "GillSans",
-//     "GujaratiSangamMN",
-//     "GurmukhiMN",
-//     "STHeitiSC",
-//     "STHeitiTC",
-//     "Helvetica",
-//     "HelveticaNeue",
-//     "HiraKakuProN-W3",
-//     "HiraKakuProN-W6",
-//     "HiraginoSans-W3",
-//     "HiraginoSans-W6",
-//     "HoeflerText",
-//     "IowanOldStyle",
-//     "Kailasa",
-//     "KannadaSangamMN",
-//     "KhmerSangamMN",
-//     "KohinoorBangla",
-//     "KohinoorDevanagari",
-//     "KohinoorTelugu",
-//     "LaoSangamMN",
-//     "MalayalamSangamMN",
-//     "Menlo",
-//     "Marion",
-//     "MarkerFelt",
-//     "Noteworthy",
-//     "Optima",
-//     "OriyaSangamMN",
-//     "Palatino",
-//     "Papyrus",
-//     "PartyLetPlain",
-//     "PingFangHK",
-//     "PingFangSC",
-//     "PingFangTC",
-//     "SanFranciscoDisplay",
-//     "SanFranciscoRounded",
-//     "SanFranciscoText",
-//     "SavoyeLetPlain",
-//     "SinhalaSangamMN",
-//     "SnellRoundhand",
-//     "Superclarendon",
-//     "Symbol",
-//     "TamilSangamMN",
-//     "TeluguSangamMN",
-//     "Thonburi",
-//     "TimesNewRomanPS",
-//     "TrebuchetMS",
-//     "Verdana",
-//     "ZapfDingbatsITC",
-//     "Zapfino"
-//
-// ]
 
 function enumerateFonts() {
     fontLoad = ''
@@ -627,9 +518,6 @@ function enumerateFonts() {
                 let assetPath = './fonts/'+base+ext
                 let fmt
                 ext = ext.toLowerCase()
-                // if(ext === '.tbf' || ext === '.tbfi') {
-                //     processFontInfo(filePath)
-                // }
                 if(ext === '.woff') fmt = 'woff'
                 if(ext === '.woff2') fmt = 'woff2'
                 if (ext == '.ttf') fmt = 'truetype'
@@ -649,87 +537,5 @@ function enumerateFonts() {
             }
         })
 
-        // list of fontnames defined by font info
-        // list of families referenced by font info
-        // list of families known
-        // list of families added
-        // reconcile families referenced to known or added families
-        // report if we can't find the link
-
-
-        // Check the map of family names to see if there are any that are not associated by font info
-        // and issue a warning
-        // Output the resulting name to font mapping
     }
 }
-
-// function processFontInfo(filePath:string) {
-//     console.log('Processing font info from ', filePath)
-//     let contents = fs.readFileSync(filePath).toString()
-//     if(!contents) return
-//
-//     const badBlock = (lineNum:number) => {
-//         console.error('Error in '+filePath+' at line '+lineNum)
-//         process.exit(-1)
-//     }
-//
-//     const lines = contents.split('\n')
-//     let blockStarted = false;
-//     let fontName = '', family = '', appearance = ''
-//     for(let i=0; i<lines.length; i++) {
-//         let line = lines[i]
-//         let cn = line.indexOf('//')
-//         if(cn === -1) cn === line.length;
-//         // line = line.substring(0, cn)
-//         let kv = line.split(':')
-//         let key = (kv[0]||'').trim()
-//         let value = (kv[1]||'').trim()
-//         if(key === 'FontName')  {
-//             if(blockStarted) badBlock(i)
-//             blockStarted = true
-//             fontName = value
-//         }
-//         else if(key === 'Family') {
-//             if(!blockStarted) badBlock(i)
-//             family = value
-//         }
-//         else if(key === 'Appearance') {
-//             if(!blockStarted) badBlock(i)
-//             appearance = value
-//         }
-//         if(fontName && family && appearance) {
-//             const isWeight = (ap:string) => {
-//                 return (ap === 'bold')
-//             }
-//             const isStyle = (ap:string) => {
-//                 return (ap === 'italic')
-//             }
-//             const isStretch = (ap:string) => {
-//                 return (
-//                     ap == 'condensed'
-//                  || ap == 'expanded'
-//                  || ap == 'semi-condensed'
-//                  || ap == 'extra-condensed'
-//                  || ap == 'ultra-condensed'
-//                  || ap == 'semi-expanded'
-//                  || ap == 'extra-expanded'
-//                  || ap == 'ultra-expanded'
-//                 )
-//             }
-//             // add the fontname and families to the record
-//             console.log('mapping font name', fontName, family)
-//             mapFamName(family, fontName)
-//
-//             let apwords = appearance.split(' ')
-//             let weight = 'normal', style='normal', stretch = 'none'
-//             apwords.forEach(ap => {
-//                 if(isWeight(ap)) weight = ap
-//                 if(isStyle(ap)) style = ap
-//                 if(isStretch(ap)) stretch = ap
-//             })
-//             let fclass = `  .f-${fontName} {\n    font-family:${family}\n    font-style:${style}\n     font-stretch:${stretch}\n  }`
-//
-//             console.log(fclass)
-//         }
-//     }
-//}

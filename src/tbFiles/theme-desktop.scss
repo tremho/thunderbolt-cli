@@ -88,7 +88,27 @@ body {
       justify-content: center;
       align-items: center;
     }
+
+    .tbIcon {
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      left: -15px;
+      top: -15px;
+    }
+
+    .tbLabel {
+      position: absolute;
+      left: -5px;
+      top: -8px;
+
+    }
   }
+  .menuIcon {
+    width: 20px;
+    height: 20px;
+  }
+
   .indicator-bar {
     background-color: aliceblue;
 
@@ -99,6 +119,13 @@ body {
       width: 1rem;
     }
 
+    .indIcon {
+      width: 18px;
+      height: 19px;
+      top: -9.5px;
+      position: absolute;
+      left: -9.5px;
+    }
   }
 
   .title {

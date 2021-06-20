@@ -1,0 +1,78 @@
+// ------------ Font Declarations
+// use name f-<fontName> (lowercase) to define fonts that can be applied using the 'fontName' property
+.f-sans {
+  font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+  font-weight: normal;
+}
+.f-sans-thin {
+  font-family: "HelveticaNeue-Thin", "Arial", sans-serif-thin;
+  font-weight: 200;
+}
+.f-sans-light {
+  font-family: "Avenir-Light",  "Arial", sans-serif-light;
+  font-weight: 100;
+}
+.f-sans-medium {
+  font-family: "Avenir",  "Arial", sans-serif-medium;
+  font-weight: normal;
+}
+.f-sans-bold {
+  font-family: "Avenir",  "Arial", sans-serif;
+  font-weight: bold;
+}
+.f-sans-heavy {
+  font-family: "Avenir-Black",  "Impact", sans-serif-black;
+  font-weight: 900;
+}
+.f-sans-condensed {
+  font-family: "AvenirNextCondensed-Regular", "Microsoft Sans Serif", sans-serif-condensed;
+  font-weight: normal;
+  font-stretch: condensed;
+}
+.f-sans-condensed-light {
+  font-family: "AvenirNextCondensed-UltraLight", "Microsoft Sans Serif", sans-serif-condensed-light;
+  font-weight: 100;
+  font-stretch: condensed;
+}
+.f-sans-condensed-bold {
+  font-family: "AvenirNextCondensed-Bold", "Microsoft Sans Serif", sans-serif-condensed;
+  font-weight: bold;
+  font-stretch: condensed;
+}
+.f-sans-mono {
+  font-family: "Menlo", "Lucida Console", monospace;
+  font-weight: normal;
+}
+.f-serif {
+  font-family: "Times New Roman", serif;
+  font-weight: normal;
+}
+.f-serif-bold {
+  font-family: "Times New Roman", serif;
+  font-weight: bold;
+}
+.f-serif-mono {
+  font-family: "Courier New", serif-monospace, monospace;
+  font-weight: normal;
+}
+.f-smallcaps {
+  font-family: "Bodoni 72 Smallcaps", "Arial", sans-serif-smallcaps;
+  font-weight: normal;
+  font-variant-caps: small-caps;
+}
+.f-marker {
+  font-family: "Marker Felt", "Comic Sans MS", casual;
+  font-weight: normal;
+}
+.f-marker-bold {
+  font-family: "Marker Felt", "Comic Sans MS", casual;
+  font-weight: bold;
+}
+.f-script {
+  font-family: "Snell Roundhand", "Segoe Script", cursive;
+  font-weight: normal;
+}
+.f-script-bold {
+  font-family: "Snell Roundhand", "Segoe Script", cursive;
+  font-weight: bold;
+}
