@@ -2,6 +2,7 @@
 import {ComponentInfo} from "./ComponentInfo";
 import * as convert from 'xml-js'
 import * as fs from 'fs'
+import * as path from 'path'
 
 
 /**
@@ -24,11 +25,11 @@ export function writeRiotFile(info:ComponentInfo, pathname:string) {
         attributeValueFn:riotProp,
         textFn:riotProp
     })
-    Object.getOwnPropertyNames(actMethods).forEach(p => {
-        // @ts-ignore
-        info.methods[p] = actMethods[p]
-        info.params[p] = 'ev'
-    })
+    // Object.getOwnPropertyNames(actMethods).forEach(p => {
+    //     // @ts-ignore
+    //     info.methods[p] = actMethods[p]
+    //     info.params[p] = 'ev'
+    // })
 
     let page = `<${info.id} bind="${info.bind}">\n`
     page += xml
@@ -36,48 +37,63 @@ export function writeRiotFile(info:ComponentInfo, pathname:string) {
     page += info.scss
     page += '\n</style>\n'
     page += `<script>`
-    page += scriptInnards(info.methods, info.params)
+    page += scriptInnards(info.codeBack)
     page += `</script>`
     page += `\n</${info.id}>\n`
 
     // New per ticket: https://github.com/tremho/thunderbolt-common/projects/1#card-60937753
-    pathname = pathname.replace('src/', '.gen/')
-    let dir = pathname.substring(0,pathname.lastIndexOf('/'))
+    let srcDir = pathname.substring(0, pathname.lastIndexOf(path.sep))
+    pathname = pathname.replace('src'+path.sep, '.gen'+path.sep)
+    let dir = pathname.substring(0,pathname.lastIndexOf(path.sep))
     if(!fs.existsSync(dir)) {
         fs.mkdirSync(dir, {recursive:true})
     }
 
     fs.writeFileSync(pathname, page)
+
+    // copy code-back file
+    const relPath = info.codeBack.substring(info.codeBack.lastIndexOf(path.sep)+1) // relative
+    let src = path.join(srcDir, relPath)
+    let dest = path.join(dir, relPath)
+    fs.copyFileSync(src,dest)
 }
 
-function scriptInnards(methods:any, params: any) {
+function scriptInnards(codeBackFile:string) {
     let tagCode = ''
-    Object.getOwnPropertyNames(methods).forEach(key => {
-        let prm = params[key]
-        let code = methods[key]
-        let lines = code.split('\n')
-        code = lines.join('\n            ').trim()
-        let value = ''
-        if(key === 'handleAction') {
-            value = '{\n        ' +lines.join('\n      ').trim()
-        } else {
-            value = '{\n        try ' + code + ' catch(e) {\n                console.error("error executing \'' + key + '\':",e)\n          }\n    }'
-        }
-        tagCode += `${key}(${prm}) ${value},\n    `
-    })
-    let script =
-`    
+    // Object.getOwnPropertyNames(methods).forEach(key => {
+    //     let prm = params[key]
+    //     let code = methods[key]
+    //     let lines = code.split('\n')
+    //     code = lines.join('\n            ').trim()
+    //     let value = ''
+    //     if(key === 'handleAction') {
+    //         value = '{\n        ' +lines.join('\n      ').trim()
+    //     } else {
+    //         value = '{\n        try ' + code + ' catch(e) {\n                console.error("error executing \'' + key + '\':",e)\n          }\n    }'
+    //     }
+    //     tagCode += `${key}(${prm}) ${value},\n    `
+    // })
+    let script
+    if(codeBackFile) {
+        const baseName = codeBackFile.substring(codeBackFile.lastIndexOf(path.sep)+1, codeBackFile.lastIndexOf('.'))
+        script = `\nimport CCB from "./${baseName}"\n`
+        script += `let ccb = null`
+    } else {
+        script = `const ccb = {}`
+    }
+    script += `    
 import {newCommon} from 'Framework/app-core/ComCommon'
 export default {
     onBeforeMount(props, state) {
         try {
             this.bound = new Object()
             this.com = newCommon(this)
+            if(!ccb) ccb = new CCB(this) 
         } catch(e) {
             console.error('Unexpected error in "'+this.root.tagName+' onBeforeMount"', e)
         } 
         try {
-            this.beforeLayout && this.beforeLayout()
+            ccb.beforeLayout && ccb.beforeLayout()
         } catch(e) {
             console.error('Error in  "'+this.root.tagName+' beforeLayout"', e)
         }    
@@ -89,12 +105,18 @@ export default {
             console.error('Unexpected error in "'+this.root.tagName+' while binding"', e)
         }
         try {    
-            this.afterLayout && this.afterLayout()
+            ccb.afterLayout && ccb.afterLayout()
         } catch(e) {
             console.error('Error in  "'+this.root.tagName+' afterLayout"', e)
         }    
     },
-    ${tagCode}
+    handleAction(ev) {
+        try {    
+            ccb.onAction && ccb.onAction(ev)
+        } catch(e) {
+            console.error('Error in  "'+this.root.tagName+' action handler"', e)
+        }    
+    }        
 }
 `
     return script

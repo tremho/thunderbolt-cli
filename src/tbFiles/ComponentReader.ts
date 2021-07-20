@@ -40,6 +40,12 @@ function readComponent(filepath:string): ComponentInfo {
     let layoutXml = ''
     let bindDeclarations = ''
 
+    let codeBackFile = filepath.substring(0, filepath.lastIndexOf('.'))
+    codeBackFile += '.ts'
+    if( fs.existsSync(codeBackFile) ) {
+        info.codeBack = codeBackFile
+    }
+
     try {
         const str = fs.readFileSync(filepath).toString()
         const lines = str.split('\n')
@@ -86,6 +92,7 @@ function readComponent(filepath:string): ComponentInfo {
                         }
                         break
                 }
+            /*
             } else if(line.substring(0,12) === 'beforeLayout' ||
                       line.substring(0,11) === 'afterLayout'  ||
                       line.substring(0,8) === 'onAction') {
@@ -113,10 +120,15 @@ function readComponent(filepath:string): ComponentInfo {
                     info.params[name] = pm
                     state = ParsedState.methods
                 }
+             */
             }
             else {
                 if(state === ParsedState.layout) {
-                    layoutXml += line
+                    if(line === '<style>') {
+                        state = ParsedState.style
+                    } else {
+                        layoutXml += line
+                    }
                 }
                 else if(state === ParsedState.bind) {
                     bindDeclarations += line
@@ -131,11 +143,11 @@ function readComponent(filepath:string): ComponentInfo {
         // now parse the xml
         const xmlResult = convert.xml2js(layoutXml, {compact:true})
         info.layout = setupAction(xmlResult)
-        for(let i=0; i<actionMethods.length; i++) {
-            let am = actionMethods[i]
-            info.methods[am.name] = am.method
-            info.params[am.name] = 'ev'
-        }
+        // for(let i=0; i<actionMethods.length; i++) {
+        //     let am = actionMethods[i]
+        //     info.methods[am.name] = am.method
+        //     info.params[am.name] = 'ev'
+        // }
         info.bind = bindDeclarations
         info.scss = style
 
@@ -172,8 +184,8 @@ function checkAction(obj:any) {
 `
 let action = this.com.getComponentAttribute(null, 'action')
 try {
-      if(typeof this.onAction === 'function') {
-          if(this.onAction(ev)) {
+      if(typeof ccb.onAction === 'function') {
+          if(ccb.onAction(ev)) {
               return
           }
       }

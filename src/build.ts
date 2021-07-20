@@ -268,6 +268,8 @@ function makeAppScss(appScss:string) {
     const scssFolder = path.join(projPath, 'src', 'scss')
 
     const imports:string[] = []
+    if(!fs.existsSync(scssFolder)) return
+
     const files = fs.readdirSync(scssFolder)
     for(let i=0; i<files.length; i++) {
         const file = files[i]
@@ -315,9 +317,12 @@ function compileScss() {
     // console.log('compileScss')
     const mainScss = 'app.scss'
     const appScss = path.join(projPath, '.gen', mainScss)
+    if(fs.existsSync(appScss)) {
+        fs.unlinkSync(appScss)
+    }
     makeAppScss(appScss)
     if(!fs.existsSync(appScss)) {
-        console.warn(`${ac.bgYellow('WARNING:')} missing ${ac.bold('app.scss')} file - no css will be generated.`)
+        console.warn(`${ac.bgYellow('WARNING:')} ${ac.bold('no scss folder')} - no css will be generated.`)
         return;
     }
     const appCss = path.join(buildPath, 'app.css')
@@ -338,7 +343,9 @@ function compileScss() {
 
 function makeRiotComponents() {
     const componentsDir = path.join(projPath, 'src', 'components')
-    componentReader.enumerateAndConvert(componentsDir, 'riot', componentsDir)
+    if(fs.existsSync(componentsDir)) {
+        componentReader.enumerateAndConvert(componentsDir, 'riot', componentsDir)
+    }
 
     console.log('converting pages to riot')
     const pageDir = path.join(projPath, 'src', 'pages')
@@ -421,11 +428,12 @@ function copyAssets() {
     let rdest = path.join(buildPath, 'assets')
     let dest = rdest
     let test = '/src/assets'
+    if(!fs.existsSync(src)) return;
     recurseDirectory(src, (filepath:string, stats:Stats) => {
         let fpb = filepath.substring(filepath.indexOf(test) + test.length)
         if(stats.isDirectory()) {
             dest = path.join(rdest, fpb)
-            console.log('dest changes to ', dest)
+            // console.log('dest changes to ', dest)
         }
         if(stats.isFile()) {
             let df = path.join(rdest, fpb)
@@ -444,19 +452,21 @@ function copyAssets() {
     // do same thing for fonts
     src = path.join(projPath, 'src', 'fonts')
     dest = path.join(buildPath, 'fonts')
-    recurseDirectory(src, (filepath:string, stats:Stats) => {
-        if(stats.isDirectory()) {
-            let test = '/src/fonts'
-            let fpb = filepath.substring(filepath.indexOf(test) + test.length)
-            dest = path.join(dest, fpb)
-        }
-        if(stats.isFile()) {
-            let base = filepath.substring(filepath.lastIndexOf('/') + 1)
-            let df = path.join(dest, base)
-            if(!fs.existsSync(dest)) fs.mkdirSync(dest, {recursive:true})
-            fs.copyFileSync(filepath, df)
-        }
-    })
+    if(fs.existsSync(src)) {
+        recurseDirectory(src, (filepath: string, stats: Stats) => {
+            if (stats.isDirectory()) {
+                let test = '/src/fonts'
+                let fpb = filepath.substring(filepath.indexOf(test) + test.length)
+                dest = path.join(dest, fpb)
+            }
+            if (stats.isFile()) {
+                let base = filepath.substring(filepath.lastIndexOf('/') + 1)
+                let df = path.join(dest, base)
+                if (!fs.existsSync(dest)) fs.mkdirSync(dest, {recursive: true})
+                fs.copyFileSync(filepath, df)
+            }
+        })
+    }
 }
 
 function doClean() {

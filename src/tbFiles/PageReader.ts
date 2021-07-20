@@ -202,6 +202,12 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
             let stat = fs.lstatSync(subdir)
             if(stat.isDirectory()) {
                 enumerateAndConvert(subdir, outType, path.join(outDir, file))
+            } else {
+                if(outType !== 'riot') {
+                    if(file.substring(file.lastIndexOf('-')+1, file.lastIndexOf('.')) !== 'page') {
+                        fs.copyFileSync(subdir, path.join(outDir, file))
+                    }
+                }
             }
         }
     })

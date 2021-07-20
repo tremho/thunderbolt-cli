@@ -4,6 +4,5 @@ export class ComponentInfo {
     bind:string = ''
     layout:any
     scss:string = ''
-    methods:any = new Object()
-    params: any = new Object()
+    codeBack:string = ''
 }

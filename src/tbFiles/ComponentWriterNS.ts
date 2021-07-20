@@ -4,6 +4,8 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {pascalCase} from "./CaseUtils";
 import {translateScss} from "./MigrateScss";
+// @ts-ignore
+import * as tsc from 'node-typescript-compiler'
 
 /**
  * N.B. 5/24/21 -- COMPACT IS TRUE
@@ -23,21 +25,48 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
 
     let parts = info.id.split('-')
     let name = ''
+    const codeBackRel = info.codeBack && info.codeBack.substring(info.codeBack.lastIndexOf(path.sep)+1, info.codeBack.lastIndexOf('.')) // base name only
+
     let i = 0
     while(parts[i]) {
         name += parts[i].charAt(0).toUpperCase()+parts[i++].substring(1).toLowerCase()
     }
     let out = `const {ComponentBase} = require('thunderbolt-mobile')\n`
     out += `const {makeDiv, makeSpan, makeLabel} = require('thunderbolt-mobile').componentExport\n\n`
+    if(codeBackRel) out += `const CCB = require('./${codeBackRel}').default\nlet ccb = null\n`
+    else out += `const ccb = {}`
     out += `module.exports.${name} = class extends ComponentBase {`
     out += '\n    createControl() {\n        try {\n            '
+    out += `if(!ccb) ccb = new CCB(this)\n            `
     out += `this.className = "${pascalCase(info.id)}"\n            `
     out += processContainer(info.layout)
 
     out = out.trim()
     out += '\n        } catch(e) {\n            console.error("Unexpected Error creating '+name+':", e)\n        }\n'
-    out += '    }\n    '
-    out += addMethods(info.methods, info.params)
+    out += '    }'
+    out += `
+    handleAction(ev) {
+        try {    
+            ccb.onAction && ccb.onAction(ev)
+        } catch(e) {
+            console.error('Error in  "'+this.root.tagName+' action handler"', e)
+        }    
+    }
+    beforeLayout() {
+        try {    
+            ccb.beforeLayout && ccb.beforeLayout()
+        } catch(e) {
+            console.error('Error in  "'+this.root.tagName+' beforeLayout"', e)
+        }    
+    }
+    afterLayout() {
+        try {    
+            ccb.afterLayout && ccb.afterLayout()
+        } catch(e) {
+            console.error('Error in  "'+this.root.tagName+' afterLayout"', e)
+        }    
+    }`
+    // out += addMethods(info.methods, info.params)
     out += '\n}\n'
 
     let destPath = pathname.substring(0, pathname.lastIndexOf(path.sep))
@@ -47,6 +76,8 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     fs.writeFileSync(pathname, out)
 
     writeAssociatedStyle(pathname, info.id, info.scss)
+
+    writeCodeBackFile(pathname, info.codeBack)
 }
 
 function writeAssociatedStyle(compPath:string, compName:string, scss:string) {
@@ -56,6 +87,27 @@ function writeAssociatedStyle(compPath:string, compName:string, scss:string) {
     const out = translateScss(scss, className)
     const scssPath = compPath.substring(0, compPath.lastIndexOf('.'))+ '.scss'
     fs.writeFileSync(scssPath, out)
+}
+
+function writeCodeBackFile(pathname:string, codeBack:string) {
+
+    const relPath = codeBack.substring(codeBack.lastIndexOf(path.sep)+1) // relative
+    const srcDir = codeBack.substring(0, codeBack.lastIndexOf(path.sep))
+    const destDir = pathname.substring(0, pathname.lastIndexOf(path.sep))
+
+    // code back file is typescript so we need to compile it, so we'll do the copy this way
+    try {
+        tsc.compile({
+                target: 'es5',
+                lib: 'es2015,dom',
+                outdir: destDir
+            }, [`${codeBack}`],
+            {banner: `Compiling component ${relPath}`}
+        )
+    } catch(e) {
+        console.error(`Failed to compile ${relPath}`)
+        throw Error()
+    }
 }
 
 function mappedComponent(tag: string) {
@@ -180,21 +232,21 @@ function uniqueName(name:string) {
     return name + unamecounts[name]
 }
 
-function addMethods(methods:any, params:any) {
-    let out = ''
-    Object.getOwnPropertyNames(methods).forEach(name => {
-        let param = params[name] || ''
-        let code = methods[name] || '{}'
-        // pretty up the code a little
-        code = code.split('\n').join('\n    ').trim()
-
-        if(code.charAt(0) !== '{') code = '{\n        '+code
-        if(code.charAt(code.length-1) !== '}') code += '}'
-
-        out += `${name}(${param}) ${code}\n    `
-    })
-    return out
-}
+// function addMethods(methods:any, params:any) {
+//     let out = ''
+//     Object.getOwnPropertyNames(methods).forEach(name => {
+//         let param = params[name] || ''
+//         let code = methods[name] || '{}'
+//         // pretty up the code a little
+//         code = code.split('\n').join('\n    ').trim()
+//
+//         if(code.charAt(0) !== '{') code = '{\n        '+code
+//         if(code.charAt(code.length-1) !== '}') code += '}'
+//
+//         out += `${name}(${param}) ${code}\n    `
+//     })
+//     return out
+// }
 
 function checkAction(key:string, value:any) {
     let eventMapped = ''
