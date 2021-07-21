@@ -88,7 +88,11 @@ function scriptInnards(codeBackFile:string) {
       const sc =  Object.assign({
         postStdOnBeforeMount() {
             try {
-                if(!ccb) ccb = new CCB(this)
+                if(!ccb) {
+                    ccb = new CCB()
+                    ccb.component = this
+                }
+                
             } catch(e) {
               console.error('error in constructor for custom component '+this.root.tagName, e)
             } 
@@ -102,7 +106,7 @@ function scriptInnards(codeBackFile:string) {
         },
         postStdOnMounted() {
             try {
-                ccb.afterLayout && ccb.afterLayout.call(this)
+                ccb.afterLayout && ccb.afterLayout.call(ccb)
             } catch(e) {
                 console.error('error in afterLayout for custom component '+this.root.tagName, e) 
             }
