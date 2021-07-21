@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tbTest-build": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js build",
-    "tbTest-nativescript": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js nativescript"
+    "tbTest-nativescript": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js nativescript",
+    "sb-mad-build": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/tbx.js build"
   },
   "keywords": [
     "Thunderbolt",

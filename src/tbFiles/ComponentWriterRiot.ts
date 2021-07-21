@@ -52,10 +52,12 @@ export function writeRiotFile(info:ComponentInfo, pathname:string) {
     fs.writeFileSync(pathname, page)
 
     // copy code-back file
-    const relPath = info.codeBack.substring(info.codeBack.lastIndexOf(path.sep)+1) // relative
-    let src = path.join(srcDir, relPath)
-    let dest = path.join(dir, relPath)
-    fs.copyFileSync(src,dest)
+    if(info.codeBack) {
+        const relPath = info.codeBack.substring(info.codeBack.lastIndexOf(path.sep) + 1) // relative
+        let src = path.join(srcDir, relPath)
+        let dest = path.join(dir, relPath)
+        fs.copyFileSync(src, dest)
+    }
 }
 
 function scriptInnards(codeBackFile:string) {
@@ -79,45 +81,42 @@ function scriptInnards(codeBackFile:string) {
         script = `\nimport CCB from "./${baseName}"\n`
         script += `let ccb = null`
     } else {
-        script = `const ccb = {}`
+        script = `\nconst ccb = {}`
     }
-    script += `    
-import {newCommon} from 'Framework/app-core/ComCommon'
-export default {
-    onBeforeMount(props, state) {
-        try {
-            this.bound = new Object()
-            this.com = newCommon(this)
-            if(!ccb) ccb = new CCB(this) 
-        } catch(e) {
-            console.error('Unexpected error in "'+this.root.tagName+' onBeforeMount"', e)
-        } 
-        try {
-            ccb.beforeLayout && ccb.beforeLayout()
-        } catch(e) {
-            console.error('Error in  "'+this.root.tagName+' beforeLayout"', e)
-        }    
-    },
-    onMounted(props, state) {
-        try {
-            this.com.bindComponent()
-        } catch(e) {
-            console.error('Unexpected error in "'+this.root.tagName+' while binding"', e)
-        }
-        try {    
-            ccb.afterLayout && ccb.afterLayout()
-        } catch(e) {
-            console.error('Error in  "'+this.root.tagName+' afterLayout"', e)
-        }    
-    },
-    handleAction(ev) {
-        try {    
-            ccb.onAction && ccb.onAction(ev)
-        } catch(e) {
-            console.error('Error in  "'+this.root.tagName+' action handler"', e)
-        }    
-    }        
-}
+    script += `
+      import StdComp from 'Framework/app-core/StdComp'
+      const sc =  Object.assign({
+        postStdOnBeforeMount() {
+            try {
+                if(!ccb) ccb = new CCB(this)
+            } catch(e) {
+              console.error('error in constructor for custom component '+this.root.tagName, e)
+            } 
+        },
+        preStdOnMounted() {
+            try {
+                ccb.beforeLayout && ccb.beforeLayout.call(ccb)
+            } catch(e) {
+                console.error('error in beforeLayout for custom component '+this.root.tagName, e) 
+            }
+        },
+        postStdOnMounted() {
+            try {
+                ccb.afterLayout && ccb.afterLayout.call(this)
+            } catch(e) {
+                console.error('error in afterLayout for custom component '+this.root.tagName, e) 
+            }
+        },
+        handleAction(ev) {
+            try {    
+                ccb.onAction && ccb.onAction(ev)
+            } catch(e) {
+                console.error('Error in  "'+this.root.tagName+' action handler"', e)
+            }                
+        }        
+      }, StdComp)
+      console.log(sc)
+      export default sc
 `
     return script
 }
