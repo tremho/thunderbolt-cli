@@ -79,7 +79,7 @@ function scriptInnards(codeBackFile:string) {
     if(codeBackFile) {
         const baseName = codeBackFile.substring(codeBackFile.lastIndexOf(path.sep)+1, codeBackFile.lastIndexOf('.'))
         script = `\nimport CCB from "./${baseName}"\n`
-        script += `let ccb = null`
+        script += `let ccb = null\nlet lastInit = Date.now()`
     } else {
         script = `\nconst ccb = {}`
     }
@@ -88,7 +88,7 @@ function scriptInnards(codeBackFile:string) {
       const sc =  Object.assign({
         postStdOnBeforeMount() {
             try {
-                if(!ccb) {
+                if(!ccb || Date.now() !== lastInit) {
                     ccb = new CCB()
                     ccb.component = this
                 }
