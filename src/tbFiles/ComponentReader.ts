@@ -5,10 +5,12 @@ enumerate and read tbc/ tbcm files from 'components' directory into data ready f
 import * as fs from "fs"
 import * as path from 'path'
 import * as convert from 'xml-js'
+import * as ac from 'ansi-colors'
 import {ComponentInfo} from "./ComponentInfo";
 import {writeRiotFile} from "./ComponentWriterRiot";
 import {writeNativeScriptFile} from "./ComponentWriterNS";
 import {pascalCase} from "./CaseUtils";
+
 
 /**
  * N.B. 5/24/21 -- COMPACT IS TRUE
@@ -46,10 +48,13 @@ function readComponent(filepath:string): ComponentInfo {
         info.codeBack = codeBackFile
     }
 
+    let errLine = 0
+    const str = fs.readFileSync(filepath).toString()
+    const lines = str.split('\n')
+
     try {
-        const str = fs.readFileSync(filepath).toString()
-        const lines = str.split('\n')
         for(let i = 0; i<lines.length; i++) {
+            errLine = i
             let line = lines[i]
             let cn = line.indexOf('//')
             if(cn !== -1) line = line.substring(0, cn)
@@ -127,7 +132,7 @@ function readComponent(filepath:string): ComponentInfo {
                     if(line === '<style>') {
                         state = ParsedState.style
                     } else {
-                        layoutXml += line
+                        layoutXml += ' '+line
                     }
                 }
                 else if(state === ParsedState.bind) {
@@ -152,7 +157,14 @@ function readComponent(filepath:string): ComponentInfo {
         info.scss = style
 
     } catch(e) {
-        console.error("Error", e)
+        console.error(ac.bold(ac.red(`Error Reading component at ${filepath} `)), e.message)
+        console.error(ac.italic(ac.blue(layoutXml)))
+        let ci = e.message.indexOf('Column:')+7
+        let cs = e.message.substring(ci, e.message.indexOf('\n', ci))
+        let c = Number(cs)
+        let marker = '-'.repeat(c)+'^'
+        console.error(marker)
+        process.exit(-1)
     }
 
     return info

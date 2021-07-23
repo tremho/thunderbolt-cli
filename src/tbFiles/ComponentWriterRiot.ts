@@ -78,42 +78,57 @@ function scriptInnards(codeBackFile:string) {
     let script
     if(codeBackFile) {
         const baseName = codeBackFile.substring(codeBackFile.lastIndexOf(path.sep)+1, codeBackFile.lastIndexOf('.'))
-        script = `\nimport CCB from "./${baseName}"\n`
-        script += `let ccb = null\nlet lastInit = Date.now()`
+        script = `\n      import CCB from "./${baseName}"`
     } else {
-        script = `\nconst ccb = {}`
+        script = `\n      // no code back`
     }
     script += `
+      let ccb = null
+      let lastInit
       import StdComp from 'Framework/app-core/StdComp'
-      const sc =  Object.assign({
+      const sc =  Object.assign({`
+    if(codeBackFile) script += `
         postStdOnBeforeMount() {
             try {
-                if(!ccb || Date.now() !== lastInit) {
+                if(Date.now() !== lastInit) {
                     ccb = new CCB()
                     ccb.component = this
+                    lastInit = Date.now()
                 }
-                
             } catch(e) {
               console.error('error in constructor for custom component '+this.root.tagName, e)
-            } 
-        },
+            }                        
+        },`
+    script += `        
         preStdOnMounted() {
             try {
-                ccb.beforeLayout && ccb.beforeLayout.call(ccb)
+                ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb)
             } catch(e) {
                 console.error('error in beforeLayout for custom component '+this.root.tagName, e) 
             }
         },
         postStdOnMounted() {
             try {
-                ccb.afterLayout && ccb.afterLayout.call(ccb)
+                ccb && ccb.afterLayout && ccb.afterLayout.call(ccb)
             } catch(e) {
                 console.error('error in afterLayout for custom component '+this.root.tagName, e) 
             }
         },
+        preStdOnBeforeUpdate() {
+            try {
+                ccb && ccb.beforeUpdate && ccb.beforeUpdate.call(ccb)
+            } catch(e) {
+                console.error('error in beforeUpdate for custom component '+this.root.tagName, e) 
+            }
+        },
         handleAction(ev) {
             try {    
-                ccb.onAction && ccb.onAction(ev)
+                if(ccb && ccb.onAction) {
+                     ccb.onAction(ev)
+                } else {
+                     // default if no special handler is specified in code back
+                     this.cm.app.callEventHandler('action', ev)
+                } 
             } catch(e) {
                 console.error('Error in  "'+this.root.tagName+' action handler"', e)
             }                

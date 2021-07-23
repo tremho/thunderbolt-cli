@@ -39,7 +39,7 @@ export function writeRiotPage(info:PageInfo, pathname:string) {
 page += `      export default pc
     </script>
     `
-    page += `</${info.id}-page>\n`
+    page += `\n</${info.id}-page>\n`
 
     // New per ticket: https://github.com/tremho/thunderbolt-common/projects/1#card-60937753
     pathname = pathname.replace('src/pages', '.gen/pages')
