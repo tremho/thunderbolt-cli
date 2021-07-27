@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.0",
+  "version": "0.6.3-prerelease-5",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -45,7 +45,6 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.11",
     "typescript": "^2.9.2",
     "webpack": "^5.47.0"
   }
