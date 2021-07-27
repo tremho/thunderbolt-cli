@@ -1,7 +1,7 @@
 {
-  "name": "thunderbolt-cli",
-  "version": "0.5.0",
-  "description": "tbx command line utility for thunderbolt development",
+  "name": "@tremho/jove-cli",
+  "version": "0.6.0",
+  "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
     "tbx": "build/tbx.js"
@@ -10,10 +10,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "tbTest-build": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js build",
     "tbTest-nativescript": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js nativescript",
-    "sb-mad-build": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/tbx.js build"
+    "sb-mad-build": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/tbx.js build",
+    "sb-mad-nativescript": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/tbx.js nativescript"
   },
   "keywords": [
-    "Thunderbolt",
+    "Jove",
     "framework",
     "cli",
     "tbx",

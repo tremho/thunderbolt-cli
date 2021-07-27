@@ -31,13 +31,21 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     while(parts[i]) {
         name += parts[i].charAt(0).toUpperCase()+parts[i++].substring(1).toLowerCase()
     }
-    let out = `const {ComponentBase} = require('thunderbolt-mobile')\n`
-    out += `const {makeDiv, makeSpan, makeLabel} = require('thunderbolt-mobile').componentExport\n\n`
+    let out = `const {ComponentBase} = require('@tremho/jove-mobile')\n`
+    out += `const {makeDiv, makeSpan, makeLabel} = require('@tremho/jove-mobile').componentExport\n\n`
     if(codeBackRel) out += `const CCB = require('./${codeBackRel}').default\nlet ccb = null\n`
-    else out += `const ccb = {}`
+    else out += `// no code back \n`
+    out += 'let lastInit\n'
     out += `module.exports.${name} = class extends ComponentBase {`
     out += '\n    createControl() {\n        try {\n            '
-    out += `if(!ccb) ccb = new CCB(this)\n            `
+    if(codeBackRel) {
+        out += `if(Date.now() !== lastInit) {
+                ccb = new CCB()
+                ccb.component = this
+                lastInit = Date.now()
+            }
+            `
+    }
     out += `this.className = "${pascalCase(info.id)}"\n            `
     out += processContainer(info.layout)
 
@@ -45,27 +53,40 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     out += '\n        } catch(e) {\n            console.error("Unexpected Error creating '+name+':", e)\n        }\n'
     out += '    }'
     out += `
+    preStdOnMounted() {
+        try {
+            ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb)
+        } catch(e) {
+            console.error('error in beforeLayout for custom component '+this.constructor.name, e) 
+        }
+    }
+    postStdOnMounted() {
+        try {
+            ccb && ccb.afterLayout && ccb.afterLayout.call(ccb)
+        } catch(e) {
+            console.error('error in afterLayout for custom component '+this.className, e) 
+        }
+    }
+    preStdOnBeforeUpdate() {
+        try {
+            ccb && ccb.beforeUpdate && ccb.beforeUpdate.call(ccb)
+        } catch(e) {
+            console.error('error in beforeUpdate for custom component '+this.className, e) 
+        }
+    }
     handleAction(ev) {
         try {    
-            ccb.onAction && ccb.onAction(ev)
+            if(ccb && ccb.onAction) {
+                 ccb.onAction(ev)
+            } else {
+                 // default if no special handler is specified in code back
+                 this.cm.app.callEventHandler('action', ev)
+            } 
         } catch(e) {
-            console.error('Error in  "'+this.root.tagName+' action handler"', e)
-        }    
+            console.error('Error in  "'+this.className+' action handler"', e)
+        }                
     }
-    beforeLayout() {
-        try {    
-            ccb.beforeLayout && ccb.beforeLayout()
-        } catch(e) {
-            console.error('Error in  "'+this.root.tagName+' beforeLayout"', e)
-        }    
-    }
-    afterLayout() {
-        try {    
-            ccb.afterLayout && ccb.afterLayout()
-        } catch(e) {
-            console.error('Error in  "'+this.root.tagName+' afterLayout"', e)
-        }    
-    }`
+     `
     // out += addMethods(info.methods, info.params)
     out += '\n}\n'
 
@@ -91,11 +112,11 @@ function writeAssociatedStyle(compPath:string, compName:string, scss:string) {
 
 function writeCodeBackFile(pathname:string, codeBack:string) {
 
+    // code back file is typescript so we need to compile it, so we'll do the copy this way
+    if(!codeBack) return
     const relPath = codeBack.substring(codeBack.lastIndexOf(path.sep)+1) // relative
     const srcDir = codeBack.substring(0, codeBack.lastIndexOf(path.sep))
     const destDir = pathname.substring(0, pathname.lastIndexOf(path.sep))
-
-    // code back file is typescript so we need to compile it, so we'll do the copy this way
     try {
         tsc.compile({
                 target: 'es5',
@@ -103,7 +124,9 @@ function writeCodeBackFile(pathname:string, codeBack:string) {
                 outdir: destDir
             }, [`${codeBack}`],
             {banner: `Compiling component ${relPath}`}
-        )
+        ).catch((e:Error) => {
+            throw e
+        })
     } catch(e) {
         console.error(`Failed to compile ${relPath}`)
         throw Error()

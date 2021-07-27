@@ -19,7 +19,7 @@ export function doHelp(command:string) {
     }
 }
 function helpDefault() {
-    console.log('tbx is the command-line tool of the Thunderbolt framework.');
+    console.log('tbx is the command-line tool of the Jove framework.');
     console.log(ac.bold("Usage: " + ac.grey("tbx " + ac.grey.dim("command  [args]"))));
     console.log("where " + ac.grey.dim("command") + " is one of:");
     console.log("  " + ac.blue.bold("help " + ac.grey.dim("[command]")) + " -- general help, or help on a given command");
@@ -92,6 +92,6 @@ function helpNativeScript() {
         'but stale files whose sources have been removed will not be removed by such an operation.')
     console.log('Use the "clean" option to force the generation of a new project over an existing one in such a case.')
     console.log('The project\'s package.json file must define a project name')
-    console.log('If the project package.json file does not provide "projId" and no --appId option is provided, the appId will be set to "thunderbolt.ns.<appName>"')
+    console.log('If the project package.json file does not provide "projId" and no --appId option is provided, the appId will be set to "jove.ns.<appName>"')
 
 }

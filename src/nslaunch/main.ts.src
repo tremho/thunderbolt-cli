@@ -1,5 +1,5 @@
 const frontApp =  require('../tbAppFront')
-import {AppCore} from 'thunderbolt-common'
+import {AppCore} from '@tremho/jove-common'
 //
 // Nativescript
 import { EventData, Page, Frame } from '@nativescript/core';

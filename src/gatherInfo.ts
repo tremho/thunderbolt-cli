@@ -68,10 +68,10 @@ function resolvePaths() {
     projPath = path.resolve(projPath || '.')
 
     modulesPath = path.resolve(path.join(projPath, 'node_modules'))
-    fwCommonPath = path.resolve(path.join(modulesPath, 'thunderbolt-common'))
-    fwDesktopPath = path.resolve(path.join(modulesPath, 'thunderbolt-desktop'))
-    fwMobilePath = path.resolve(path.join(modulesPath, 'thunderbolt-mobile'))
-    fwCliPath = path.resolve(path.join(modulesPath, 'thunderbolt-cli'))
+    fwCommonPath = path.resolve(path.join(modulesPath, '@tremho', 'jove-common'))
+    fwDesktopPath = path.resolve(path.join(modulesPath, '@tremho', 'jove-desktop'))
+    fwMobilePath = path.resolve(path.join(modulesPath, '@tremho', 'jove-mobile'))
+    fwCliPath = path.resolve(path.join(modulesPath, '@tremho', 'jove-cli'))
 
     // console.log('tbxPath', tbxPath)
     // console.log('cmd', cmd)
@@ -101,11 +101,11 @@ function resolvePaths() {
     }
 
     if(!fwCommonPath || !fwDesktopPath || !fwCliPath) {
-        let line1 = ac.red('missing framework modules\n')
-        let line2 = ac.blue('thunderbolt-common ')+ac.gray('and/or ')+ac.blue('thunderbolt-desktop ')+ac.gray('and ')+ac.blue('thunderbolt-cli\n')
+        let line1 = ac.red('missing Jove framework modules\n')
+        let line2 = ac.blue('@tremho/jove-common ')+ac.gray(', ')+ac.blue('@tremho/jove-desktop ')+ac.gray('and ')+ac.blue('@tremho/jove-cli\n')
         let line3 = 'all three must be installed\n'
         let line4 = `try ${ac.bold('npm install')} to re-install standard set, or\n`
-        let line5 = `use ${ac.bold('npm install thunderbolt-common thunderbolt-desktop thunderbolt-cli')} to install these dependencies.`
+        let line5 = `use ${ac.bold('npm install @tremho/jove-common @tremho/jove-desktop @tremho/jove-cli')} to install these dependencies.`
         console.error(line1+line2+line3+line4+line5)
         throw Error('import error')
     }

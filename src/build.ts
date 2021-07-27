@@ -216,7 +216,7 @@ function generateBuildEnvironment() {
         fs.mkdirSync(genDir)
     }
 
-    // read version of Thunderbolt we are using from its package.json
+    // read version of Jove we are using from its package.json
     // const tbDir = path.resolve(path.join(modulesPath, 'thunderb'))
     let pkg = readPackageInfoAtPath(fwDesktopPath)
     const tbVersion = pkg.version
@@ -228,7 +228,7 @@ function generateBuildEnvironment() {
 
     const environment = {
         framework: {
-            name: 'ThunderBolt/Desktop',
+            name: 'Jove/Desktop',
             version: tbVersion,
         },
         platform: {
@@ -281,20 +281,20 @@ function makeAppScss(appScss:string) {
         }
     }
 
-    const varSrc = path.join(modulesPath, 'thunderbolt-cli', 'src', 'tbFiles', 'theme-vars.scss')
+    const varSrc = path.join(modulesPath, '@tremho/jove-cli', 'src', 'tbFiles', 'theme-vars.scss')
     const varDest = path.join(projPath, '.gen', 'tb-vars.scss')
     fs.copyFileSync(varSrc, varDest)
 
-    const fontSrc = path.join(modulesPath, 'thunderbolt-cli', 'src', 'tbFiles', 'theme-fonts.scss')
+    const fontSrc = path.join(modulesPath, '@tremho/jove-cli', 'src', 'tbFiles', 'theme-fonts.scss')
     const fontDest = path.join(projPath, '.gen', 'tb-fonts.scss')
     fs.copyFileSync(fontSrc, fontDest)
     
-    const themeSrc = path.join(modulesPath, 'thunderbolt-cli', 'src', 'tbFiles', 'theme-desktop.scss')
+    const themeSrc = path.join(modulesPath, '@tremho/jove-cli', 'src', 'tbFiles', 'theme-desktop.scss')
     const themeDest = path.join(projPath, '.gen', 'tb-theme.scss')
     fs.copyFileSync(themeSrc, themeDest)
 
     const theme = `
-    // Thunderbolt default styles
+    // Jove default styles
     
     @import "./tb-vars";
     @import "./tb-fonts";

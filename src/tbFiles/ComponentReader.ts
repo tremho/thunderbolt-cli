@@ -279,7 +279,7 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
         let dest = outDir.substring(0, n-1)
         dest = path.join(dest, 'components')
         const tbcFile = path.join(dest, 'tb-components.ts')
-        let tbc = 'const {componentExport} = require(\'thunderbolt-mobile\')\n'
+        let tbc = 'const {componentExport} = require(\'@tremho/jove-mobile\')\n'
         tbc += 'module.exports = componentExport\n'
         for(let i=0; i<locals.length; i++) {
             let f = locals[i]

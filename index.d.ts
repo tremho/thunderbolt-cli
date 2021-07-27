@@ -1,1 +1,1 @@
-declare module "thunderbolt-cli"
+declare module "@tremho/jove-cli"

@@ -41,7 +41,7 @@ function processCommand() {
 function printBanner(cmd:string) {
     let out = '  ' + ac.green('╭───────────────────────────────────────────────────────────────╮')+'\n'
        out += '  ' + ac.green('|                                                               |')+'\n'
-       out += '  ' + ac.green('|                     Thunderbolt Framework                     |')+'\n'
+       out += '  ' + ac.green('|                               Jove                            |')+'\n'
        out += '  ' + ac.green('|                                                               |')+'\n'
        out += '  ' + ac.green('╰───────────────────────────────────────────────────────────────╯')+'\n'
        out += '  ' + ac.bold.green(cmd)

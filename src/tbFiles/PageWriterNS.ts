@@ -39,19 +39,18 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     out += '>\n'
     if(!info.noTitle) {
         out += `    <tb:TBPage id="${info.id}" title="${info.title}"`
-
-        if(info.noBack) out += ' noBack = "true"'
-        if(info.menuId) out +=  ` menu-id="${info.menuId}"`
-        if(info.toolbarId) out +=  ` toolbar-id="${info.toolbarId}"`
-        if(info.indicatorsId) out +=  ` indicators-id="${info.indicatorsId}"`
-        if(info.orientationReload) out += ' reloadOnOrientationChange="true"'
-
-        out += '>\n'
     }
+    if(info.noBack) out += ' noBack = "true"'
+    if(info.menuId) out +=  ` menu-id="${info.menuId}"`
+    if(info.toolbarId) out +=  ` toolbar-id="${info.toolbarId}"`
+    if(info.indicatorsId) out +=  ` indicators-id="${info.indicatorsId}"`
+    if(info.orientationReload) out += ' reloadOnOrientationChange="true"'
+
+    out += '>\n'
     out += `        <tb:TBContent>\n`
     out += cleanup(xml)
     out += `        </tb:TBContent>\n`
-    out += `    </tb:TBPage>\n`
+    if(!info.noTitle) out += `    </tb:TBPage>\n`
     out += `</Page>\n`
 
     if(!fs.existsSync(outDir)) {
@@ -65,7 +64,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     copyUpdate(src,dest)
 
 /*
-    import {Observable} from 'thunderbolt-mobile'
+    import {Observable} from '@tremho/jove-mobile'
     import {AppCore} from 'thunderbolt-common'
     import * as activity from './stack-test-logic'
 

@@ -305,6 +305,26 @@
   overflow-y: scroll;
 }
 
+.ns-android, .ns-ios {
+  .SimpleList {
+    user-select: none;
+    padding: 3;
+    border-width: 3;
+    border-color: black;
+    border-style: solid;
+    text-align: center;
+
+    .list-item {
+    }
+
+    .normal {
+    }
+
+    .selected {
+      background-color: yellow;
+    }
+  }
+}
 
 // experimental, not part of theme definition
 

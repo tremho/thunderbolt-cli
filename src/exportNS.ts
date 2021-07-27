@@ -39,11 +39,11 @@ function collectInfo() {
         outPath = path.resolve(info.projPath, '..', 'nativescript')
     }
     if(!appId) {
-        appId = info.projId || `thunderbolt.ns.${info.projName}`
+        appId = info.projId || `jove.ns.${info.projName}`
     }
     projName = info.projName
     projPath = info.projPath
-    tbxPath = path.resolve(info.packPath, '..', '..', 'thunderbolt-cli','src')
+    tbxPath = path.resolve(info.packPath, '..', '..', '@tremho/jove-cli','src')
 }
 
 
@@ -177,17 +177,17 @@ function migrateAppBack() {
     } catch(e) {
         throw Error('Unable to read app file "'+tbAppSrcPath+'"')
     }
-    // find "thunderbolt-desktop" in either an import or require line
+    // find "@tremho/jove-desktop" in either an import or require line
     let lines = source.split('\n')
     for(let i=0; i<lines.length; i++) {
         const ln = lines[i]
-        let n = ln.indexOf('thunderbolt-desktop')
+        let n = ln.indexOf('@tremho/jove-desktop')
         if(n !== -1) {
-            // console.log('found "thunderbolt-desktop"')
+            // console.log('found "@tremho/jove-desktop"')
             if(ln.indexOf('import') !== -1 || ln.indexOf('require') !== -1) {
-                // change to "thunderbolt-mobile"
+                // change to "@tremho/jove-mobile"
                 // console.log('changing to "mobile"')
-                lines[i] = ln.replace('thunderbolt-desktop','thunderbolt-mobile')
+                lines[i] = ln.replace('@tremho/jove-desktop','@tremho/jove-mobile')
                 // console.log(lines[i])
             }
         }
