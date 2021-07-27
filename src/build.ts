@@ -11,7 +11,7 @@ import * as pageReader from './tbFiles/PageReader'
 import {spaceCase} from "./tbFiles/CaseUtils";
 import * as os from "os"
 import webpack from "webpack";
-import UglifyJsPlugin from "uglifyjs-webpack-plugin";
+// import UglifyJsPlugin from "uglifyjs-webpack-plugin";
 // @ts-ignore
 import * as tsc from 'node-typescript-compiler'
 import * as sass from 'sass'
@@ -82,11 +82,11 @@ function doWebpackBuild() {
                 publicPath: buildPath,
                 filename: 'bundle.js'
             },
-            optimization: {
-                minimizer: [
-                    new UglifyJsPlugin({sourceMap:true})
-                ]
-            },
+            // optimization: {
+            //     minimizer: [
+            //         new UglifyJsPlugin({sourceMap:true})
+            //     ]
+            // },
             // devtool: 'eval-source-map',
             devtool: 'source-map',
             resolve: {
