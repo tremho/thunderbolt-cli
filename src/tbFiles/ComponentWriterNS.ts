@@ -5,7 +5,7 @@ import * as path from 'path'
 import {pascalCase} from "./CaseUtils";
 import {translateScss} from "./MigrateScss";
 // @ts-ignore
-import * as tsc from 'node-typescript-compiler'
+import {executeCommand} from "../execCmd";
 
 /**
  * N.B. 5/24/21 -- COMPACT IS TRUE
@@ -110,23 +110,32 @@ function writeAssociatedStyle(compPath:string, compName:string, scss:string) {
     fs.writeFileSync(scssPath, out)
 }
 
+function tscCompile(options:any, files:string[]) {
+    const argList:string[] = []
+    argList.push('--version')
+    if(options.target) { argList.push('--target '+options.target) }
+    if(options.lib) { argList.push('--lib '+options.lib)}
+    if(options.outdir) { argList.push('--outDir '+options.outdir)}
+    argList.concat(files)
+    return executeCommand('tsc', argList)
+}
+
 function writeCodeBackFile(pathname:string, codeBack:string) {
 
     // code back file is typescript so we need to compile it, so we'll do the copy this way
-    if(!codeBack) return
+    if(!codeBack) return Promise.resolve()
     const relPath = codeBack.substring(codeBack.lastIndexOf(path.sep)+1) // relative
     const srcDir = codeBack.substring(0, codeBack.lastIndexOf(path.sep))
     const destDir = pathname.substring(0, pathname.lastIndexOf(path.sep))
     try {
-        tsc.compile({
-                target: 'es5',
-                lib: 'es2015,dom',
-                outdir: destDir
-            }, [`${codeBack}`],
-            {banner: `Compiling component ${relPath}`}
-        ).catch((e:Error) => {
-            throw e
-        })
+        console.log(`Compiling component ${relPath}`)
+        return tscCompile({
+                    target: 'es5',
+                    lib: 'es2015,dom',
+                    outdir: destDir
+                }, [`${codeBack}`]).catch((e:Error) => {
+                    throw e
+                })
     } catch(e) {
         console.error(`Failed to compile ${relPath}`)
         throw Error()

@@ -272,7 +272,6 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
             }
         }
     })
-    // console.log('>>>>> EnumerateAndConvert ', outType, dirpath)
     if(outType === 'nativescript') {
         let n = outDir.lastIndexOf('components')
         if(n === -1) throw(Error('Unexpected path passed for making tb-components: '+outDir))

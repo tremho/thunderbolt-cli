@@ -2,6 +2,7 @@ import * as process from "process";
 import * as ac from "ansi-colors";
 import * as path from "path";
 import * as fs from "fs";
+import * as os from "os"
 
 // Variables resolved and used in build functions
 let tbxPath:string,  // path to the tbx script itself. This establishes where framework is within project node_modules space.
@@ -120,8 +121,16 @@ function resolvePaths() {
     appPages = path.resolve(path.join(projPath, 'src', 'pages'))
     riotMain = path.resolve(path.join(projPath, '.gen')) // now in the .gen folder
 
-    electronExecPath = path.join(fwDesktopPath, 'node_modules', 'electron',
-        'dist', 'Electron.app', 'Contents','MacOS', 'Electron')
+    if(os.platform() === 'darwin') {
+        electronExecPath = path.join(fwDesktopPath, 'node_modules', 'electron',
+            'dist', 'Electron.app', 'Contents', 'MacOS', 'Electron')
+    }
+    else if(os.platform() === 'win32') {
+        electronExecPath = path.join(fwDesktopPath, 'node_modules', 'electron', 'dist', 'electron.exe')
+    } else {
+        // assume linux-like
+        electronExecPath = path.join(fwDesktopPath, 'node_modules', 'electron', 'dist', 'electron')
+    }
 
 
     if(verbose) {
@@ -166,6 +175,9 @@ function getPackageJSONInfo() {
     frontMain = pkgJson.frontMain || 'frontMain.js'
     projDesc = pkgJson.description || ''
     projId = pkgJson.projId || ''
+
+    backMain = backMain.replace(/\//g, path.sep).replace(/\\/g, path.sep)
+    frontMain = frontMain.replace(/\//g, path.sep).replace(/\\/g, path.sep)
 
     // console.log('project name = ', projName)
     // console.log('version = ', projVersion)

@@ -1,7 +1,8 @@
 
 import {exec} from 'child_process'
+import * as path from 'path'
 
-export function executeCommand(cmd:string, args:any[], cwd = '', consolePass = false):Promise<any> {
+export function executeCommand(cmd:string, args:any[],  cwd = '', consolePass = false):Promise<any> {
   const out = {
     stdStr: '',
     errStr: '',

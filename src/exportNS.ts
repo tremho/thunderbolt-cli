@@ -1,7 +1,7 @@
-import * as fs from 'fs-extra'
+import * as fs from 'fs'
 import * as path from 'path'
 import * as ac from 'ansi-colors'
-// import * as os from 'os'
+
 import {executeCommand} from "./execCmd";
 import {gatherInfo} from "./gatherInfo";
 import * as componentReader from './tbFiles/ComponentReader'

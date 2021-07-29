@@ -1,6 +1,7 @@
 
 import * as path from "path";
 import * as fs from "fs";
+import * as os from "os"
 
 // check for an execcutable and record the date/time
 // then check all the project sources and check for a later date/time
@@ -9,12 +10,14 @@ import * as fs from "fs";
 let exeStats:any
 
 function checkExecutable(projPath:string, projName:string) {
-    const exePath = path.join(projPath, 'build', projName)
-    console.log('checking executable at ', exePath)
+    const script = os.platform() === 'win32' ? projName+'.bat' : projName
+    const exePath = path.join(projPath, 'build', script)
+    // console.log('checking executable at ', exePath)
      if(!fs.existsSync(exePath)) {
          return true; // definitely need to build if it doesn't exist
      }
      exeStats = fs.statSync(exePath)
+    // console.log(exeStats)
     return false
 }
 

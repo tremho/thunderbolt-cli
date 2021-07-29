@@ -2,6 +2,7 @@
 import {PageInfo} from "./PageInfo";
 import * as convert from 'xml-js'
 import * as fs from 'fs'
+import * as path from 'path'
 
 export function writeRiotPage(info:PageInfo, pathname:string) {
 
@@ -41,9 +42,10 @@ page += `      export default pc
     `
     page += `\n</${info.id}-page>\n`
 
-    // New per ticket: https://github.com/tremho/thunderbolt-common/projects/1#card-60937753
-    pathname = pathname.replace('src/pages', '.gen/pages')
-    let dir = pathname.substring(0,pathname.lastIndexOf('/'))
+    const srcPages = 'src'+path.sep+'pages'
+    const genPages = '.gen'+path.sep+'pages'
+    pathname = pathname.replace(srcPages, genPages)
+    let dir = pathname.substring(0,pathname.lastIndexOf(path.sep))
     if(!fs.existsSync(dir)) {
         fs.mkdirSync(dir, {recursive:true})
     }

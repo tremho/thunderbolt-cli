@@ -15,8 +15,7 @@ export function doRun() {
     console.log('waiting...')
     return Promise.resolve(p).then(() => {
         setTimeout(() => {
-            console.log('executing...')
-            executeCommand('./'+projName, [], path.join(projPath, 'build'),true)
+            executeCommand('.'+path.sep+projName, [], path.join(projPath, 'build'),true)
 
         }, (p !== undefined ? 5000: 1)) // wait 5 seconds if we did a build to allow shell to clear out
     })

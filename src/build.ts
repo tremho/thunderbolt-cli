@@ -11,9 +11,11 @@ import * as pageReader from './tbFiles/PageReader'
 import {spaceCase} from "./tbFiles/CaseUtils";
 import * as os from "os"
 import webpack from "webpack";
-// import UglifyJsPlugin from "uglifyjs-webpack-plugin";
+// import UglifyJsPlugin from "uglifyjs-webpack-plugin"; // TODO: Look into TerserPlugin instead
 // @ts-ignore
-import * as tsc from 'node-typescript-compiler'
+// import * as tsc from 'node-typescript-compiler' // REMOVED: Doesn't work on Windows
+import {executeCommand} from "./execCmd";
+
 import * as sass from 'sass'
 import {mkdirSync} from "fs";
 
@@ -22,6 +24,7 @@ import * as riot from 'riot'
 import * as AppFront from 'Project/tbAppFront'
 // @ts-ignore
 import App from 'RiotMain/app.riot'
+import {exec} from "child_process";
 // import {AppCore, setTheApp} from 'Framework/app-core/AppCore'
 // import registerGlobalComponents from 'BuildPack/register-global-components'
 
@@ -99,9 +102,9 @@ function doWebpackBuild() {
                     FrameworkComponents: fwcomp,
                     RiotMain: riotMain
                 },
-                fallback: {fs: false, path: false, os: false},
+                // fallback: {fs: false, path: false, os: false},
                 modules: [modulesPath, appPages, genDir],
-                extensions: [ '.ts', '.js', '.riot', 'css', 'txt' ],
+                extensions: [ '.ts', '.js', '.riot', 'css' ],
             },
             module: {
                 rules: [
@@ -117,11 +120,12 @@ function doWebpackBuild() {
                             configFileName: `${packPath}/tsconfig.json`,
                             transpileOnly: true // skip type checks
                         }
-                    },
-                    {
-                        test:/\.(txt|png|jpg)$/i,
-                        type: 'asset/resource'
                     }
+                    // {
+                    //     test:/\.(txt|png|jpg)$/i,
+                    //     use: 'raw-loader'
+                    //     // type: 'asset/resource'
+                    // }
                 ]
             }
 
@@ -146,7 +150,22 @@ function doWebpackBuild() {
             console.log('bundle.js creation complete')
             resolve(undefined)
         })
+    }).catch(e => {
+        console.error('FAILED WEBPACK Bundling:', e)
     })
+}
+
+let tscCommand = ''
+
+function tscCompile(options:any, files:string[]) {
+
+    const argList:string[] = []
+    if(options.target) { argList.push('--target '+options.target) }
+    if(options.lib) { argList.push('--lib '+options.lib)}
+    if(options.outdir) { argList.push('--outDir '+options.outdir)}
+    let f
+    while((f=files.pop())) argList.push(f)
+    return executeCommand('tsc', argList, '', true)
 }
 
 /**
@@ -156,58 +175,65 @@ function doWebpackBuild() {
  * - create an executable in the name of the app that runs electron and points to our main module
  */
 function mainAndExec() {
+    let p
     try {
-        tsc.compile({
-                target: 'es5',
-                lib: 'es2015,dom',
-                outdir: 'build'
-            }, [`${backMain}`],
-            {banner: `Compiling ${projName} ${projVersion}`}
-        )
+        console.log(ac.bold(`Compiling ${projName} ${projVersion}`))
+        p = tscCompile({
+            target: 'es5',
+            lib: 'es2015,dom',
+            outdir: 'build'
+        }, [backMain]).then(() => {
+            console.log(ac.italic(`${projName} compiled successfully`))
+
+        }).catch((e:Error) => {
+            throw e
+        })
+
     } catch(e) {
-        console.error(`Failed to compile ${backMain}`)
+        console.error(ac.red(`Failed to compile ${backMain}`))
         throw Error()
     }
-    try {
-        if (!fs.existsSync(buildPath)) {
-            fs.mkdirSync(buildPath, {recursive: true})
+    p.then(() => {
+        try {
+            if (!fs.existsSync(buildPath)) {
+                fs.mkdirSync(buildPath, {recursive: true})
+            }
+        } catch (e) {
+            console.error(`failed to find or create build path ${buildPath}`)
+            throw Error()
         }
-    } catch(e) {
-        console.error(`failed to find or create build path ${buildPath}`)
-        throw Error()
-    }
-    try {
-        fs.copyFileSync(path.join(packPath, 'index.html'), path.join(buildPath, 'index.html'))
-    } catch(e) {
-        console.error(`failed to copy index.html from ${packPath} to ${buildPath}`)
-        throw Error()
-    }
+        try {
+            fs.copyFileSync(path.join(packPath, 'index.html'), path.join(buildPath, 'index.html'))
+        } catch (e) {
+            console.error(`failed to copy index.html from ${packPath} to ${buildPath}`)
+            throw Error()
+        }
 
-    /* Not needed ...
-    // write out a package.json
-    const ourPkg = {
-      name: projName,
-      version: projVersion,
-      description: projDesc,
-      main: 'tbAppBack.js'
-    }
-    fs.writeFileSync(path.join(buildPath, '..', 'package.json'), JSON.stringify(ourPkg))
-     */
 
-    // write out an execution script in the name of the app
-    // electron tbAppBack.js
+        // write out an execution script in the name of the app
+        // electron tbAppBack.js
 
-    let n = backMain.lastIndexOf('.')
-    const backMainJS = backMain.substring(0, n)+".js"
+        let n = backMain.lastIndexOf('.')
+        const backMainJS = backMain.substring(0, n) + ".js"
 
-    const index = backMainJS.substring(backMainJS.lastIndexOf('/')+1)
-    try {
-        fs.writeFileSync(path.join(buildPath, '..', projName), `#!/bin/bash\n\n${electronExecPath} ${index}\n`, {mode: '777'})
-    } catch(e) {
-        console.error(`failed to create executable ${projName} from ${index} using ${electronExecPath}`)
-        throw Error()
-    }
-
+        const index = backMainJS.substring(backMainJS.lastIndexOf(path.sep) + 1)
+        let scriptFile = projName
+        try {
+            let script = ''
+            if(os.platform() === 'win32') {
+                scriptFile += '.bat'
+                script += '@echo off\n'
+            } else {
+                script += '#!/bin/bash\n\n'
+            }
+            script += `${electronExecPath} ${index}\n`
+            fs.writeFileSync(path.join(buildPath, '..', scriptFile), script, {mode: '777'})
+        } catch (e) {
+            console.error(`failed to create executable ${scriptFile} from ${index} using ${electronExecPath}`)
+            throw Error()
+        }
+    })
+    return p
 }
 
 function generateBuildEnvironment() {
@@ -400,8 +426,9 @@ export function doBuild() {
                 console.log('completing build...')
                 createSMX()
                 copyAssets()
-                mainAndExec()
-                summary()
+                mainAndExec().then(() => {
+                    summary()
+                })
             })
         }
 
@@ -427,7 +454,7 @@ function copyAssets() {
     let src = path.join(projPath, 'src', 'assets')
     let rdest = path.join(buildPath, 'assets')
     let dest = rdest
-    let test = '/src/assets'
+    let test = path.sep+'src'+path.sep+'assets'
     if(!fs.existsSync(src)) return;
     recurseDirectory(src, (filepath:string, stats:Stats) => {
         let fpb = filepath.substring(filepath.indexOf(test) + test.length)
@@ -437,7 +464,7 @@ function copyAssets() {
         }
         if(stats.isFile()) {
             let df = path.join(rdest, fpb)
-            let pd = df.substring(0, df.lastIndexOf('/'))
+            let pd = df.substring(0, df.lastIndexOf(path.sep))
             if(!fs.existsSync(pd)) {
                 fs.mkdirSync(pd, {recursive:true})
             }
@@ -455,18 +482,19 @@ function copyAssets() {
     if(fs.existsSync(src)) {
         recurseDirectory(src, (filepath: string, stats: Stats) => {
             if (stats.isDirectory()) {
-                let test = '/src/fonts'
+                let test = '/src/fonts'.replace(/\//g, path.sep)
                 let fpb = filepath.substring(filepath.indexOf(test) + test.length)
                 dest = path.join(dest, fpb)
             }
             if (stats.isFile()) {
-                let base = filepath.substring(filepath.lastIndexOf('/') + 1)
+                let base = filepath.substring(filepath.lastIndexOf(path.sep) + 1)
                 let df = path.join(dest, base)
                 if (!fs.existsSync(dest)) fs.mkdirSync(dest, {recursive: true})
                 fs.copyFileSync(filepath, df)
             }
         })
     }
+
 }
 
 function doClean() {
@@ -474,7 +502,7 @@ function doClean() {
     // let dirpath = path.join(projPath, 'src', 'components')
     // recurseDirectory(dirpath, (filepath, stats) => {
     //     if(stats.isFile()) {
-    //         let ext = filepath.substring(filepath.lastIndexOf('.'))
+    //         let ext = filepath.substring(filepath.lastIndexOf('.'))tsc
     //         if(ext === '.riot') {
     //             fs.unlinkSync(filepath)
     //         }
