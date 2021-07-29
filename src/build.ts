@@ -102,7 +102,7 @@ function doWebpackBuild() {
                     FrameworkComponents: fwcomp,
                     RiotMain: riotMain
                 },
-                // fallback: {fs: false, path: false, os: false},
+                fallback: os.platform() === 'win32' ? undefined : {fs: false, path: false, os: false},
                 modules: [modulesPath, appPages, genDir],
                 extensions: [ '.ts', '.js', '.riot', 'css' ],
             },
@@ -155,14 +155,17 @@ function doWebpackBuild() {
     })
 }
 
-let tscCommand = ''
-
 function tscCompile(options:any, files:string[]) {
 
     const argList:string[] = []
-    if(options.target) { argList.push('--target '+options.target) }
-    if(options.lib) { argList.push('--lib '+options.lib)}
     if(options.outdir) { argList.push('--outDir '+options.outdir)}
+    if(options.target) { argList.push('--target '+options.target) }
+    if(options.lib) {
+        const libs = options.lib.split(',')
+        libs.forEach((lib: string) => {
+            argList.push('--lib ' + lib)
+        })
+    }
     let f
     while((f=files.pop())) argList.push(f)
     return executeCommand('tsc', argList, '', true)
@@ -178,17 +181,14 @@ function mainAndExec() {
     let p
     try {
         console.log(ac.bold(`Compiling ${projName} ${projVersion}`))
-        p = tscCompile({
-            target: 'es5',
-            lib: 'es2015,dom',
-            outdir: 'build'
-        }, [backMain]).then(() => {
-            console.log(ac.italic(`${projName} compiled successfully`))
-
-        }).catch((e:Error) => {
-            throw e
-        })
-
+        p = tscCompile(
+            {
+                target: 'es5',
+                lib: 'es2015,dom',
+                outdir: 'build'
+             },[backMain]).catch((e:Error) => {throw e}).then(() =>{
+                 console.log(ac.italic(`${projName} successfully compiled`))
+             })
     } catch(e) {
         console.error(ac.red(`Failed to compile ${backMain}`))
         throw Error()
@@ -542,27 +542,27 @@ let fontLoad = ''
 function enumerateFonts() {
     fontLoad = ''
     let fontsPath = path.join(projPath, 'src', 'fonts')
-    if(fs.existsSync(fontsPath)) {
-        recurseDirectory(fontsPath, (filePath:string, stats:Stats) => {
-                // console.log(filePath)
-                let file = filePath.substring(filePath.lastIndexOf('/') + 1)
-                let dot = file.lastIndexOf('.')
-                let ext = file.substring(dot)
-                let base = file.substring(0, dot)
-                // console.log(base, ext)
-                if(stats.isFile() && base.charAt(0) !== '.') {
+    if (fs.existsSync(fontsPath)) {
+        recurseDirectory(fontsPath, (filePath: string, stats: Stats) => {
+            // console.log(filePath)
+            let file = filePath.substring(filePath.lastIndexOf('/') + 1)
+            let dot = file.lastIndexOf('.')
+            let ext = file.substring(dot)
+            let base = file.substring(0, dot)
+            // console.log(base, ext)
+            if (stats.isFile() && base.charAt(0) !== '.') {
                 let familyName = spaceCase(base)
 
-                let assetPath = './fonts/'+base+ext
+                let assetPath = './fonts/' + base + ext
                 let fmt
                 ext = ext.toLowerCase()
-                if(ext === '.woff') fmt = 'woff'
-                if(ext === '.woff2') fmt = 'woff2'
+                if (ext === '.woff') fmt = 'woff'
+                if (ext === '.woff2') fmt = 'woff2'
                 if (ext == '.ttf') fmt = 'truetype'
                 if (ext === '.otf') fmt = 'opentype'
                 if (ext === '.eot') fmt = 'embedded-opentype'
                 if (ext === '.svg' || ext === 'svgz') fmt = 'svg'
-                if(fmt && familyName) {
+                if (fmt && familyName) {
                     let ff = `
     @font-face {
         font-family: "${familyName}";
