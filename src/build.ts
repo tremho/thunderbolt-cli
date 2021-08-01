@@ -102,7 +102,7 @@ function doWebpackBuild() {
                     FrameworkComponents: fwcomp,
                     RiotMain: riotMain
                 },
-                fallback: os.platform() === 'win32' ? undefined : {fs: false, path: false, os: false},
+                fallback: {fs: false, path: false, os: false},
                 modules: [modulesPath, appPages, genDir],
                 extensions: [ '.ts', '.js', '.riot', 'css' ],
             },
@@ -237,9 +237,9 @@ function mainAndExec() {
 }
 
 function generateBuildEnvironment() {
-    const genDir = path.join(projPath, '.gen')
+    const genDir = path.join(buildPath, '..')  // generate it at runtime cwd, not front
     if(!fs.existsSync(genDir)) {
-        fs.mkdirSync(genDir)
+        fs.mkdirSync(genDir, {recursive:true})
     }
 
     // read version of Jove we are using from its package.json
@@ -307,16 +307,21 @@ function makeAppScss(appScss:string) {
         }
     }
 
+    const genDir = path.join(projPath, '.gen')
+    if(!fs.existsSync(genDir)) {
+        fs.mkdirSync(genDir)
+    }
+
     const varSrc = path.join(modulesPath, '@tremho/jove-cli', 'src', 'tbFiles', 'theme-vars.scss')
-    const varDest = path.join(projPath, '.gen', 'tb-vars.scss')
+    const varDest = path.join(genDir, 'tb-vars.scss')
     fs.copyFileSync(varSrc, varDest)
 
     const fontSrc = path.join(modulesPath, '@tremho/jove-cli', 'src', 'tbFiles', 'theme-fonts.scss')
-    const fontDest = path.join(projPath, '.gen', 'tb-fonts.scss')
+    const fontDest = path.join(genDir, 'tb-fonts.scss')
     fs.copyFileSync(fontSrc, fontDest)
     
     const themeSrc = path.join(modulesPath, '@tremho/jove-cli', 'src', 'tbFiles', 'theme-desktop.scss')
-    const themeDest = path.join(projPath, '.gen', 'tb-theme.scss')
+    const themeDest = path.join(genDir, 'tb-theme.scss')
     fs.copyFileSync(themeSrc, themeDest)
 
     const theme = `
