@@ -43,7 +43,7 @@ function collectInfo() {
     }
     projName = info.projName
     projPath = info.projPath
-    tbxPath = path.resolve(info.packPath, '..', '..', '@tremho/jove-cli','src')
+    tbxPath = path.resolve(info.packPath, '..', '..', '..', '@tremho/jove-cli','src')
 }
 
 

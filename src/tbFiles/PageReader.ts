@@ -205,6 +205,9 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
             } else {
                 if(outType !== 'riot') {
                     if(file.substring(file.lastIndexOf('-')+1, file.lastIndexOf('.')) !== 'page') {
+                        if(!fs.existsSync(outDir)) {
+                            fs.mkdirSync(outDir, {recursive:true})
+                        }
                         fs.copyFileSync(subdir, path.join(outDir, file))
                     }
                 }
