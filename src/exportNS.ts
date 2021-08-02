@@ -95,7 +95,7 @@ function createNSProjectIfNotExist() {
         let existing = false;
         if(fs.existsSync(nsRoot)) {
             if(wantClean) {
-                fs.rmdirSync(nsRoot, {recursive:true})
+                fs.rmSync(nsRoot, {recursive:true})
             } else {
                 // verify nativescript.config.ts, package.json, app/tbAppBack.ts
                 let okay = fs.existsSync(path.join(nsRoot, 'nativescript.config.ts'))

@@ -523,9 +523,9 @@ function doClean() {
     //     }
     // })
     let dirpath = path.join(projPath, '.gen')
-    fs.rmdirSync(dirpath, {recursive:true})
+    fs.rmSync(dirpath, {recursive:true})
     dirpath = path.join(projPath, 'build')
-    fs.rmdirSync(dirpath, {recursive:true})
+    fs.rmSync(dirpath, {recursive:true})
 }
 interface RecurseCB {
     (filepath: string, stats: Stats): boolean|void;
