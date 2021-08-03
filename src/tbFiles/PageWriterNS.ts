@@ -65,7 +65,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
 
 /*
     import {Observable} from '@tremho/jove-mobile'
-    import {AppCore} from 'thunderbolt-common'
+    import {AppCore} from '@tremho/jove-common'
     import * as activity from './stack-test-logic'
 
     const pageMethods = {
@@ -93,9 +93,9 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     pageMethods += '}\n'
 
     const stub = `
-    import {Observable} from 'thunderbolt-mobile'
-    import {AppCore} from 'thunderbolt-common'
-    import * as activity from './${id}-logic'    
+    import {Observable} from '@tremho/jove-mobile'
+    import {AppCore} from '@tremho/jove-common'
+    import * as activity from './${id}-logic'    cd 
     ${pageMethods}
     export function onLoaded(args) {
         const page = args.object

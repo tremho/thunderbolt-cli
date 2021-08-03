@@ -33,7 +33,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     }
     let out = `const {ComponentBase} = require('@tremho/jove-mobile')\n`
     out += `const {makeDiv, makeSpan, makeLabel} = require('@tremho/jove-mobile').componentExport\n\n`
-    if(codeBackRel) out += `const CCB = require('./${codeBackRel}').default\nlet ccb = null\n`
+    if(codeBackRel) out += `const CCB = require('./${codeBackRel}-tb').default\nlet ccb = null\n`
     else out += `// no code back \n`
     out += 'let lastInit\n'
     out += `module.exports.${name} = class extends ComponentBase {`
