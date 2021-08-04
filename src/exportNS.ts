@@ -270,6 +270,11 @@ function migrateLaunch() {
     }
     copySourceFile(path.join(srcPath, 'main.ts.src'), path.join(destPath, 'main.ts'))
     copySourceFile(path.join(srcPath, 'main.xml.src'), path.join(destPath, 'main.xml'))
+
+    console.log('transferring BuildEnvironment')
+    const src = path.join(projPath, 'build', 'BuildEnvironment.json')
+    const dest = path.join(outPath, projName, 'app', 'BuildEnvironment.json')
+    copySourceFile(src,dest)
 }
 
 function npmInstall() {
