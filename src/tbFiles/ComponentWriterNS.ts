@@ -135,7 +135,10 @@ function writeCodeBackFile(pathname:string, codeBack:string) {
                     outdir: destDir
                 }, [`${codeBack}`]).catch((e:Error) => {
                     throw e
-                })
+                }).then((rt:any) => {
+                    console.log(rt.stdStr)
+                    console.error(rt.errStr)
+            })
     } catch(e) {
         console.error(`Failed to compile ${relPath}`)
         throw Error()
