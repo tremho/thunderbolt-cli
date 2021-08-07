@@ -111,12 +111,13 @@ function writeAssociatedStyle(compPath:string, compName:string, scss:string) {
 }
 
 function tscCompile(options:any, files:string[]) {
-    const argList:string[] = []
-    argList.push('--version')
+    let argList:string[] = []
+    // argList.push('--version')
     if(options.target) { argList.push('--target '+options.target) }
     if(options.lib) { argList.push('--lib '+options.lib)}
     if(options.outdir) { argList.push('--outDir '+options.outdir)}
-    argList.concat(files)
+    argList = argList.concat(files)
+    console.log('tsc '+ argList.join(' '))
     return executeCommand('tsc', argList)
 }
 
@@ -128,17 +129,14 @@ function writeCodeBackFile(pathname:string, codeBack:string) {
     const srcDir = codeBack.substring(0, codeBack.lastIndexOf(path.sep))
     const destDir = pathname.substring(0, pathname.lastIndexOf(path.sep))
     try {
-        console.log(`Compiling component ${relPath} to ${destDir}`)
+        console.log(`Compiling component ${codeBack} to ${destDir}`)
         return tscCompile({
                     target: 'es5',
                     lib: 'es2015,dom',
                     outdir: destDir
                 }, [`${codeBack}`]).catch((e:Error) => {
                     throw e
-                }).then((rt:any) => {
-                    console.log(rt.stdStr)
-                    console.error(rt.errStr)
-            })
+                })
     } catch(e) {
         console.error(`Failed to compile ${relPath}`)
         throw Error()

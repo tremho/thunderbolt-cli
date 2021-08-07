@@ -95,7 +95,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     const stub = `
     import {Observable} from '@tremho/jove-mobile'
     import {AppCore} from '@tremho/jove-common'
-    import * as activity from './${id}-logic'    cd 
+    import * as activity from './${id}-logic' 
     ${pageMethods}
     export function onLoaded(args) {
         const page = args.object
