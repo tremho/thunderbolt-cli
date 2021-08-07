@@ -274,10 +274,10 @@ function migrateLaunch() {
     console.log('transferring BuildEnvironment')
     const src = path.join(projPath, 'build', 'BuildEnvironment.json')
     const dest = path.join(outPath, projName, 'app', 'BuildEnvironment.json')
-    console.log(src, dest)
+    // console.log(src, dest)
     fs.copyFileSync(src, dest) // copy the file directly over
     const verify = fs.existsSync(dest)
-    console.log("copy verified as "+verify)
+    // console.log("copy verified as "+verify)
 }
 
 function npmInstall() {

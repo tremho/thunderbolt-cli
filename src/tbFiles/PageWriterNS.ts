@@ -10,14 +10,14 @@ function valueFix(value:string):string {
 
     let cleaned
     if(value.indexOf('&') !== -1) {
-        console.log('cleaning', value)
+        // console.log('cleaning', value)
         cleaned = value.replace(/&quot;/g, '"')  // convert quote back before converting amp
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&apos;')
-        console.log('result:', cleaned)
+        // console.log('result:', cleaned)
         return cleaned
     }
     return translateScssExpression(value)
