@@ -184,9 +184,7 @@ function findChildren(obj:any) {
     const children:any[] = []
     Object.getOwnPropertyNames(obj).forEach(p => {
         let c = obj[p]
-        if(c.hasOwnProperty('_attributes') || c.hasOwnProperty('_text')) {
-            children.push({name:p, data:c})
-        }
+        children.push({name: p, data: c})
     })
     return children
 }
@@ -229,10 +227,14 @@ function processContainer(container:any, name='container', level=0) {
         out += '// processing '+text+'\n'
         out += ' '.repeat(indent)
 
+        let lit
         let bname
         if(text.charAt(0) === '$') {
             bname = text.substring(1)
+        } else {
+            lit = text
         }
+
 
         let tname = `${cname}_text`
         out += `${tname} = makeLabel()\n`
@@ -242,17 +244,33 @@ function processContainer(container:any, name='container', level=0) {
             out += ' '.repeat(indent)
             out += `this.localBinds.push([${tname}, '${bname}', 'text'])\n`
             out += ' '.repeat(indent)
+        } else if(lit) {
+            out += `${tname}.set('text', '${lit}'))\n`
+            out += ' '.repeat(indent)
+
         }
         out += `${cname}.addChild(${tname})\n`
         out += ' '.repeat(indent)
     }
     let children = findChildren(container)
-    for(let i=0; i<children.length; i++) {
+    for (let i = 0; i < children.length; i++) {
         let {name, data} = children[i]
-        name = uniqueName(name)
-        out += processContainer(data, name, level+1)
-        out += `${cname}.addChild(this.${name})\n`
-        out += ' '.repeat(indent)
+        if(""+Number(name) === name) continue;
+        if(name.charAt(0) === '_') continue;
+        if(Array.isArray(data)) {
+            for(let n = 0; n< data.length; n++) {
+                const s = data[n]
+                let lname = uniqueName(name)
+                out += processContainer(s, lname, level)
+                out += `${cname}.addChild(this.${lname})\n`
+                out += ' '.repeat(indent)
+            }
+        } else {
+            let lname = uniqueName(name)
+            out += processContainer(data, lname, level + 1)
+            out += `${cname}.addChild(this.${lname})\n`
+            out += ' '.repeat(indent)
+        }
     }
 
     return out
