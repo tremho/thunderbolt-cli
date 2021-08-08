@@ -245,7 +245,7 @@ function processContainer(container:any, name='container', level=0) {
             out += `this.localBinds.push([${tname}, '${bname}', 'text'])\n`
             out += ' '.repeat(indent)
         } else if(lit) {
-            out += `${tname}.set('text', '${lit}'))\n`
+            out += `${tname}.set('text', '${lit}')\n`
             out += ' '.repeat(indent)
 
         }
