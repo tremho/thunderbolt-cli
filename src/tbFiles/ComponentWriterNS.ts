@@ -322,13 +322,18 @@ function checkAction(key:string, value:any) {
 function insertSetProperties() {
     let out = `
     setProperties() {
+        const navInfo = this.cm.model.getAtPath('page.navInfo')
+        const pageName = navInfo && navInfo.pageId  && navInfo.pageId + '-page'
+        const bindTo = this.bound || this.bindingContext || {}
+        if(pageName) bindTo.data = this.cm.app.getPageData(pageName)
+        this.bindingContext = this.bound = bindTo
+    
     `
     // @ts-ignore
     for(let lbe of setPropertyBindEntries) {
         let {tname, bname, btarg} = lbe
         out += `
-        component = this.rootComponent || this
-        component.setDynamicExpressions(this.get('${bname}'), ${tname}, '${btarg}')\n
+        this.setDynamicExpressions(this.get('${bname}') || this.bound['${bname}'], ${tname}, '${btarg}')\n
         `
     }
     out += `
