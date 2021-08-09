@@ -326,7 +326,9 @@ function insertSetProperties() {
     // @ts-ignore
     for(let lbe of setPropertyBindEntries) {
         let {tname, bname, btarg} = lbe
-        out += `this.setDynamicExpressions(this.get('${bname}'), ${tname}, '${btarg}')\n
+        out += `
+        component = this.rootComponent || this
+        component.setDynamicExpressions(this.get('${bname}'), ${tname}, '${btarg}')\n
         `
     }
     out += `
