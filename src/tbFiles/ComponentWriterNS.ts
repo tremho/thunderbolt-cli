@@ -7,6 +7,8 @@ import {translateScss} from "./MigrateScss";
 // @ts-ignore
 import {executeCommand} from "../execCmd";
 
+let setPropertyBindEntries:any[] = []
+
 /**
  * N.B. 5/24/21 -- COMPACT IS TRUE
  * Originally coded with js/xml convert using option compact:true, but then changed to compact:false because similar
@@ -26,6 +28,8 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     let parts = info.id.split('-')
     let name = ''
     const codeBackRel = info.codeBack && info.codeBack.substring(info.codeBack.lastIndexOf(path.sep)+1, info.codeBack.lastIndexOf('.')) // base name only
+
+    setPropertyBindEntries = []
 
     let i = 0
     while(parts[i]) {
@@ -53,6 +57,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     out = out.trim()
     out += '\n        } catch(e) {\n            console.error("Unexpected Error creating '+name+':", e)\n        }\n'
     out += '    }'
+    out += insertSetProperties()
     out += `
     preStdOnMounted() {
         try {
@@ -242,7 +247,8 @@ function processContainer(container:any, name='container', level=0) {
         if(bname) {
             out += `${tname}.set('text', this.get('${bname}'))\n`
             out += ' '.repeat(indent)
-            out += `this.localBinds.push([${tname}, '${bname}', 'text'])\n`
+            out += `// this.localBinds.push([${tname}, '${bname}', 'text'])\n`
+            setPropertyBindEntries.push({tname, bname, btarg:'text'})
             out += ' '.repeat(indent)
         } else if(lit) {
             out += `${tname}.set('text', '${lit}')\n`
@@ -311,4 +317,20 @@ function checkAction(key:string, value:any) {
             break;
     }
     return eventMapped
+}
+
+function insertSetProperties() {
+    let out = `
+    setProperties() {
+    `
+    // @ts-ignore
+    for(let lbe of setPropertyBindEntries) {
+        let {tname, bname, btarg} = lbe
+        out += `this.setDynamicExpressions(this.get('${bname}'), ${tname}, '${btarg}')\n
+        `
+    }
+    out += `
+    }
+    `
+    return out
 }
