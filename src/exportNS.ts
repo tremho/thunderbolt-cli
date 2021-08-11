@@ -90,8 +90,9 @@ function createNSProjectIfNotExist() {
             for(let ln of lines) {
                 if(''+Number(ln.charAt(0) === ln.charAt(0))) {
                     nsVersion = ln
+                    console.log('>>>>>> Detected NS version ', nsVersion)
                     if(Number(nsVersion) < 8) {
-                        console.log(ac.bold.red('Error: NativeScript version \'+nsVersion+\' is not supported.  Please use NativeScript 8 or higher'))
+                        console.log(ac.bold.red(`Error: NativeScript version ${nsVersion} is not supported.  Please use NativeScript 8 or higher`))
                         process.exit(1)
                     }
                 }
