@@ -9,6 +9,7 @@ import * as pageReader from "./tbFiles/PageReader";
 import {translateScss} from "./tbFiles/MigrateScss";
 
 let nsRoot:string
+let nsVersion:string
 
 let outPath:string, appId:string, projName:string, projPath:string, pkgInfo:any, tbxPath:string
 let wantClean = false;
@@ -78,11 +79,23 @@ function createNSProjectIfNotExist() {
     nsRoot = path.join(outPath, projName)
 
     // start by verifying ns exists
-    return executeCommand('which ns', []).then(ret=> {
+    return executeCommand('ns --version', []).then(ret=> {
 
         if(ret.retcode) {
             console.log(ac.bold.red('Error: Nativescript is not installed!'))
             process.exit(1)
+        }
+        if(ret.stdStr) {
+            const lines = ret.stdStr.split('\n')
+            for(let ln of lines) {
+                if(''+Number(ln.charAt(0) === ln.charAt(0))) {
+                    nsVersion = ln
+                    if(Number(nsVersion) < 8) {
+                        console.log(ac.bold.red('Error: NativeScript version \'+nsVersion+\' is not supported.  Please use NativeScript 8 or higher'))
+                        process.exit(1)
+                    }
+                }
+            }
         }
 
         // if we don't have the outpath root, we must create it
@@ -274,10 +287,25 @@ function migrateLaunch() {
     console.log('transferring BuildEnvironment')
     const src = path.join(projPath, 'build', 'BuildEnvironment.json')
     const dest = path.join(outPath, projName, 'app', 'BuildEnvironment.json')
-    // console.log(src, dest)
-    fs.copyFileSync(src, dest) // copy the file directly over
-    const verify = fs.existsSync(dest)
-    // console.log("copy verified as "+verify)
+
+    // read current build environment
+    try {
+        let contents = fs.readFileSync(src).toString()
+        let be = JSON.parse(contents)
+        // add our nsVersion
+        be.platform.nativeScript = nsVersion
+        contents = JSON.stringify(be, null, 2)
+        // write to destination
+        fs.writeFileSync(dest, contents)
+    } catch(e) {
+        console.error(ac.red('Error migrating build environment '))
+        throw e
+    }
+    //
+    // // console.log(src, dest)
+    // fs.copyFileSync(src, dest) // copy the file directly over
+    // const verify = fs.existsSync(dest)
+    // // console.log("copy verified as "+verify)
 }
 
 function npmInstall() {
