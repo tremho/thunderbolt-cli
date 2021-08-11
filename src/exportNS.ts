@@ -88,10 +88,11 @@ function createNSProjectIfNotExist() {
         if(ret.stdStr) {
             const lines = ret.stdStr.split('\n')
             for(let ln of lines) {
-                if(''+Number(ln.charAt(0) === ln.charAt(0))) {
+                let t = Number(ln.charAt(0))
+                if(isFinite(t)) {
                     nsVersion = ln
                     console.log('>>>>>> Detected NS version ', nsVersion)
-                    if(Number(nsVersion) < 8) {
+                    if(t < 8) {
                         console.log(ac.bold.red(`Error: NativeScript version ${nsVersion} is not supported.  Please use NativeScript 8 or higher`))
                         process.exit(1)
                     }
