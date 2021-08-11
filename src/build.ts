@@ -46,6 +46,9 @@ let tbxPath:string,  // path to the tbx script itself. This establishes where fr
     projName:string, // name of project from project package.json file
     projVersion:string, // version of project from project package.json file
     projDesc:string, // description of project from project package.json file
+    displayName:string,
+    copyright:string,
+    author: string,
     frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
     backMain:string  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
 
@@ -251,7 +254,6 @@ function generateBuildEnvironment() {
     pkg = readPackageInfoAtPath(electronDir)
     const electronVersion = pkg.version
 
-
     const environment = {
         framework: {
             name: 'Jove/Desktop',
@@ -271,6 +273,9 @@ function generateBuildEnvironment() {
         app: {
             name: projName,
             version: projVersion,
+            displayName: displayName,
+            copyright: copyright,
+            author: author,
             description: projDesc,
             buildTime: Date.now()
         }
@@ -385,8 +390,9 @@ function makeRiotComponents() {
 
 function summary() {
     console.log('')
-    console.log(`${projName} ${projVersion}`)
+    console.log(`${displayName} (${projName} ${projVersion})`)
     console.log(projDesc)
+    console.log(copyright)
 }
 
 export function doBuild() {
@@ -410,6 +416,9 @@ export function doBuild() {
         projName = info.projName
         projVersion = info.projVersion
         projDesc = info.projDesc
+        displayName = info.displayName
+        copyright = info.copyright
+        author = info.author
         frontMain = info.frontMain
         backMain = info.backMain
 

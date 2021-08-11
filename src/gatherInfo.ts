@@ -23,6 +23,9 @@ let tbxPath:string,  // path to the tbx script itself. This establishes where fr
     projVersion:string, // version of project from project package.json file
     projDesc:string, // description of project from project package.json file
     projId:string, // the appid reverse dot.com format identifier for app publication
+    displayName:string,
+    copyright: string,
+    author: string,
     frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
     backMain:string,  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
     clean: boolean, // true if we should remove any intermediate artifacts first
@@ -169,12 +172,15 @@ function readPackageInfoAtPath(directory:string):any {
  */
 function getPackageJSONInfo() {
     const pkgJson = readPackageInfoAtPath(projPath)
-    projName = pkgJson.name || 'tbApp'
+    projName = pkgJson.name || 'jove-app'
     projVersion = pkgJson.version || "1.0.0"
     backMain = pkgJson.backMain || 'backMain.js'
     frontMain = pkgJson.frontMain || 'frontMain.js'
     projDesc = pkgJson.description || ''
-    projId = pkgJson.projId || ''
+    projId = pkgJson.projId || (pkgJson.build && pkgJson.build.appId) || ''
+    displayName = pkgJson.displayName || projName
+    copyright = pkgJson.copyright || (pkgJson.build && pkgJson.build.copyright) || ''
+    author = pkgJson.author || ''
 
     backMain = backMain.replace(/\//g, path.sep).replace(/\\/g, path.sep)
     frontMain = frontMain.replace(/\//g, path.sep).replace(/\\/g, path.sep)
@@ -208,6 +214,9 @@ export function gatherInfo() {
         projVersion, // version of project from project package.json file
         projDesc, // description of project from project package.json file
         projId, // the appid reverse dot.com format identifier for app publication
+        displayName,
+        copyright,
+        author,
         frontMain, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
         backMain,  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
         buildFlags: {
