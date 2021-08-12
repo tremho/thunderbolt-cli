@@ -37,16 +37,16 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     out += `      xmlns:tb="~/components/tb-components"\n`
     out += `      actionBarHidden="true"\n`
     out += '>\n'
-    if(!info.noTitle) {
+    if(!info.noTitle || info.menuId || info.toolbarId || info.indicatorsId || info.orientationReload) {
         out += `    <tb:TBPage id="${info.id}" title="${info.title}"`
+        if(info.noBack) out += ' noBack = "true"'
+        if(info.menuId) out +=  ` menu-id="${info.menuId}"`
+        if(info.toolbarId) out +=  ` toolbar-id="${info.toolbarId}"`
+        if(info.indicatorsId) out +=  ` indicators-id="${info.indicatorsId}"`
+        if(info.orientationReload) out += ' reloadOnOrientationChange="true"'
+        out += '>\n'
     }
-    if(info.noBack) out += ' noBack = "true"'
-    if(info.menuId) out +=  ` menu-id="${info.menuId}"`
-    if(info.toolbarId) out +=  ` toolbar-id="${info.toolbarId}"`
-    if(info.indicatorsId) out +=  ` indicators-id="${info.indicatorsId}"`
-    if(info.orientationReload) out += ' reloadOnOrientationChange="true"'
 
-    out += '>\n'
     out += `        <tb:TBContent>\n`
     out += cleanup(xml)
     out += `        </tb:TBContent>\n`

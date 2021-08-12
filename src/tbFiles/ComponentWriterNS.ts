@@ -153,6 +153,7 @@ function mappedComponent(tag: string) {
     let type
     if(tag === 'div') type = 'Div'
     else if(tag === 'span') type = 'Span'
+    else if(tag === 'img') type = 'Img'
     else type = tag
 
     return type
@@ -203,7 +204,7 @@ function processContainer(container:any, name='container', level=0) {
         while(tag.charAt(tag.length-1).match(/[0-9]/)) {
             tag = tag.substring(0, tag.length-1)
         }
-        if(tag === 'div' || tag === 'span') {
+        if(tag === 'div' || tag === 'span' || tag === 'img') {
             out += `${cname} = make${mappedComponent(tag)}()\n`
         }  else {
             out += `${cname} = new ${mappedComponent(tag)}()\n`
@@ -325,7 +326,9 @@ function insertSetProperties() {
         const navInfo = this.cm.model.getAtPath('page.navInfo')
         const pageName = navInfo && navInfo.pageId  && navInfo.pageId + '-page'
         const bindTo = this.bound || this.bindingContext || {}
-        if(pageName) bindTo.data = this.cm.app.getPageData(pageName)
+        try {
+            if(pageName) bindTo.data = this.cm.app.getPageData(pageName)
+        } catch(e) {}    
         this.bindingContext = this.bound = bindTo
     
     `
