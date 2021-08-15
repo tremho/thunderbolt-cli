@@ -63,21 +63,21 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
         try {
             ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb)
         } catch(e) {
-            console.error('error in beforeLayout for custom component '+this.constructor.name, e) 
+            console.error('error in beforeLayout for custom component '+this.tagName, e) 
         }
     }
     postStdOnMounted() {
         try {
             ccb && ccb.afterLayout && ccb.afterLayout.call(ccb)
         } catch(e) {
-            console.error('error in afterLayout for custom component '+this.className, e) 
+            console.error('error in afterLayout for custom component '+this.tagName, e) 
         }
     }
     preStdOnBeforeUpdate() {
         try {
             ccb && ccb.beforeUpdate && ccb.beforeUpdate.call(ccb)
         } catch(e) {
-            console.error('error in beforeUpdate for custom component '+this.className, e) 
+            console.error('error in beforeUpdate for custom component '+this.tagName, e) 
         }
     }
     handleAction(ev) {
@@ -89,7 +89,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
                  this.cm.app.callEventHandler('action', ev)
             } 
         } catch(e) {
-            console.error('Error in  "'+this.className+' action handler"', e)
+            console.error('Error in  "'+this.tagName+' action handler"', e)
         }                
     }
      `
@@ -207,9 +207,9 @@ function processContainer(container:any, name='container', level=0) {
             tag = tag.substring(0, tag.length-1)
         }
         if(tag === 'div' || tag === 'span' || tag === 'img') {
-            out += `${cname} = make${mappedComponent(tag)}(${abs})\n`
+            out += `${cname} = make${mappedComponent(tag)}('${abs}')\n`
         }  else {
-            out += `${cname} = new ${mappedComponent(tag)}(${abs})\n`
+            out += `${cname} = new ${mappedComponent(tag)}('${abs}')\n`
         }
         out += ' '.repeat(indent)
     }
