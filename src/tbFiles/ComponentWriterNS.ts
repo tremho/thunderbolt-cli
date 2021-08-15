@@ -350,7 +350,13 @@ function insertSetProperties() {
 function attributesContain(atts:Attribute[], value:string):boolean {
     for(let i=0; i<atts.length; i++) {
         let ak = atts[i].key
-        if (ak === value) return true
+        let av = atts[i].value
+        if (ak === value) {
+            // we can't have an attribute without a value per the XML parser, sp
+            // any value other than 'false' or 'no' validates the attribute
+            // if false or no, we just ignore it.
+            if(av !== 'false' && av !== 'no') return true;
+        }
     }
     return false;
 }
