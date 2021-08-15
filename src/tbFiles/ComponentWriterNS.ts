@@ -199,21 +199,23 @@ function processContainer(container:any, name='container', level=0) {
     const indent = 12
     let out = ''
     let cname = level ? 'this.'+name : 'this.container'
+    let {atts, text} = findAttributesAndText(container)
+    const abs = attributesContain(atts,'absolute') ? 'absolute' : ''
     if(name && level) {
         let tag = name
         while(tag.charAt(tag.length-1).match(/[0-9]/)) {
             tag = tag.substring(0, tag.length-1)
         }
         if(tag === 'div' || tag === 'span' || tag === 'img') {
-            out += `${cname} = make${mappedComponent(tag)}()\n`
+            out += `${cname} = make${mappedComponent(tag)}(${abs})\n`
         }  else {
-            out += `${cname} = new ${mappedComponent(tag)}()\n`
+            out += `${cname} = new ${mappedComponent(tag)}(${abs})\n`
         }
         out += ' '.repeat(indent)
     }
-    let {atts, text} = findAttributesAndText(container)
     for(let i=0; i<atts.length; i++) {
         let ak = atts[i].key
+        if(ak === 'absolute') continue; // skip this in this context; it has no value
         let av = atts[i].value
         let em = checkAction(ak, av)
         if(em) {
@@ -343,4 +345,12 @@ function insertSetProperties() {
     }
     `
     return out
+}
+
+function attributesContain(atts:Attribute[], value:string):boolean {
+    for(let i=0; i<atts.length; i++) {
+        let ak = atts[i].key
+        if (ak === value) return true
+    }
+    return false;
 }
