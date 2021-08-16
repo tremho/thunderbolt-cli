@@ -338,7 +338,7 @@ function insertSetProperties() {
     for(let lbe of setPropertyBindEntries) {
         let {tname, bname, btarg} = lbe
         out += `
-        this.setDynamicExpressions(this.get('${bname}') || this.bound['${bname}'], ${tname}, '${btarg}')\n
+        this.setDynamicExpressions(this.get('${bname}') || this.bound['${bname}'], ${tname}, '${btarg}', '${bname}')
         `
     }
     out += `
