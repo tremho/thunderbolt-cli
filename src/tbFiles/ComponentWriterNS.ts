@@ -39,16 +39,11 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     out += `const {makeDiv, makeSpan, makeImg, makeLabel} = require('@tremho/jove-mobile').componentExport\n\n`
     if(codeBackRel) out += `const CCB = require('./${codeBackRel}').default\n`
     else out += `// no code back \n`
-    out += 'let ccb = null\n'
-    out += 'let lastInit\n'
     out += `module.exports.${name} = class extends ComponentBase {`
     out += '\n    createControl() {\n        try {\n            '
     if(codeBackRel) {
-        out += `if(Date.now() !== lastInit) {
-                ccb = new CCB()
-                ccb.component = this
-                lastInit = Date.now()
-            }
+        out += `this.ccb = new CCB()
+            this.ccb.component = this
             `
     }
     out += `this.className = "${pascalCase(info.id)}"\n            `
@@ -61,29 +56,29 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     out += `
     preStdOnMounted() {
         try {
-            ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb)
+            this.ccb && this.ccb.beforeLayout && this.ccb.beforeLayout.call(this.ccb)
         } catch(e) {
             console.error('error in beforeLayout for custom component '+this.tagName, e) 
         }
     }
     postStdOnMounted() {
         try {
-            ccb && ccb.afterLayout && ccb.afterLayout.call(ccb)
+            this.ccb && this.ccb.afterLayout && this.ccb.afterLayout.call(this.ccb)
         } catch(e) {
             console.error('error in afterLayout for custom component '+this.tagName, e) 
         }
     }
     preStdOnBeforeUpdate() {
         try {
-            ccb && ccb.beforeUpdate && ccb.beforeUpdate.call(ccb)
+            this.ccb && this.ccb.beforeUpdate && this.ccb.beforeUpdate.call(this.ccb)
         } catch(e) {
             console.error('error in beforeUpdate for custom component '+this.tagName, e) 
         }
     }
     handleAction(ev) {
         try {    
-            if(ccb && ccb.onAction) {
-                 ccb.onAction(ev)
+            if(this.ccb && this.ccb.onAction) {
+                 this.ccb.onAction(ev) 
             } else {
                  // default if no special handler is specified in code back
                  this.cm.app.callEventHandler('action', ev)
