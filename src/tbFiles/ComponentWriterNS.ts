@@ -214,10 +214,15 @@ function processContainer(container:any, name='container', level=0) {
         let av = atts[i].value
         let em = checkAction(ak, av)
         if(em) {
-            out += `${cname}.on(\'${em}\', this.handleAction.bind(this))\n`
+            // out += `${cname}.on(\'${em}\', this.handleAction.bind(this))\n`
+            out += `this.setActionResponder(${cname}, '${em}', 'action')`
         } else {
             out += `${cname}.set('${ak}','${av}')\n`
+            if(ak === 'src') {
+                setPropertyBindEntries.push({cname, av, btarg:'src'})
+            }
         }
+
         out += ' '.repeat(indent)
     }
     if(text) {
@@ -237,8 +242,6 @@ function processContainer(container:any, name='container', level=0) {
         } else {
             lit = text
         }
-
-
         let tname = `${cname}_text`
         out += `${tname} = makeLabel()\n`
         out += ' '.repeat(indent)
