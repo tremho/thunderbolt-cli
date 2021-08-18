@@ -219,7 +219,10 @@ function processContainer(container:any, name='container', level=0) {
         } else {
             out += `${cname}.set('${ak}','${av}')\n`
             if(ak === 'src') {
-                setPropertyBindEntries.push({tname: cname, bname:av, btarg:'src'})
+                if(av.charAt(0) === '$') {
+                    const bname = av.substring(1)
+                    setPropertyBindEntries.push({tname: cname, bname, btarg: 'src'})
+                }
             }
         }
 
