@@ -215,11 +215,11 @@ function processContainer(container:any, name='container', level=0) {
         let em = checkAction(ak, av)
         if(em) {
             // out += `${cname}.on(\'${em}\', this.handleAction.bind(this))\n`
-            out += `this.setActionResponder(${cname}, '${em}', 'action')`
+            out += `this.setActionResponder(${cname}, '${em}', 'action')\n`
         } else {
             out += `${cname}.set('${ak}','${av}')\n`
             if(ak === 'src') {
-                setPropertyBindEntries.push({cname, av, btarg:'src'})
+                setPropertyBindEntries.push({tname: cname, bname:av, btarg:'src'})
             }
         }
 
