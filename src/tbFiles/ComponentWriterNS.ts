@@ -332,9 +332,9 @@ function insertSetProperties() {
     // @ts-ignore
     for(let lbe of setPropertyBindEntries) {
         let {tname, bname, btarg} = lbe
+        //        this.setDynamicExpressions(get('value') || '$value', this.span3_text, 'text', 'value')
         out += `
-        this.setDynamicExpressions(this.get('${bname}') || this.bound['${bname}'], ${tname}, '${btarg}', '${bname}')
-        `
+        this.setDynamicExpressions(this.get('${bname}') || '$${bname}', ${tname}, '${btarg}', '${bname}')`
     }
     out += `
     }
