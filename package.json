@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.37",
+  "version": "0.6.9-pre-release.38",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "prepublish": "npm run build",
     "clean": "rm -fr build node_modules && npm install",
-    "build": "tsc",
+    "build": "tsc && chmod +x build/tbx.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tbTest-build": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js build",
     "tbTest-nativescript": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js nativescript",
