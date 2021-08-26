@@ -63,6 +63,8 @@ export function doNativeScript() {
         migrateScss()
         // console.log('migrateLaunch')
         migrateLaunch()
+        // console.log('unify project identifier')
+        unifyProjectId()
         // console.log('npm install')
         npmInstall().then(() => {
             console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
@@ -416,4 +418,32 @@ function importScss(dirPath:string, imports:string[], destDir:string = dirPath) 
             }
         }
     }
+}
+
+/**
+ * Copy appId into place for NS
+ */
+function unifyProjectId () {
+const configTemplate = `
+import { NativeScriptConfig } from '@nativescript/core';
+
+export default {
+  id: '${appId}',
+  appPath: 'app',
+  appResourcesPath: 'App_Resources',
+  android: {
+    v8Flags: '--expose_gc',
+    markingMode: 'none'
+  }
+} as NativeScriptConfig;
+`
+    try {
+        const configDest = path.join(outPath, projName, 'nativescript.config.ts')
+        fs.writeFileSync(configDest, configTemplate)
+    } catch(e) {
+        console.error(ac.bold.red('ERROR updating Nativescript config'), ac.red(e))
+    }
+
+    console.log('project id written as ', appId)
+
 }
