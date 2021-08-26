@@ -7,6 +7,7 @@ import {gatherInfo} from "./gatherInfo";
 import * as componentReader from './tbFiles/ComponentReader'
 import * as pageReader from "./tbFiles/PageReader";
 import {translateScss} from "./tbFiles/MigrateScss";
+import {iconPrepNS} from "./tbFiles/IconPrepNS";
 
 let nsRoot:string
 let nsVersion:string
@@ -65,9 +66,13 @@ export function doNativeScript() {
         migrateLaunch()
         // console.log('unify project identifier')
         unifyProjectId()
-        // console.log('npm install')
-        npmInstall().then(() => {
-            console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
+
+        // make icons
+        iconPrepNS(projPath, path.join(outPath, projName)).then(() => {
+            // console.log('npm install')
+            npmInstall().then(() => {
+                console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
+            })
         })
     })
 }
