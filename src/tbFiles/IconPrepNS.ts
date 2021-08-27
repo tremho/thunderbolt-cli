@@ -39,8 +39,8 @@ export function iconPrepNS(srcDir:string, destDir:string) {
     }
     let hasIcon = false
     let hasProduct = false
-    let srcFile = path.join(srcLiDir, 'product.jpg')
-    let dstFile = path.join(dstLiDir, 'product.jpg')
+    let srcFile = path.join(srcLiDir, 'splash.jpg')
+    let dstFile = path.join(dstLiDir, 'splash.jpg')
     if(testIfNewer(srcFile, dstFile)) {
         console.log('copying product.jpg')
         fs.copyFileSync(srcFile, dstFile)
@@ -58,9 +58,9 @@ export function iconPrepNS(srcDir:string, destDir:string) {
         console.log('generating splash screens')
         wait.push(executeCommand('ns resources generate splashes', ['product.jpg'], destDir))
     }
-    if(hasProduct || hasIcon) { // if either was copied, then make icons from the new version
-        const iconSrc = hasIcon ? 'icon.png' : 'product.jpg'
-        wait.push(executeCommand('ns resources generate icons', [iconSrc], destDir))
+    if(hasIcon) {
+        console.log('generating icons')
+        wait.push(executeCommand('ns resources generate icons', ['icon.png'], destDir))
     }
     return Promise.all(wait).then(() => {
         console.log('generation complete')
