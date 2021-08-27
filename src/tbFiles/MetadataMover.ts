@@ -140,7 +140,7 @@ export function metaMigrateNS(outPath:string) {
         version += '.'+prc
     }
     // @ts-ignore
-    let avc = new BigInteger(vparts[0] * 1000000000000 + vparts[1] * 1000000000 + vparts[2] * 1000000 + prc * 1000 + build % 1000)
+    let avc = vparts[0] * 1000000000000 + vparts[1] * 1000000000 + vparts[2] * 1000000 + prc * 1000 + build % 1000
 
     // update the plist items
     updatePListItems(outPath, version, displayName, shortDisplayName)
@@ -195,7 +195,7 @@ function updatePListItems(outPath:string, version:string, displayName:string, sh
 
 }
 
-function updateAndroidMeta(outPath:string, version:string, avc:BigInteger, appId:string, displayName:string, shortName?:string, minSDK?:string, targetSDK?:string) {
+function updateAndroidMeta(outPath:string, version:string, avc:number, appId:string, displayName:string, shortName?:string, minSDK?:string, targetSDK?:string) {
     if(!shortName) shortName = shortFromDisplay(displayName)
 
     let error = false
