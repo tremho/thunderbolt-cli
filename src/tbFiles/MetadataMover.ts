@@ -202,7 +202,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
 
     // update values in AndroidManifest.xml
     try {
-        const xmlPath = path.join('outPath', 'App_Resources', 'Android', 'src', 'res', 'AndroidManifest.xml')
+        const xmlPath = path.join(outPath, 'App_Resources', 'Android', 'src', 'res', 'AndroidManifest.xml')
         let xmlData = fs.readFileSync(xmlPath).toString()
         let spot = xmlData.indexOf('android:versionCode')
         if(spot !== -1) {
@@ -221,7 +221,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
     }
     // write out settings.json
     try {
-        const settingsFile = path.join('outPath', 'App_Resources', 'Android', 'settings.json')
+        const settingsFile = path.join(outPath, 'App_Resources', 'Android', 'settings.json')
         const set = {appId: appId, minSdkVersion: minSDK || null, targetSdkVersion: targetSDK || null}
         const setstr = JSON.stringify(set)
         fs.writeFileSync(settingsFile, setstr)
@@ -230,7 +230,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
         error = true
     }
     // write out strings.xml (titles.xml?)
-    const stringsFile = path.join('outPath', 'App_Resources', 'Android', 'src', 'main', 'res', 'values', 'strings.xml')
+    const stringsFile = path.join(outPath, 'App_Resources', 'Android', 'src', 'main', 'res', 'values', 'strings.xml')
     const xml =`
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
