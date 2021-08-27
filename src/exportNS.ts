@@ -8,6 +8,7 @@ import * as componentReader from './tbFiles/ComponentReader'
 import * as pageReader from "./tbFiles/PageReader";
 import {translateScss} from "./tbFiles/MigrateScss";
 import {iconPrepNS} from "./tbFiles/IconPrepNS";
+import {metaMigrateNS} from "./tbFiles/MetadataMover"
 
 let nsRoot:string
 let nsVersion:string
@@ -67,6 +68,8 @@ export function doNativeScript() {
         // console.log('unify project identifier')
         unifyProjectId()
 
+        // migrate metadata
+        metaMigrateNS(path.join(outPath, projName))
         // make icons
         iconPrepNS(projPath, path.join(outPath, projName)).then(() => {
             // console.log('npm install')
@@ -142,7 +145,7 @@ function createNSProjectIfNotExist() {
         let p
         if(!existing) {
             console.log(ac.bold.green('Creating new nativescript project export at '+nsRoot))
-            p =  ns(`create ${projName} --appid ${appId} --template /Users/sohmert/tbd/tbns-template --path ${outPath}`).then(ret => {
+            p =  ns(`create ${projName} --appid ${appId} --template @tremho/jove-app-template --path ${outPath}`).then(ret => {
                 if(ret.retcode) {
                     console.log(ac.bold.red('Error') + ': Unable to create Nativescript export')
                     console.log(ret.errStr || ret.stdStr)

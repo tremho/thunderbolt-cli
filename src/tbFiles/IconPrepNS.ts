@@ -24,21 +24,44 @@ export function iconPrepNS(srcDir:string, destDir:string) {
     if(!fs.existsSync(dstLiDir)) {
         fs.mkdirSync(dstLiDir)
     }
-    let hasIcon = false
-    if(fs.existsSync(path.join(srcLiDir, 'product.jpg'))) {
-        console.log('copying product.jpg')
-        fs.copyFileSync(path.join(srcLiDir, 'product.jpg'), path.join(dstLiDir, 'splash.jpg'))
+    const testIfNewer = (src:string, dst:string) => {
+        if(fs.existsSync(src)) {
+            if(fs.existsSync(dst)) {
+                const sstat = fs.lstatSync(src)
+                const dstat = fs.lstatSync(dst)
+                return sstat.mtimeMs > dstat.ctimeMs // newer if modified after the dest version
+            } else {
+                return true; // newer if destination does not exist
+            }
+        } else {
+            return false; // not newer if source doesn't exist
+        }
     }
-    if(fs.existsSync(path.join(srcLiDir, 'icon.png'))) {
+    let hasIcon = false
+    let hasProduct = false
+    let srcFile = path.join(srcLiDir, 'product.jpg')
+    let dstFile = path.join(dstLiDir, 'product.jpg')
+    if(testIfNewer(srcFile, dstFile)) {
+        console.log('copying product.jpg')
+        fs.copyFileSync(srcFile, dstFile)
+        hasProduct = true
+    }
+    srcFile = path.join(srcLiDir, 'icon.png')
+    dstFile = path.join(dstLiDir, 'icon.png')
+    if(testIfNewer(srcFile, dstFile)) {
         console.log('copying icon.png')
         fs.copyFileSync(path.join(srcLiDir, 'icon.png'), path.join(dstLiDir, 'icon.png'))
         hasIcon = true
     }
-    console.log('generating splash screens')
     const wait = []
-    wait.push(executeCommand('ns resources generate splashes', ['splash.jpg'], destDir))
-    const iconSrc = hasIcon ? 'icon.png' : 'product.jpg'
-    wait.push(executeCommand('ns resources generate icons', [iconSrc], destDir))
+    if(hasProduct) {
+        console.log('generating splash screens')
+        wait.push(executeCommand('ns resources generate splashes', ['product.jpg'], destDir))
+    }
+    if(hasProduct || hasIcon) { // if either was copied, then make icons from the new version
+        const iconSrc = hasIcon ? 'icon.png' : 'product.jpg'
+        wait.push(executeCommand('ns resources generate icons', [iconSrc], destDir))
+    }
     return Promise.all(wait).then(() => {
         console.log('generation complete')
     })
