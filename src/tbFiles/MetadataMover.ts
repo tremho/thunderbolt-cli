@@ -202,7 +202,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
 
     // update values in AndroidManifest.xml
     try {
-        const xmlPath = path.join(outPath, 'App_Resources', 'Android', 'src', 'res', 'AndroidManifest.xml')
+        const xmlPath = path.join(outPath, 'App_Resources', 'Android', 'src', 'main', 'AndroidManifest.xml')
         let xmlData = fs.readFileSync(xmlPath).toString()
         let spot = xmlData.indexOf('android:versionCode')
         if(spot !== -1) {
