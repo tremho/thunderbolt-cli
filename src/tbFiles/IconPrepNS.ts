@@ -56,7 +56,7 @@ export function iconPrepNS(srcDir:string, destDir:string) {
     const wait = []
     if(hasProduct) {
         console.log('generating splash screens')
-        wait.push(executeCommand('ns resources generate splashes', ['product.jpg'], destDir))
+        wait.push(executeCommand('ns resources generate splashes', ['splash.jpg'], destDir))
     }
     if(hasIcon) {
         console.log('generating icons')
