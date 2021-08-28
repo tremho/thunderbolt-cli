@@ -231,15 +231,17 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
     }
     // write out strings.xml (titles.xml?)
     const stringsFile = path.join(outPath, 'App_Resources', 'Android', 'src', 'main', 'res', 'values', 'strings.xml')
+    const v21stringsFile = path.join(outPath, 'App_Resources', 'Android', 'src', 'main', 'res', 'values-v21', 'strings.xml')
     const xml =`
-<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <string name="app_name">${displayName}</string>
-    <string name="title_activity_kimera">${displayName}</string>
+    <string name="app_name">${shortName}</string>
+    <string name="title_activity_kimera">${shortName}</string>
 </resources>
 `
     try {
         fs.writeFileSync(stringsFile, xml)
+        fs.writeFileSync(v21stringsFile, xml)
     } catch(e) {
         console.error('Error: unable to write '+stringsFile, e)
         error = true
