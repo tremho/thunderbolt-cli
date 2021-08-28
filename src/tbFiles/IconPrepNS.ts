@@ -56,11 +56,11 @@ export function iconPrepNS(srcDir:string, destDir:string) {
     const wait = []
     if(hasProduct) {
         console.log('generating splash screens')
-        wait.push(executeCommand('ns resources generate splashes', ['splash.jpg'], destDir))
+        wait.push(executeCommand('ns resources generate splashes', [path.join('launch-icons', 'splash.jpg')], destDir))
     }
     if(hasIcon) {
         console.log('generating icons')
-        wait.push(executeCommand('ns resources generate icons', ['icon.png'], destDir))
+        wait.push(executeCommand('ns resources generate icons', [path.join('launch-icons','icon.png')], destDir))
     }
     return Promise.all(wait).then(() => {
         console.log('generation complete')
