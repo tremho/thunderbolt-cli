@@ -171,7 +171,7 @@ function updatePListItems(outPath:string, version:string, displayName:string, sh
             const bspot = plist.indexOf('\n', rspot)
             const front = plist.substring(0, rspot)
             const back = plist.substring(bspot)
-            const insert = `<string>${value}</string>`
+            const insert = `    <string>${value}</string>`
             return front+insert+back
         }
         return plist
