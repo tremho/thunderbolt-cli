@@ -61,6 +61,7 @@ const electronVersion = "12.0.5"
 function appendBuildInfo(pkgJson:any):any {
     const build = {
         appId: pkgJson.projId,
+        productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
         mac: pkgJson.macOS,
