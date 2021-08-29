@@ -71,7 +71,7 @@ function scriptInnards(codeBackFile:string) {
     //     if(key === 'handleAction') {
     //         value = '{\n        ' +lines.join('\n      ').trim()
     //     } else {
-    //         value = '{\n        try ' + code + ' catch(e:any) {\n                console.error("error executing \'' + key + '\':",e)\n          }\n    }'
+    //         value = '{\n        try ' + code + ' catch(e) {\n                console.error("error executing \'' + key + '\':",e)\n          }\n    }'
     //     }
     //     tagCode += `${key}(${prm}) ${value},\n    `
     // })
@@ -95,7 +95,7 @@ function scriptInnards(codeBackFile:string) {
                     ccb.component = this
                     lastInit = Date.now()
                 }
-            } catch(e:any) {
+            } catch(e) {
               console.error('error in constructor for custom component '+this.root.tagName, e)
             }                        
         },`
@@ -103,21 +103,21 @@ function scriptInnards(codeBackFile:string) {
         preStdOnMounted() {
             try {
                 ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb)
-            } catch(e:any) {
+            } catch(e) {
                 console.error('error in beforeLayout for custom component '+this.root.tagName, e) 
             }
         },
         postStdOnMounted() {
             try {
                 ccb && ccb.afterLayout && ccb.afterLayout.call(ccb)
-            } catch(e:any) {
+            } catch(e) {
                 console.error('error in afterLayout for custom component '+this.root.tagName, e) 
             }
         },
         preStdOnBeforeUpdate() {
             try {
                 ccb && ccb.beforeUpdate && ccb.beforeUpdate.call(ccb)
-            } catch(e:any) {
+            } catch(e) {
                 console.error('error in beforeUpdate for custom component '+this.root.tagName, e) 
             }
         },
@@ -129,7 +129,7 @@ function scriptInnards(codeBackFile:string) {
                      // default if no special handler is specified in code back
                      this.cm.app.callEventHandler('action', ev)
                 } 
-            } catch(e:any) {
+            } catch(e) {
                 console.error('Error in  "'+this.root.tagName+' action handler"', e)
             }                
         }        

@@ -137,7 +137,7 @@ function readPage(filepath:string):PageInfo {
             try {
                 // we do this repeatedly because we want to trap an error where it occurs, we do it for real after we get out of the loop
                 convert.xml2js(content, {compact: true}) // we can use compact for this fake parse
-            } catch(e:any) {
+            } catch(e) {
                 const pageName = filepath.substring(filepath.lastIndexOf('/')+1)
                 console.error(ac.bold.red('Error reading page ')+pageName+' at line '+(i+1)+":", e.message)
                 // console.log(ac.bold.italic('offending line: ')+ac.bold.blue(lines[i]))
@@ -147,12 +147,12 @@ function readPage(filepath:string):PageInfo {
         try {
             // this is the real conversion, but we can't isolate the line an error occurs on here
             info.content = convert.xml2js(content, {compact: false})
-        } catch(e:any) {
+        } catch(e) {
             const pageName = filepath.substring(filepath.lastIndexOf('/')+1)
             console.error(ac.bold.red('Error processing page ')+pageName+":", e.message)
             process.exit(-1)
         }
-    } catch(e:any) {
+    } catch(e) {
         console.error(e)
     }
     return info
@@ -245,7 +245,7 @@ function preproc(line:string):string {
             if(n == -1) n = line.length;
             inScope = parsePreproc(line.substring(4, n).trim())
         }
-    } catch(e:any) {
+    } catch(e) {
         console.error(e)
         process.exit(-1)
     }

@@ -50,28 +50,28 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     out += processContainer(info.layout)
 
     out = out.trim()
-    out += '\n        } catch(e:any) {\n            console.error("Unexpected Error creating '+name+':", e)\n        }\n'
+    out += '\n        } catch(e) {\n            console.error("Unexpected Error creating '+name+':", e)\n        }\n'
     out += '    }'
     out += insertSetProperties()
     out += `
     preStdOnMounted() {
         try {
             this.ccb && this.ccb.beforeLayout && this.ccb.beforeLayout.call(this.ccb)
-        } catch(e:any) {
+        } catch(e) {
             console.error('error in beforeLayout for custom component '+this.tagName, e) 
         }
     }
     postStdOnMounted() {
         try {
             this.ccb && this.ccb.afterLayout && this.ccb.afterLayout.call(this.ccb)
-        } catch(e:any) {
+        } catch(e) {
             console.error('error in afterLayout for custom component '+this.tagName, e) 
         }
     }
     preStdOnBeforeUpdate() {
         try {
             this.ccb && this.ccb.beforeUpdate && this.ccb.beforeUpdate.call(this.ccb)
-        } catch(e:any) {
+        } catch(e) {
             console.error('error in beforeUpdate for custom component '+this.tagName, e) 
         }
     }
@@ -83,7 +83,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
                  // default if no special handler is specified in code back
                  this.cm.app.callEventHandler('action', ev)
             } 
-        } catch(e:any) {
+        } catch(e) {
             console.error('Error in  "'+this.tagName+' action handler"', e)
         }                
     }
@@ -138,7 +138,7 @@ function writeCodeBackFile(pathname:string, codeBack:string) {
                 }, [`${codeBack}`]).catch((e:Error) => {
                     throw e
                 })
-    } catch(e:any) {
+    } catch(e) {
         console.error(`Failed to compile ${relPath}`)
         throw Error()
     }
@@ -331,7 +331,7 @@ function insertSetProperties() {
         const bindTo = this.bound || this.bindingContext || {}
         try {
             if(pageName) bindTo.data = this.cm.app.getPageData(pageName)
-        } catch(e:any) {}    
+        } catch(e) {}    
         this.bindingContext = this.bound = bindTo
     
     `

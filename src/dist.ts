@@ -32,7 +32,7 @@ export function doDist(args:string[]) {
                 fs.renameSync('package.json', 'dist-package.json')
                 // rename app-package.json package.json
                 fs.renameSync('app-package.json', 'package.json')
-            } catch(e:any) {
+            } catch(e) {
                 console.error(ac.bold.red('problem renaming package files'), e)
             }
         })
