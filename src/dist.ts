@@ -103,21 +103,24 @@ function appendBuildInfo(pkgJson:any):any {
 }
 
 function makeDistribution() {
-    return new Promise(resolve => {
+    return new Promise((resolve:any) => {
         spinner.start()
         executeCommand('npm run release',[]).then((rt:any)=> {
-            spinner.stop()
-            if(rt.stdStr) {
-                console.log(ac.green.dim(rt.stdStr))
-            }
-            if(rt.errStr) {
-                console.log(ac.red(rt.errStr))
-            }
-            if(rt.code) {
-                console.log(ac.bold.red('Electron Builder failed with code '+rt.code))
-            } else {
-                console.log(ac.bold.green('Electron Builder reports success'))
-            }
+            setTimeout(() => {
+                spinner.stop()
+                if(rt.stdStr) {
+                    console.log(ac.green.dim(rt.stdStr))
+                }
+                if(rt.errStr) {
+                    console.log(ac.red(rt.errStr))
+                }
+                if(rt.code) {
+                    console.log(ac.bold.red('Electron Builder failed with code '+rt.code))
+                } else {
+                    console.log(ac.bold.green('Electron Builder reports success'))
+                }
+                resolve()
+            }, 500)
         })
 
     })
