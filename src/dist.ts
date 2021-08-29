@@ -2,26 +2,31 @@
 import * as ac from "ansi-colors";
 import fs from "fs";
 import path from "path"
+import {doBuild} from "./build";
+import {executeCommand} from "./execCmd";
 
 export function doDist(args:string[]) {
-    console.log('doing dist with args', args)
 
-    // read package.json
-    const pkgJson = readPackageJSON()
-    // append build info
-    appendBuildInfo(pkgJson)
-    // rename package.json app-package.json
-    fs.renameSync('package.json', 'app-package.json')
-    // write out data as package.json
-    fs.writeFileSync('package.json', JSON.stringify(pkgJson, null, 2))
-    // execute electron builder
-    makeDistribution().then(() => {
-        // rename package.json dist-package.json
-        fs.renameSync('package.json', 'dist-package.json')
-        // rename app-package.json package.json
-        fs.renameSync('app-package.json', 'package.json')
+    console.log(ac.bold.blue('Creating distributable installer...'))
 
-        console.log(ac.bold.green('dist package created'))
+    process.argv.push('--clean') // force a clean build first
+    return doBuild().then(() => {
+
+        // read package.json
+        const pkgJson = readPackageJSON()
+        // append build info
+        appendBuildInfo(pkgJson)
+        // rename package.json app-package.json
+        fs.renameSync('package.json', 'app-package.json')
+        // write out data as package.json
+        fs.writeFileSync('package.json', JSON.stringify(pkgJson, null, 2))
+        // execute electron builder
+        return makeDistribution().then(() => {
+            // rename package.json dist-package.json
+            fs.renameSync('package.json', 'dist-package.json')
+            // rename app-package.json package.json
+            fs.renameSync('app-package.json', 'package.json')
+        })
     })
 }
 
@@ -82,11 +87,25 @@ function appendBuildInfo(pkgJson:any):any {
         }
     }
     pkgJson.build = build
+    const scripts = pkgJson.scripts || {}
+    scripts.release = 'electron-builder'
+    pkgJson.scripts = scripts
 }
 
 function makeDistribution() {
     return new Promise(resolve => {
-        console.log('pretending to make distribution...')
-        setTimeout(resolve, 1000)
+        executeCommand('npm run release',[]).then((rt:any)=> {
+            if(rt.stdStr) {
+                console.log(ac.green.dim(rt.stdStr))
+            }
+            if(rt.errStr) {
+                console.log(ac.red(rt.errStr))
+            }
+            if(rt.code) {
+                console.log(ac.bold.red('Electron Builder failed with code '+rt.code))
+            } else {
+                console.log(ac.bold.green('Electron Builder reports success'))
+            }
+        })
     })
 }
