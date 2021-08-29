@@ -190,6 +190,7 @@ function readProjPackage() {
         const contents = fs.readFileSync(pkgjson).toString()
         pkgInfo = JSON.parse(contents)
     } catch(e) {
+        // @ts-ignore
         console.log(ac.bold(ac.red('Error')+ `: No "package.json" file for project ${projName}`))
         throw Error()
     }
@@ -417,6 +418,7 @@ function importScss(dirPath:string, imports:string[], destDir:string = dirPath) 
                         // console.log('write to ', dest)
                         fs.writeFileSync(dest, converted)
                     } catch(e) {
+                        // @ts-ignore
                         console.error(ac.bold.red('Error migrating '+srcScss), e)
                         process.exit(-1)
 
@@ -449,6 +451,7 @@ export default {
         const configDest = path.join(outPath, projName, 'nativescript.config.ts')
         fs.writeFileSync(configDest, configTemplate)
     } catch(e) {
+        // @ts-ignore
         console.error(ac.bold.red('ERROR updating Nativescript config'), ac.red(e))
     }
 

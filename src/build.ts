@@ -288,6 +288,7 @@ function generateBuildEnvironment() {
         fs.writeFileSync(outPath, str)
     } catch(e) {
         console.error(`failed to create environment info`)
+        // @ts-ignore
         throw e
     }
 }
@@ -372,6 +373,7 @@ function compileScss() {
         const cssContent = result.css.toString()
         fs.writeFileSync(appCss, cssContent)
     } catch(e) {
+        // @ts-ignore
         console.error('Sass error', e)
         throw Error()
     }
@@ -449,6 +451,7 @@ export function doBuild() {
         return Promise.resolve(p)
 
     } catch(e) {
+        // @ts-ignore
         console.error(e)
         process.exit(-1)
     }
@@ -485,6 +488,7 @@ function copyAssets() {
             try {
                 fs.copyFileSync(filepath, df)
             } catch(e) {
+                // @ts-ignore
                 console.error('Error copying asset', filepath, e.message)
                 process.exit(-1)
             }

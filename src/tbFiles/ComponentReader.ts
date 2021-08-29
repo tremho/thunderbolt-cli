@@ -157,9 +157,12 @@ function readComponent(filepath:string): ComponentInfo {
         info.scss = style
 
     } catch(e) {
+        // @ts-ignore
         console.error(ac.bold(ac.red(`Error Reading component at ${filepath} `)), e.message)
         console.error(ac.italic(ac.blue(layoutXml)))
+        // @ts-ignore
         let ci = e.message.indexOf('Column:')+7
+        // @ts-ignore
         let cs = e.message.substring(ci, e.message.indexOf('\n', ci))
         let c = Number(cs)
         let marker = '-'.repeat(c)+'^'
@@ -203,6 +206,7 @@ try {
       }
       this.com.getApp().callPageAction(action, ev)
     } catch(e) {
+        // @ts-ignore
       console.error("Error in action handler '"+action+"':", e)
     }
 }                

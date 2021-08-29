@@ -33,6 +33,7 @@ export function doDist(args:string[]) {
                 // rename app-package.json package.json
                 fs.renameSync('app-package.json', 'package.json')
             } catch(e) {
+                // @ts-ignore
                 console.error(ac.bold.red('problem renaming package files'), e)
             }
         })
