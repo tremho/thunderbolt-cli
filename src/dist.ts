@@ -79,6 +79,20 @@ function appendBuildInfo(pkgJson:any):any {
             main: "tbAppBack.js"
         }
     }
+    const mac = pkgJson.mac || {
+        target: "dmg",
+        asarUnpack: [
+            "**/*"
+        ]
+    }
+    const win = pkgJson.win || {
+        target: "dmg",
+        asarUnpack: [
+            "**/*"
+        ]
+    }
+    build.mac = mac
+    build.win = win
     const buildFiles = fs.readdirSync('build')
     for(let f of buildFiles) {
         if(f !== pkgJson.name) {
