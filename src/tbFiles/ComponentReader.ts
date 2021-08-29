@@ -156,7 +156,7 @@ function readComponent(filepath:string): ComponentInfo {
         info.bind = bindDeclarations
         info.scss = style
 
-    } catch(e) {
+    } catch(e:any) {
         console.error(ac.bold(ac.red(`Error Reading component at ${filepath} `)), e.message)
         console.error(ac.italic(ac.blue(layoutXml)))
         let ci = e.message.indexOf('Column:')+7
@@ -202,7 +202,7 @@ try {
           }
       }
       this.com.getApp().callPageAction(action, ev)
-    } catch(e) {
+    } catch(e:any) {
       console.error("Error in action handler '"+action+"':", e)
     }
 }                

@@ -24,7 +24,7 @@ export function createSMX() {
     try {
         const content = fs.readFileSync(mapPath).toString()
         mapInfo = JSON.parse(content)
-    } catch(e) {
+    } catch(e:any) {
         console.error(ac.red('Unable to read bundle map data'))
         throw e
     }
@@ -50,7 +50,7 @@ export function createSMX() {
         const contents = '_smxInfo = ' + JSON.stringify(smxData)
         const smxInfoPath = path.resolve(path.join(info.buildPath, 'smx-info.js'))
         fs.writeFileSync(smxInfoPath, contents)
-    } catch(e) {
+    } catch(e:any) {
         console.error(ac.red('Unable to write source map info'))
         throw e
     }

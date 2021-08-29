@@ -35,7 +35,7 @@ export function writeRiotPage(info:PageInfo, pathname:string) {
         let code = info.methods[p]
         code = code.replace(/(\s|;|,|)this/g, '$1_this')
         let param = info.params[p] ? '_this, '+info.params[p] : '_this'
-        page += `      pc.${p} = (${param}) => {try ${code} catch(e) {console.error(e)}}\n`
+        page += `      pc.${p} = (${param}) => {try ${code} catch(e:any) {console.error(e)}}\n`
     })
 page += `      export default pc
     </script>

@@ -189,7 +189,7 @@ function readProjPackage() {
     try {
         const contents = fs.readFileSync(pkgjson).toString()
         pkgInfo = JSON.parse(contents)
-    } catch(e) {
+    } catch(e:any) {
         console.log(ac.bold(ac.red('Error')+ `: No "package.json" file for project ${projName}`))
         throw Error()
     }
@@ -203,7 +203,7 @@ function migrateAppBack() {
     let source = ""
     try {
         source = fs.readFileSync(path.join(projPath, tbAppSrcPath)).toString()
-    } catch(e) {
+    } catch(e:any) {
         throw Error('Unable to read app file "'+tbAppSrcPath+'"')
     }
     // find "@tremho/jove-desktop" in either an import or require line
@@ -231,7 +231,7 @@ function migrateAppBack() {
         // console.log('migrating ', source)
         fs.writeFileSync(dest, source)
 
-    } catch(e) {
+    } catch(e:any) {
         console.error('Unable to write '+dest)
         throw e
     }
@@ -313,7 +313,7 @@ function migrateLaunch() {
         contents = JSON.stringify(be, null, 2)
         // write to destination
         fs.writeFileSync(dest, contents)
-    } catch(e) {
+    } catch(e:any) {
         console.error(ac.red('Error migrating build environment '))
         throw e
     }
@@ -416,7 +416,7 @@ function importScss(dirPath:string, imports:string[], destDir:string = dirPath) 
                         let dest = path.join(destDir, file)
                         // console.log('write to ', dest)
                         fs.writeFileSync(dest, converted)
-                    } catch(e) {
+                    } catch(e:any) {
                         console.error(ac.bold.red('Error migrating '+srcScss), e)
                         process.exit(-1)
 
@@ -448,7 +448,7 @@ export default {
     try {
         const configDest = path.join(outPath, projName, 'nativescript.config.ts')
         fs.writeFileSync(configDest, configTemplate)
-    } catch(e) {
+    } catch(e:any) {
         console.error(ac.bold.red('ERROR updating Nativescript config'), ac.red(e))
     }
 

@@ -192,7 +192,7 @@ function mainAndExec() {
              },[backMain]).catch((e:Error) => {throw e}).then(() =>{
                  console.log(ac.italic(`${projName} successfully compiled`))
              })
-    } catch(e) {
+    } catch(e:any) {
         console.error(ac.red(`Failed to compile ${backMain}`))
         throw Error()
     }
@@ -286,7 +286,7 @@ function generateBuildEnvironment() {
         const outPath = path.normalize(path.join(genDir, 'BuildEnvironment.json'))
         // console.log('writing to ', outPath)
         fs.writeFileSync(outPath, str)
-    } catch(e) {
+    } catch(e:any) {
         console.error(`failed to create environment info`)
         throw e
     }
@@ -371,7 +371,7 @@ function compileScss() {
         console.log(`${result.stats.includedFiles.length} files compiled to css in ${result.stats.duration} ms`)
         const cssContent = result.css.toString()
         fs.writeFileSync(appCss, cssContent)
-    } catch(e) {
+    } catch(e:any) {
         console.error('Sass error', e)
         throw Error()
     }
@@ -448,7 +448,7 @@ export function doBuild() {
 
         return Promise.resolve(p)
 
-    } catch(e) {
+    } catch(e:any) {
         console.error(e)
         process.exit(-1)
     }
@@ -484,7 +484,7 @@ function copyAssets() {
             }
             try {
                 fs.copyFileSync(filepath, df)
-            } catch(e) {
+            } catch(e:any) {
                 console.error('Error copying asset', filepath, e.message)
                 process.exit(-1)
             }

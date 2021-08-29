@@ -189,7 +189,7 @@ function updatePListItems(outPath:string, version:string, displayName:string, sh
         keySpot = plist.indexOf('<key>CFBundleVersion</key>')
         plist = replaceSpot(plist, keySpot, version)
         fs.writeFileSync(plistPath, plist)
-    } catch(e) {
+    } catch(e:any) {
         console.error('Error: unable to update plist', e)
     }
 
@@ -215,7 +215,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
         }
         fs.writeFileSync(xmlPath, xmlData)
 
-    } catch(e) {
+    } catch(e:any) {
         console.error('Error: unable to update AndroidManifest.xml', e)
         error = true
     }
@@ -225,7 +225,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
         const set = {appId: appId, minSdkVersion: minSDK || null, targetSdkVersion: targetSDK || null}
         const setstr = JSON.stringify(set)
         fs.writeFileSync(settingsFile, setstr)
-    } catch(e) {
+    } catch(e:any) {
         console.error('Error: unable to write settings.json', e)
         error = true
     }
@@ -242,7 +242,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
     try {
         fs.writeFileSync(stringsFile, xml)
         fs.writeFileSync(v21stringsFile, xml)
-    } catch(e) {
+    } catch(e:any) {
         console.error('Error: unable to write '+stringsFile, e)
         error = true
     }
@@ -284,7 +284,7 @@ ${devTeamLine}${provisionLine}${codeSignLine}
     const fileName = path.join(outPath, 'App_Resources', 'iOS', 'build.xcconfig')
     try {
         fs.writeFileSync(fileName, config)
-    } catch(e) {
+    } catch(e:any) {
         console.error('Error: unable to write '+fileName, e)
         throw Error()
     }
