@@ -5,6 +5,11 @@ import path from "path"
 import {doBuild} from "./build";
 import {executeCommand} from "./execCmd";
 
+const spinner = require('text-spinner')({
+    interval: 100,
+    prefix: '\x1B[10G'
+})
+
 export function doDist(args:string[]) {
 
     console.log(ac.bold.blue('Creating distributable installer...'))
@@ -22,10 +27,14 @@ export function doDist(args:string[]) {
         fs.writeFileSync('package.json', JSON.stringify(pkgJson, null, 2))
         // execute electron builder
         return makeDistribution().then(() => {
-            // rename package.json dist-package.json
-            fs.renameSync('package.json', 'dist-package.json')
-            // rename app-package.json package.json
-            fs.renameSync('app-package.json', 'package.json')
+            try {
+                // rename package.json dist-package.json
+                fs.renameSync('package.json', 'dist-package.json')
+                // rename app-package.json package.json
+                fs.renameSync('app-package.json', 'package.json')
+            } catch(e:any) {
+                console.error(ac.bold.red('problem renaming package files'), e)
+            }
         })
     })
 }
@@ -94,7 +103,12 @@ function appendBuildInfo(pkgJson:any):any {
 
 function makeDistribution() {
     return new Promise(resolve => {
+        let id = setInterval(() => {
+            console.log('.')
+        })
+        spinner.start()
         executeCommand('npm run release',[]).then((rt:any)=> {
+            spinner.stop()
             if(rt.stdStr) {
                 console.log(ac.green.dim(rt.stdStr))
             }
@@ -107,5 +121,6 @@ function makeDistribution() {
                 console.log(ac.bold.green('Electron Builder reports success'))
             }
         })
+
     })
 }
