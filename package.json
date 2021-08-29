@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.61",
+  "version": "0.6.9-pre-release.62",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -43,6 +43,7 @@
     "@types/sass": "^1.16.0",
     "ansi-colors": "^4.1.1",
     "awesome-typescript-loader": "^5.2.1",
+    "conversion_cargo": "^2.1.21",
     "riot": "^5.3.3",
     "sass": "^1.32.11",
     "text-spinner": "^0.0.4",

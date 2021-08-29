@@ -5,6 +5,8 @@ import path from "path"
 import {doBuild} from "./build";
 import {executeCommand} from "./execCmd";
 
+// import * as imageConversion from 'conversion_cargo';
+
 const spinner = require('text-spinner')({
     interval: 100,
     prefix: '\x1B[10G'
@@ -25,6 +27,11 @@ export function doDist(args:string[]) {
         fs.renameSync('package.json', 'app-package.json')
         // write out data as package.json
         fs.writeFileSync('package.json', JSON.stringify(pkgJson, null, 2))
+
+        // copy icons and other resources
+        prepareIcons()
+        copyAdditional()
+
         // execute electron builder
         return makeDistribution().then(() => {
             try {
@@ -114,6 +121,43 @@ function appendBuildInfo(pkgJson:any):any {
     const scripts = pkgJson.scripts || {}
     scripts.release = 'electron-builder'
     pkgJson.scripts = scripts
+}
+
+function prepareIcons() {
+    const buildDir = path.resolve('build')
+    let splash = path.join('launch-icons','splash.jpg')
+    let commonIcon = path.join('launch-icons','icon.png')
+    let dmgBackground = path.join('launch-icons', 'dmgBackground.png')
+    if(!fs.existsSync(commonIcon)) {
+        convertToPng(splash, commonIcon)
+    }
+    if(fs.existsSync(commonIcon)) {
+        console.log('preparing icon')
+        fs.copyFileSync(commonIcon, path.join(buildDir, 'icon.png'))
+    }
+    if(fs.existsSync(dmgBackground)) {
+        console.log('preparing dmg background')
+        fs.copyFileSync(dmgBackground, path.join(buildDir, 'background.png'))
+    }
+}
+function copyAdditional() {
+    const buildDir = path.resolve('build')
+    const extras = path.resolve('additional dist resources')
+    if(fs.existsSync(extras)) {
+        console.log('copying additional resources')
+        const fileList = fs.readdirSync(extras)
+        for(let f of fileList) {
+            fs.copyFileSync(path.join(extras, f), path.join(buildDir, f))
+        }
+    }
+
+}
+function convertToPng(imagePath:string, pngOutPath:string) {
+    // TODO: still need to find a decent utility for this
+    // read image and convert it to PNG, ideally converting background (pixel 0,0) to transparency
+    // imageConversion.compressAccurately(imagePath, {
+    //
+    // })
 }
 
 function makeDistribution() {
