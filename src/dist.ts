@@ -104,9 +104,6 @@ function appendBuildInfo(pkgJson:any):any {
 
 function makeDistribution() {
     return new Promise(resolve => {
-        let id = setInterval(() => {
-            console.log('.')
-        })
         spinner.start()
         executeCommand('npm run release',[]).then((rt:any)=> {
             spinner.stop()
