@@ -1,6 +1,7 @@
 
 import * as ac from "ansi-colors";
 import fs from "fs";
+import path from "path"
 
 export function doDist(args:string[]) {
     console.log('doing dist with args', args)
@@ -66,7 +67,7 @@ function appendBuildInfo(pkgJson:any):any {
     const buildFiles = fs.readdirSync('build')
     for(let f of buildFiles) {
         if(f !== pkgJson.name) {
-            const st = fs.lstatSync(f)
+            const st = fs.lstatSync(path.join('build', f))
             const entry = {filter: '', from:'', to: ''}
             if(st.isDirectory()) {
                 entry.filter = '**/*'

@@ -12,6 +12,8 @@ export function doHelp(command:string) {
             return helpDoc();
         case 'test':
             return helpTest();
+        case 'dist':
+            return helpDist();
         case 'nativescript':
             return helpNativeScript();
         default:
@@ -27,6 +29,7 @@ function helpDefault() {
     console.log("  " + ac.blue.bold("run") + "  -- build and run the desktop project");
     console.log("  " + ac.blue.bold("doc") + "  -- generate documentation from JavaDoc-style comment blocks");
     console.log("  " + ac.blue.bold("test") + "  -- run tests");
+    console.log("  " + ac.blue.bold("dist") + "  -- create distribution installer");
     console.log("  " + ac.blue.bold("nativescript") + "-- Export to a Nativescript Mobile project");
     console.log('');
     console.log('zero or more arguments may follow a command, and are specific to the context of that command.');
@@ -74,6 +77,13 @@ function helpTest() {
     console.log(ac.bold('test'));
     console.log('Executes the tests defined for the project');
     console.log('');
+}
+function helpDist() {
+    console.log(ac.bold('dist'));
+    console.log('Generates an installer package for the project')
+    console.log('Installer will be for current OS target only')
+    console.log(ac.dim('later version will include publishing options'))
+    console.log('')
 }
 function helpNativeScript() {
     console.log(ac.bold('nativescript'));
