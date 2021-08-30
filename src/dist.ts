@@ -76,6 +76,9 @@ function appendBuildInfo(pkgJson:any):any {
             "build/front/assets/**/*"
            ]
         },
+        nsis: pkgJson.nsis,
+        dmg: pkgJson.dmg,
+
         files: [
             {
                 filter: "package.json",
@@ -88,22 +91,20 @@ function appendBuildInfo(pkgJson:any):any {
         }
     }
     const mac = pkgJson.mac || {
-        target: "dmg",
         asarUnpack: [
             "**/*"
         ]
     }
     const win = pkgJson.win || {
-        target: "dmg",
         asarUnpack: [
             "**/*"
         ]
     }
-    build.mac = mac
-    build.win = win
+    build.mac = Object.assign(mac, pkgJson.mac || {})
+    build.win = Object.assign(win, pkgJson.win || {})
     const buildFiles = fs.readdirSync('build')
     for(let f of buildFiles) {
-        if(f !== pkgJson.name) {
+        if(f !== pkgJson.name && f !== pkgJson.name+".bat") {
             const st = fs.lstatSync(path.join('build', f))
             const entry = {filter: '', from:'', to: ''}
             if(st.isDirectory()) {
