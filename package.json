@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.64",
+  "version": "0.6.9-pre-release.69",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -44,14 +44,15 @@
     "ansi-colors": "^4.1.1",
     "awesome-typescript-loader": "^5.2.1",
     "conversion_cargo": "^2.1.21",
+    "readline-sync": "^1.4.10",
     "riot": "^5.3.3",
     "sass": "^1.32.11",
     "text-spinner": "^0.0.4",
+    "webpack": "^5.47.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "@types/node": "^16.4.12",
-    "run-script-os": "^1.1.6",
-    "webpack": "^5.47.0"
+    "run-script-os": "^1.1.6"
   }
 }

@@ -299,7 +299,7 @@ ${devTeamLine}${provisionLine}${codeSignLine}
  * Shorten name by removing vowels, then spaces, until we are 12 characters or less
  * @param name
  */
-function shortFromDisplay(name:string) {
+export function shortFromDisplay(name:string) {
      const vowels = 'aeiou'
      let shortName = ''
     if(name.length <= 12) return name // okay as it is

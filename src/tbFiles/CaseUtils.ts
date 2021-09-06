@@ -18,7 +18,9 @@ export function hyphenate(name:string) {
             out += name.substring(last, i).toLowerCase()+'-'
             last = i
         }
+        i++
     }
+    out += name.substring(last).toLowerCase()
     return out
 }
 export function dashToCamel(name:string):string {

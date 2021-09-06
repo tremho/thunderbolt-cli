@@ -20,7 +20,7 @@ function processCommand() {
   printBanner(command)
   switch (command) {
     case 'init':
-      return doInit()
+      return doInit(args)
     case 'help':
       return doHelp(args[0] || '')
     case 'build':
