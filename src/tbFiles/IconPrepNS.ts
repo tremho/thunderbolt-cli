@@ -53,7 +53,8 @@ export function iconPrepNS(srcDir:string, destDir:string) {
         fs.copyFileSync(path.join(srcLiDir, 'icon.png'), path.join(dstLiDir, 'icon.png'))
         hasIcon = true
     }
-    const wait = []
+    const wait:any[] = []
+    /* Temporarily disable until I can figure out how to make this work with NS 8.1.2 update
     if(hasSplash) {
         console.log('generating splash screens')
         wait.push(executeCommand('ns resources generate splashes', [path.join('launch-icons', 'splash.jpg')], destDir))
@@ -62,6 +63,7 @@ export function iconPrepNS(srcDir:string, destDir:string) {
         console.log('generating icons')
         wait.push(executeCommand('ns resources generate icons', [iconsrc], destDir))
     }
+    */
     return Promise.all(wait).then(() => {
         console.log('generation complete')
     })
