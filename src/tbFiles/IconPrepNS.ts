@@ -18,6 +18,10 @@ copy launch-icons
  */
 export function iconPrepNS(srcDir:string, destDir:string) {
 
+    // temporarily disable until we can figure out why ns 8.1.2 doesn't work the same
+    console.log('splash and icon generation disabled')
+    return Promise.resolve()
+
     const srcLiDir = path.join(srcDir, 'launch-icons')
     const dstLiDir = path.join(destDir, 'launch-icons')
     console.log('preparing for icon generation...')
@@ -54,7 +58,6 @@ export function iconPrepNS(srcDir:string, destDir:string) {
         hasIcon = true
     }
     const wait:any[] = []
-    /* Temporarily disable until I can figure out how to make this work with NS 8.1.2 update
     if(hasSplash) {
         console.log('generating splash screens')
         wait.push(executeCommand('ns resources generate splashes', [path.join('launch-icons', 'splash.jpg')], destDir))
@@ -63,7 +66,6 @@ export function iconPrepNS(srcDir:string, destDir:string) {
         console.log('generating icons')
         wait.push(executeCommand('ns resources generate icons', [iconsrc], destDir))
     }
-    */
     return Promise.all(wait).then(() => {
         console.log('generation complete')
     })
