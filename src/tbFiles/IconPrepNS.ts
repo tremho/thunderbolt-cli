@@ -18,10 +18,6 @@ copy launch-icons
  */
 export function iconPrepNS(srcDir:string, destDir:string) {
 
-    // temporarily disable until we can figure out why ns 8.1.2 doesn't work the same
-    console.log('splash and icon generation disabled')
-    return Promise.resolve()
-
     const srcLiDir = path.join(srcDir, 'launch-icons')
     const dstLiDir = path.join(destDir, 'launch-icons')
     console.log('preparing for icon generation...')
