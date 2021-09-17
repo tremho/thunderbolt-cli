@@ -279,11 +279,9 @@ function makeXCBuildSettings(outPath:string, options:any) {
 // }    
 // always generated:    
 //    ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-//    ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
     
 ${devTeamLine}${provisionLine}${codeSignLine}
     ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-    ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 `
     const fileName = path.join(outPath, 'App_Resources', 'iOS', 'build.xcconfig')
     try {
