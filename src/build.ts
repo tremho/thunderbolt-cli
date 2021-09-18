@@ -11,6 +11,8 @@ import * as pageReader from './tbFiles/PageReader'
 import {spaceCase} from "./tbFiles/CaseUtils";
 import * as os from "os"
 import webpack from "webpack";
+import {TsconfigPathsPlugin} from "tsconfig-paths-webpack-plugin"
+
 // import UglifyJsPlugin from "uglifyjs-webpack-plugin"; // TODO: Look into TerserPlugin instead
 // @ts-ignore
 // import * as tsc from 'node-typescript-compiler' // REMOVED: Doesn't work on Windows
@@ -96,6 +98,9 @@ function doWebpackBuild() {
             // devtool: 'eval-source-map',
             devtool: 'source-map',
             resolve: {
+                plugins: [new TsconfigPathsPlugin({
+                    configFile: `${packPath}/tsconfig.json`
+                })],
                 alias: {
                     Project: srcDir,
                     Generated: genDir,
@@ -118,10 +123,9 @@ function doWebpackBuild() {
                     {
                         test: /\.tsx?$/,
                         // loader: 'ts-loader', // ts loader is not working right
-                        loader: 'awesome-typescript-loader',
+                        loader: 'ts-loader',
                         options: {
-                            configFileName: `${packPath}/tsconfig.json`,
-                            transpileOnly: true // skip type checks
+                            transpileOnly: true
                         }
                     }
                     // {
