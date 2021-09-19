@@ -100,8 +100,8 @@ function doWebpackBuild() {
             devtool: 'source-map',
             resolve: {
                 plugins: [new TsconfigPathsPlugin({
-                    baseUrl: path.resolve(srcDir),
-                    configFile: `${packPath}/tsconfig.json`
+                    baseUrl: path.resolve(projPath),
+                    configFile: `${projPath}/tsconfig.json`
                 })],
                 alias: {
                     Project: srcDir,
