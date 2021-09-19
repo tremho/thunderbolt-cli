@@ -83,9 +83,9 @@ function doWebpackBuild() {
         cmd option for production/development
         also a command option for source maps (devtool option below)
          */
-        delete process.env.TS_NODE_PROJECT;
         //@ts-ignore
         webpack({
+            // bail: true, // die on first sign of trouble
             mode: 'none', // or development or production TODO: cmd option
             context: packPath,
             entry: './appMain.js',
@@ -153,6 +153,7 @@ function doWebpackBuild() {
             }
 
         }).run((err:any, stats:any) => {
+            console.log('webpack results', err, stats)
             if(err) {
                 console.error('Webpack error', err)
             }
