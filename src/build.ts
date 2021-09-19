@@ -99,7 +99,7 @@ function doWebpackBuild() {
             devtool: 'source-map',
             resolve: {
                 plugins: [new TsconfigPathsPlugin({
-                    baseUrl: srcDir,
+                    baseUrl: path.resolve(srcDir),
                     configFile: `${packPath}/tsconfig.json`
                 })],
                 alias: {
@@ -126,6 +126,7 @@ function doWebpackBuild() {
                         // loader: 'ts-loader', // ts loader is not working right
                         loader: 'ts-loader',
                         options: {
+                            baseUrl: path.resolve(srcDir),
                             transpileOnly: true
                         }
                     }
