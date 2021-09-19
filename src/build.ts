@@ -80,6 +80,7 @@ function doWebpackBuild() {
         cmd option for production/development
         also a command option for source maps (devtool option below)
          */
+        delete process.env.TS_NODE_PROJECT;
         //@ts-ignore
         webpack({
             mode: 'none', // or development or production TODO: cmd option
