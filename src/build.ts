@@ -85,7 +85,7 @@ function doWebpackBuild() {
          */
         //@ts-ignore
         webpack({
-            bail: true, // die on first sign of trouble
+            // bail: true, // die on first sign of trouble
             mode: 'none', // or development or production TODO: cmd option
             context: packPath,
             entry: './appMain.js',
@@ -119,6 +119,7 @@ function doWebpackBuild() {
                 modules: [modulesPath, appPages, genDir],
                 extensions: [ '.ts', '.js', '.riot', 'css' ],
             },
+            // these don't seem to be doing anything for me.
             plugins: [
                 new ForkTsCheckerWebpackPlugin({
                     eslint: true
@@ -153,7 +154,7 @@ function doWebpackBuild() {
             }
 
         }).run((err:any, stats:any) => {
-            console.log('webpack results', err, stats)
+            // console.log('webpack results', err, stats)
             if(err) {
                 console.error('Webpack error', err)
             }
