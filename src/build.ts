@@ -99,7 +99,7 @@ function doWebpackBuild() {
             devtool: 'source-map',
             resolve: {
                 plugins: [new TsconfigPathsPlugin({
-                    baseUrl: packPath,
+                    baseUrl: srcDir,
                     configFile: `${packPath}/tsconfig.json`
                 })],
                 alias: {
