@@ -99,10 +99,10 @@ function doWebpackBuild() {
             // devtool: 'eval-source-map',
             devtool: 'source-map',
             resolve: {
-                plugins: [new TsconfigPathsPlugin({
-                    baseUrl: path.resolve(projPath),
-                    configFile: `${projPath}/tsconfig.json`
-                })],
+            //     plugins: [new TsconfigPathsPlugin({
+            //         baseUrl: path.resolve(projPath),
+            //         configFile: `${projPath}/tsconfig.json`
+            //     })],
                 alias: {
                     Project: srcDir,
                     Generated: genDir,
@@ -126,10 +126,10 @@ function doWebpackBuild() {
                         test: /\.tsx?$/,
                         // loader: 'ts-loader', // ts loader is not working right
                         loader: 'ts-loader',
-                        options: {
-                            baseUrl: path.resolve(srcDir),
-                            transpileOnly: true
-                        }
+                        // options: {
+                        //     baseUrl: path.resolve(s),
+                        //     transpileOnly: true
+                        // }
                     }
                     // {
                     //     test:/\.(txt|png|jpg)$/i,
