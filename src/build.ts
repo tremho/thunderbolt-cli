@@ -12,6 +12,9 @@ import {spaceCase} from "./tbFiles/CaseUtils";
 import * as os from "os"
 import webpack from "webpack";
 import {TsconfigPathsPlugin} from "tsconfig-paths-webpack-plugin"
+const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // import UglifyJsPlugin from "uglifyjs-webpack-plugin"; // TODO: Look into TerserPlugin instead
 // @ts-ignore
@@ -116,6 +119,16 @@ function doWebpackBuild() {
                 modules: [modulesPath, appPages, genDir],
                 extensions: [ '.ts', '.js', '.riot', 'css' ],
             },
+            plugins: [
+                new ForkTsCheckerWebpackPlugin({
+                    eslint: true
+                }),
+                new ForkTsCheckerNotifierWebpackPlugin({ title: 'TypeScript', excludeWarnings: false }),
+                // new HtmlWebpackPlugin({
+                //     inject: true,
+                //     template: 'src/index.html'
+                // }),
+            ],
             module: {
                 rules: [
                     {
