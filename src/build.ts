@@ -85,7 +85,7 @@ function doWebpackBuild() {
          */
         //@ts-ignore
         webpack({
-            // bail: true, // die on first sign of trouble
+            bail: true, // die on first sign of trouble
             mode: 'none', // or development or production TODO: cmd option
             context: packPath,
             entry: './appMain.js',
