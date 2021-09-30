@@ -106,13 +106,19 @@ export function metaMigrateNS(outPath:string) {
     let {version, displayName, shortDisplayName, projId} = pkgJson
 
     // make version transmogrifications
+    if(!version) version = '0.0.1-pre-release.1'
+    if(!shortDisplayName) shortDisplayName = shortFromDisplay(displayName)
+    if(!displayName) displayName = shortDisplayName
+    if(!projId) projId = 'org.jove.'+pkgJson.name
+
     let prc = 0 // pre-release
     let vparts:string[] = version.split('.') //'1.2.3-pre-release.x' => [1,2,3-pre-release, x]
-    if(vparts.length > 3) {
+    if(vparts.length > 2) {
         let s = vparts[2]
         if(s.indexOf('-') !== -1) {
             let prs = s.substring(s.indexOf('-') + 1)
             vparts[2] = s.substring(0, s.indexOf('-'))
+            prs = prs.substring(0, prs.lastIndexOf('.'))
             switch(prs) {
                 case 'alpha':
                     prc = 1
@@ -134,13 +140,19 @@ export function metaMigrateNS(outPath:string) {
             prc = 9 // release
         }
     }
-    let build = vparts[3]
     version = vparts.slice(0, 2).join('.')
     if(prc !== 9) {
         version += '.'+prc
     }
+    let maj = vparts[0] || 0
+    let min = vparts[1] || 0
+    let rev = vparts[2] || 0
+    let build = vparts[3] || 0
+    console.log('maj,min,rev, build = ', maj, min, rev, build)
     // @ts-ignore
-    let avc = vparts[0] * 1000000000000 + vparts[1] * 1000000000 + vparts[2] * 1000000 + prc * 1000 + build % 1000
+    let avc = maj * 1000000000000 + min * 1000000000 + rev * 1000000 + prc * 1000 + build % 1000
+
+    console.log('avc = ', avc)
 
     // update the plist items
     updatePListItems(outPath, version, displayName, shortDisplayName)
