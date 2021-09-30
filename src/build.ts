@@ -122,7 +122,8 @@ function doWebpackBuild() {
             // these don't seem to be doing anything for me.
             plugins: [
                 new ForkTsCheckerWebpackPlugin({
-                    eslint: true
+                    typescript:true,
+                    eslint: {enabled:true, files: "**/*.ts"}
                 }),
                 new ForkTsCheckerNotifierWebpackPlugin({ title: 'TypeScript', excludeWarnings: false }),
                 // new HtmlWebpackPlugin({
