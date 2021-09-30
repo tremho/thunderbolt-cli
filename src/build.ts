@@ -84,7 +84,7 @@ function doWebpackBuild() {
         also a command option for source maps (devtool option below)
          */
         //@ts-ignore
-        webpack({
+        const wpconf:any = {
             // bail: true, // die on first sign of trouble
             mode: 'none', // or development or production TODO: cmd option
             context: packPath,
@@ -102,10 +102,10 @@ function doWebpackBuild() {
             // devtool: 'eval-source-map',
             devtool: 'source-map',
             resolve: {
-            //     plugins: [new TsconfigPathsPlugin({
-            //         baseUrl: path.resolve(projPath),
-            //         configFile: `${projPath}/tsconfig.json`
-            //     })],
+                //     plugins: [new TsconfigPathsPlugin({
+                //         baseUrl: path.resolve(projPath),
+                //         configFile: `${projPath}/tsconfig.json`
+                //     })],
                 alias: {
                     Project: srcDir,
                     Generated: genDir,
@@ -117,16 +117,16 @@ function doWebpackBuild() {
                 },
                 fallback: {fs: false, path: false, os: false},
                 modules: [modulesPath, appPages, genDir],
-                extensions: [ '.ts', '.js', '.riot', 'css' ],
+                extensions: ['.ts', '.js', '.riot', 'css'],
             },
             // these don't seem to be doing anything for me.
             plugins: [
                 new ForkTsCheckerWebpackPlugin({
                     typescript: {
-                        context: packPath
+                        context: projPath
                     }
                 }),
-                new ForkTsCheckerNotifierWebpackPlugin({ title: 'TypeScript', excludeWarnings: false }),
+                new ForkTsCheckerNotifierWebpackPlugin({title: 'TypeScript', excludeWarnings: false}),
                 // new HtmlWebpackPlugin({
                 //     inject: true,
                 //     template: 'src/index.html'
@@ -154,8 +154,9 @@ function doWebpackBuild() {
                     // }
                 ]
             }
-
-        }).run((err:any, stats:any) => {
+        }
+        // console.log('webpack config = ', wpconf)
+        webpack(wpconf).run((err:any, stats:any) => {
             // console.log('webpack results', err, stats)
             if(err) {
                 console.error('Webpack error', err)

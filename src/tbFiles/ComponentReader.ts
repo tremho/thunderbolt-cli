@@ -252,7 +252,7 @@ const locals:string[] = []
  * @param outType
  */
 export function enumerateAndConvert(dirpath:string, outType:string, outDir:string) {
-    const files = fs.readdirSync(dirpath)
+    const files = fs.existsSync(dirpath) ? fs.readdirSync(dirpath) : []
     files.forEach(file => {
         if(file.match(/.tbcm?$/)) {
             const info = readComponent(path.join(dirpath, file))
