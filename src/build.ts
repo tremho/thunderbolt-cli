@@ -463,12 +463,14 @@ export function doBuild() {
             makePageList()
         }
         if(info.buildFlags.compile) {
-            p =  doWebpackBuild().then(() => {
-                console.log('completing build...')
-                createSMX()
-                copyAssets()
-                mainAndExec().then(() => {
-                    summary()
+            p = npmInstall().then(() => {
+                doWebpackBuild().then(() => {
+                    console.log('completing build...')
+                    createSMX()
+                    copyAssets()
+                    mainAndExec().then(() => {
+                        summary()
+                    })
                 })
             })
         }
@@ -483,6 +485,30 @@ export function doBuild() {
 
     console.log('')
 }
+
+/**
+ * do an npm install if package.json is newer than node_modules, or node_modules does not exist
+ */
+function npmInstall() {
+    const pkgStat = fs.lstatSync('package.json')
+    let ptime = pkgStat.mtimeMs
+    let mtime = 0
+    if(fs.existsSync('node_modules')) {
+        const modStat = fs.lstatSync('node_modules')
+        mtime = modStat.mtimeMs
+    }
+    if(ptime > mtime) {
+        return executeCommand('npm', ['install']).then(rt => {
+            if(rt.code) {
+                console.error(rt.errStr)
+                throw Error()
+            }
+        })
+    } else {
+        return Promise.resolve()
+    }
+}
+
 
 /**
  * Copy all the files from src/assets to build/front/assets

@@ -28,6 +28,7 @@ export async function doInit(args:string[]) {
             }
         } else {
             fs.mkdirSync(dirPath)
+            process.chdir(dirPath)
         }
     } else {
         dirPath = process.cwd()
@@ -140,7 +141,6 @@ async function createPackageJSON(oldPkg:any) {
         dependencies: {
             "@tremho/jove-common": "^0.6.9-pre-release",
             "@tremho/jove-desktop": "^0.6.9-pre-release",
-            "awesome-typescript-loader": "^5.2.1",
             "css-element-queries": "^1.2.3",
             "riot": "^5.3.3",
             "sourcemap-codec": "^1.4.8"
