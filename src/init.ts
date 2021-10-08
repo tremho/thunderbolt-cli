@@ -117,7 +117,7 @@ async function createPackageJSON(oldPkg:any) {
     let license = ask('Enter a license type SPDX code (e.g. MIT)', 'license', oldPkg.licence || 'UNLICENSED')
 
 
-    // TODO: keep jove versions named here in sync with tbns-template also.
+    // TODO: keep jove versions named here in sync with tbns-template also....
 
     const pkgJson = {
         name,
@@ -132,11 +132,9 @@ async function createPackageJSON(oldPkg:any) {
         frontMain: oldPkg.frontMain || 'src/joveAppFront.ts',
         scripts: {
             postinstall: "npm run initDesktop && npm run initCli",
-            initDesktop: "cd node_modules/@tremho/jove-desktop && npm install",
+            initDesktop: "cd node_modules/@tremho/jove-desktop && npm install && cd buildPack && npm install",
             initCli: "cd node_modules/@tremho/jove-cli && npm install",
-            test: "echo \"Error: no test specified\" && exit 1",
-            "run": "tsc && node build/index.js" // temp during bootstrapping
-
+            test: "echo \"Error: no test specified\" && exit 1"
         },
         dependencies: {
             "@tremho/jove-common": "^0.6.9-pre-release",

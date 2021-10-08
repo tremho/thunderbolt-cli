@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.96",
+  "version": "0.6.9-pre-release.98",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -11,12 +11,12 @@
     "clean": "rm -fr build node_modules && npm install",
     "build": "run-script-os",
     "build:windows": "tsc",
-    "build:nix": "tsc && chmod +x build/tbx.js",
+    "build:nix": "tsc && chmod +x build/jove.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tbTest-build": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js build",
-    "tbTest-nativescript": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/tbx.js nativescript",
-    "sb-mad-build": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/tbx.js build",
-    "sb-mad-nativescript": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/tbx.js nativescript"
+    "tbTest-build": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/jove.js build",
+    "tbTest-nativescript": "tsc; p=`pwd`; cd ../tbTest; node ${p}/build/jove.js nativescript",
+    "sb-mad-build": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/jove.js build",
+    "sb-mad-nativescript": "tsc; p=`pwd`; cd ../sb-mad; node ${p}/build/jove.js nativescript"
   },
   "keywords": [
     "Jove",
