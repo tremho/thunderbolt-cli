@@ -15,7 +15,7 @@ const spinner = require('text-spinner')({
 let dirPath
 let pkgJson:any = {}
 
-export function doInit(args:string[]) {
+export async function doInit(args:string[]) {
     let dirName = args[0] || ''
     if(dirName) {
         dirPath = path.resolve(dirName)
@@ -26,7 +26,6 @@ export function doInit(args:string[]) {
                 console.log('no action taken')
                 return;
             }
-
         } else {
             fs.mkdirSync(dirPath)
         }
@@ -46,8 +45,7 @@ export function doInit(args:string[]) {
         console.log('no existing package.json')
     }
 
-
-    const newPkg = createPackageJSON(pkgJson)
+    const newPkg = await createPackageJSON(pkgJson)
     console.log('\n\n\n');
     pkgJson = Object.assign(pkgJson, newPkg)
 
@@ -68,13 +66,13 @@ export function doInit(args:string[]) {
         spinner.stop()
         if(rt.code) {
             console.error(ac.bold.red('error '+rt.code))
-            console.error(ac.red("Jove Initializaiton failed on NPM Install:"))
+            console.error(ac.red("Jove Initialization failed on NPM Install:"))
             console.error(ac.black.dim(rt.errStr))
             console.error('while...')
             console.error(ac.green.dim(rt.stdStr))
         } else {
             console.log(ac.green.bold(`${pkgJson.displayName} is ready`))
-            console.log(ac.blue("type tbx run to run the empty stub project"))
+            console.log(ac.blue("type jove run to run the empty stub project"))
             console.log(ac.gray('then add your own code to complete the app'))
         }
     })
@@ -88,7 +86,19 @@ function ask(desc:string, query:string, def:string) {
     return answer
 }
 
-function createPackageJSON(oldPkg:any) {
+function gitName() {
+    return executeCommand('git', ['config', '--get', 'user.name']).then(rt => {
+        let name = ''
+        if(rt.code) {
+            console.error('Error '+rt.code, rt.errStr)
+        } else {
+            name = rt.stdStr.trim().toLowerCase()
+        }
+        return name
+    })
+}
+
+async function createPackageJSON(oldPkg:any) {
     let modname = process.cwd()
     modname = hyphenate(modname.substring(modname.lastIndexOf(path.sep) + 1))
 
@@ -99,9 +109,11 @@ function createPackageJSON(oldPkg:any) {
     let description = ask('Enter a brief description of this application (about box)', 'description', oldPkg.description || '')
     let randId = Math.floor(Math.random() * 10000)
     let projId = ask('Enter a project Id (reverse domain form, e.g. "com.mydomain.myapp")', 'projId', oldPkg.projId || 'joveapp.'+randId)
-    let author = ask('Enter your author name (e.g. github account name) (about box)', 'author', oldPkg.author || '')
-    let copyright = ask('Enter any copyright information (about box)', 'copyright', oldPkg.copyright || '')
-    let license = ask('Enter a license type code (e.g. MIT)', 'license', oldPkg.licence || 'NONE')
+    let gitAuthor = await gitName()
+    let author = ask('Enter your author name (e.g. github account name) (about box)', 'author', oldPkg.author || gitAuthor)
+    let defCopy = "© "+new Date().getFullYear()+" "+author+". All Rights Reserved"
+    let copyright = ask('Enter any copyright information (about box)', 'copyright', oldPkg.copyright || defCopy)
+    let license = ask('Enter a license type SPDX code (e.g. MIT)', 'license', oldPkg.licence || 'UNLICENSED')
 
 
     // TODO: keep jove versions named here in sync with tbns-template also.
@@ -260,5 +272,4 @@ export function pageStart(app:any) {
     fs.writeFileSync('src/pages/main-page.tbpg', tbpg)
     fs.writeFileSync('src/pages/main-page.ts', logic)
 }
-
 

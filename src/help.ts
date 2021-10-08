@@ -4,6 +4,8 @@ export function doHelp(command:string) {
     switch (command) {
         case 'help':
             return helpHelp();
+        case 'init':
+            return helpInit()
         case 'build':
             return helpBuild();
         case 'run':
@@ -21,10 +23,11 @@ export function doHelp(command:string) {
     }
 }
 function helpDefault() {
-    console.log('tbx is the command-line tool of the Jove framework.');
-    console.log(ac.bold("Usage: " + ac.grey("tbx " + ac.grey.dim("command  [args]"))));
+    console.log('jove is the command-line tool of the Jove framework.');
+    console.log(ac.bold("Usage: " + ac.grey("jove " + ac.grey.dim("command  [args]"))));
     console.log("where " + ac.grey.dim("command") + " is one of:");
     console.log("  " + ac.blue.bold("help " + ac.grey.dim("[command]")) + " -- general help, or help on a given command");
+    console.log("  " + ac.blue.bold("init") + "  -- create or prepare a directory as a Jove project");
     console.log("  " + ac.blue.bold("build") + "  -- build the project for desktop");
     console.log("  " + ac.blue.bold("run") + "  -- build and run the desktop project");
     console.log("  " + ac.blue.bold("doc") + "  -- generate documentation from JavaDoc-style comment blocks");
@@ -37,15 +40,25 @@ function helpDefault() {
 }
 function helpHelp() {
     console.log(ac.bold('help'));
-    console.log("use " + ac.bold('tbx help') + " by itself to see a list of commands");
-    console.log("use " + ac.bold("tbx help " + ac.grey.dim('[command]')) + " for help on a given command");
+    console.log("use " + ac.bold('jove help') + " by itself to see a list of commands");
+    console.log("use " + ac.bold("jove help " + ac.grey.dim('[command]')) + " for help on a given command");
     console.log('');
+}
+function helpInit() {
+    console.log(ac.bold('init'));
+    console.log("use " + ac.bold('jove init') + " from within a directory to init the current directory as a jove-project");
+    console.log("use " + ac.bold("jove init " + ac.grey.dim('name')) + " to create a directory and start init on a project of that name");
+    console.log("")
+    console.log("This will begin an interactive session where you will be asked questions about the project you are creating.")
+    console.log("The project will be complete and ready to run right away.")
+    console.log("You can then modify the application to your needs.")
+
 }
 function helpBuild() {
     console.log(ac.bold('build'));
     console.log('builds the desktop project');
     console.log('');
-    console.log("use "+ac.bold('tbx build .') + 'build the current project')
+    console.log("use "+ac.bold('jove build .') + 'build the current project')
     console.log(" or provide a path to the project directory as the argument.")
     console.log(ac.green('options:'))
     console.log(ac.bold('    --clean') + ': clears any previous build artifacts before building')
@@ -63,7 +76,7 @@ function helpRun() {
     console.log(ac.bold('run'));
     console.log('builds (if necessary) and then runs the desktop project');
     console.log('')
-    console.log("use "+ac.bold('tbx build .') + 'build the current project')
+    console.log("use "+ac.bold('jove build .') + 'build the current project')
     console.log(" or provide a path to the project directory as the argument.")
     console.log("Source files are checked for update since the date of the executable.  If sources are newer, the project is built before running.")
 

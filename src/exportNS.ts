@@ -13,7 +13,7 @@ import {metaMigrateNS} from "./tbFiles/MetadataMover"
 let nsRoot:string
 let nsVersion:string
 
-let outPath:string, appId:string, projName:string, projPath:string, pkgInfo:any, tbxPath:string
+let outPath:string, appId:string, projName:string, projPath:string, pkgInfo:any, jovePath:string
 let wantClean = false;
 
 function readCommandOptions() {
@@ -46,7 +46,7 @@ function collectInfo() {
     }
     projName = info.projName
     projPath = info.projPath
-    tbxPath = path.resolve(info.packPath, '..', '..', '..', '@tremho/jove-cli','src')
+    jovePath = path.resolve(info.packPath, '..', '..', '..', '@tremho/jove-cli','src')
 }
 
 
@@ -293,7 +293,7 @@ function migrateLaunch() {
     if(!fs.existsSync(destPath)) {
         fs.mkdirSync(destPath)
     }
-    let srcPath = path.join(tbxPath, 'nslaunch')
+    let srcPath = path.join(jovePath, 'nslaunch')
     if(!fs.existsSync(srcPath)) {
         console.error('CLI launch file templates not available -- check installation', srcPath)
         throw Error
@@ -332,7 +332,7 @@ function npmInstall() {
 }
 
 function makeNativeScriptComponents() {
-    // console.log('ready to makeNativeScriptComponents', projPath, tbxPath)
+    // console.log('ready to makeNativeScriptComponents', projPath, jovePath)
     const componentsDir = path.join(projPath, 'src', 'components')
     let dest = path.join(outPath, projName, 'app', 'components')
 
@@ -356,11 +356,11 @@ function migrateScss() {
     importScss(scssSource, imports, scssDest)
     importScss(path.join(outPath, projName, 'app', 'components'), imports)
 
-    const varSrc = path.join(tbxPath, 'tbFiles', 'theme-vars.scss')
+    const varSrc = path.join(jovePath, 'tbFiles', 'theme-vars.scss')
     const varDest = path.join(outPath, projName, 'tb-vars.scss')
     fs.copyFileSync(varSrc, varDest)
 
-    const themeSrc = path.join(tbxPath, 'tbFiles', 'theme-nativescript.scss')
+    const themeSrc = path.join(jovePath, 'tbFiles', 'theme-nativescript.scss')
     const themeDest = path.join(outPath, projName, 'tb-theme.scss')
     fs.copyFileSync(themeSrc, themeDest)
 

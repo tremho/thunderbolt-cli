@@ -89,9 +89,9 @@ from items found in package.json
 
 /*
 So what we want to do here
-tbx nativescript -- move all the metadata to NS targets when we export NS
-tbx publish -- (new) copy all to publish staging folder with build section added to package.json
-               and execute equivalent of     "dist": "tbx build --clean && electron-builder",
+jove nativescript -- move all the metadata to NS targets when we export NS
+jove publish -- (new) copy all to publish staging folder with build section added to package.json
+               and execute equivalent of     "dist": "jove build --clean && electron-builder",
 
 also: on publish run IconPrepElectron to make icon for that side of things.
 

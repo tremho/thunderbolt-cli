@@ -15,8 +15,10 @@ export function hyphenate(name:string) {
     let last = 0
     while(i < name.length) {
         if(name.charAt(i) === name.charAt(i).toUpperCase()) {
-            out += name.substring(last, i).toLowerCase()+'-'
-            last = i
+            if (name.charAt(i) !== '-') {
+                out += name.substring(last, i).toLowerCase() + '-'
+                last = i
+            }
         }
         i++
     }

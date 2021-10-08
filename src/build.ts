@@ -35,7 +35,7 @@ import {exec} from "child_process";
 
 
 // Variables resolved and used in build functions
-let tbxPath:string,  // path to the tbx script itself. This establishes where framework is within project node_modules space.
+let jovePath:string,  // path to the jove script itself. This establishes where framework is within project node_modules space.
     packPath:string, // path to directory in framework that holds the sources for the app bootstrap
     projPath:string, // path to the project
     buildPath:string, // path to the project build directory space
@@ -427,7 +427,7 @@ export function doBuild() {
     let p;
     try {
         const info = gatherInfo()
-        tbxPath = info.tbxPath
+        jovePath = info.jovePath
         packPath = info.packPath
         projPath = info.projPath
         buildPath = info.buildPath

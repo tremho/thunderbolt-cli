@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as os from "os"
 
 // Variables resolved and used in build functions
-let tbxPath:string,  // path to the tbx script itself. This establishes where framework is within project node_modules space.
+let jovePath:string,  // path to the jove script itself. This establishes where framework is within project node_modules space.
     packPath:string, // path to directory in framework that holds the sources for the app bootstrap
     projPath:string, // path to the project
     buildPath:string, // path to the project build directory space
@@ -13,7 +13,7 @@ let tbxPath:string,  // path to the tbx script itself. This establishes where fr
     fwCommonPath:string, // path to framework module in node_modules
     fwDesktopPath:string, // path to desktop framework module in node_modules
     fwMobilePath:string, // path to mobile framework module in node_modules
-    fwCliPath:string, // path to tbx command line module
+    fwCliPath:string, // path to jove command line module
     tbBuildSrc:string, // path to the framework 'src' folder
     fwcomp:string,  // path to the framework components folder tree
     appPages:string, // path to the app's pages folder
@@ -40,7 +40,7 @@ function resolvePaths() {
     // console.log('paths = ', process.argv)
     clean = false
     prepare = compile = true
-    tbxPath = process.argv[1]
+    jovePath = process.argv[1]
     let cmd = process.argv[2]
     if(cmd === 'build' || cmd === 'run') {
         let i = 3
@@ -77,7 +77,7 @@ function resolvePaths() {
     fwMobilePath = path.resolve(path.join(modulesPath, '@tremho', 'jove-mobile'))
     fwCliPath = path.resolve(path.join(modulesPath, '@tremho', 'jove-cli'))
 
-    // console.log('tbxPath', tbxPath)
+    // console.log('jovePath', jovePath)
     // console.log('cmd', cmd)
     // console.log('projPath',projPath)
     //
@@ -137,7 +137,7 @@ function resolvePaths() {
 
 
     if(verbose) {
-        console.log('tbxPath = ', tbxPath)
+        console.log('jovePath = ', jovePath)
         console.log('projPath = ', projPath)
         console.log('modulesPath = ', modulesPath)
         console.log('fwCommonPath', fwCommonPath)
@@ -196,7 +196,7 @@ export function gatherInfo() {
     getPackageJSONInfo()
 
     return {
-        tbxPath,  // path to the tbx script itself. This establishes where framework is within project node_modules space.
+        jovePath,  // path to the jove script itself. This establishes where framework is within project node_modules space.
         packPath, // path to directory in framework that holds the sources for the app bootstrap
         projPath, // path to the project
         buildPath, // path to the project build directory space
