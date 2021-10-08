@@ -57,7 +57,7 @@ export async function doInit(args:string[]) {
     fs.mkdirSync('src/pages', {recursive:true})
     fs.mkdirSync('src/assets', {recursive:true})
     fs.mkdirSync('src/scss', {recursive:true})
-// stubs for tbAppBack.ts and tbAppFront.ts if they do not exist
+// stubs for joveAppBack.ts and joveAppFront.ts if they do not exist
     makeAppStubs()
 // stub main page?
     makeMainPageStub()
@@ -128,8 +128,8 @@ async function createPackageJSON(oldPkg:any) {
         copyright,
         author,
         license,
-        backMain: oldPkg.backMain || 'src/tbAppBack.ts',
-        frontMain: oldPkg.frontMain || 'src/tbAppFront.ts',
+        backMain: oldPkg.backMain || 'src/joveAppBack.ts',
+        frontMain: oldPkg.frontMain || 'src/joveAppFront.ts',
         scripts: {
             postinstall: "npm run initDesktop && npm run initCli",
             initDesktop: "cd node_modules/@tremho/jove-desktop && npm install",
@@ -190,12 +190,12 @@ function createTSConfig() {
 
 function makeAppStubs() {
     let front, back
-    let backMain = pkgJson.backMain || 'src/tbAppBack.ts'
+    let backMain = pkgJson.backMain || 'src/joveAppBack.ts'
     if(fs.existsSync(backMain)) {
         console.log(ac.gray.dim.italic(backMain+' already exists'))
         back = true
     }
-    let frontMain = pkgJson.frontMain || 'src/tbAppFront.ts'
+    let frontMain = pkgJson.frontMain || 'src/joveAppFront.ts'
     if(fs.existsSync(frontMain)) {
         console.log(ac.gray.dim.italic(frontMain+' already exists'))
         front = true
@@ -250,11 +250,11 @@ registerApp(targetPlatform, ourApp)
 }
 
 function makeMainPageStub() {
-    if(fs.existsSync('src/pages/main-page.tbpg')) {
+    if(fs.existsSync('src/pages/main-page.jvpg')) {
         console.log(ac.gray.dim.italic('main-page exists'))
         return
     }
-    const tbpg = `
+    const jvpg = `
 #page main
 title='Main Page'
 
@@ -269,7 +269,7 @@ export function pageStart(app:any) {
     console.log('main page started')
 }        
 `
-    fs.writeFileSync('src/pages/main-page.tbpg', tbpg)
+    fs.writeFileSync('src/pages/main-page.jvpg', jvpg)
     fs.writeFileSync('src/pages/main-page.ts', logic)
 }
 

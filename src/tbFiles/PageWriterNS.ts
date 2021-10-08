@@ -108,7 +108,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     //
     // console.log(out)
     //
-    src = path.join(srcpath, `${id}-page.tbpg`)
+    src = path.join(srcpath, `${id}-page.jvpg`)
     dest = path.join(outDir, `${id}-page.ts`)
     if(testForUpdate(src,dest)) {
         // console.log(`exporting ${id}-page`)

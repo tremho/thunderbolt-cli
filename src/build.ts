@@ -26,7 +26,7 @@ import {mkdirSync} from "fs";
 
 import * as riot from 'riot'
 // @ts-ignore
-import * as AppFront from 'Project/tbAppFront'
+import * as AppFront from 'Project/joveAppFront'
 // @ts-ignore
 import App from 'RiotMain/app.riot'
 import {exec} from "child_process";
@@ -54,8 +54,8 @@ let jovePath:string,  // path to the jove script itself. This establishes where 
     displayName:string,
     copyright:string,
     author: string,
-    frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
-    backMain:string  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
+    frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (joveAppFront.ts)
+    backMain:string  // name of entry module for the app Back (node) process code, fom project package.json file or default (joveAppBack.ts)
 
 // TODO: Import from gatherInfo rather than repeat here
 function readPackageInfoAtPath(directory:string):any {
@@ -239,7 +239,7 @@ function mainAndExec() {
 
 
         // write out an execution script in the name of the app
-        // electron tbAppBack.js
+        // electron joveAppBack.js
 
         let n = backMain.lastIndexOf('.')
         const backMainJS = backMain.substring(0, n) + ".js"

@@ -1,5 +1,5 @@
 /*
-enumerate and read tbc/ tbcm files from 'components' directory into data ready for export
+enumerate and read jvc/ jvcm files from 'components' directory into data ready for export
  */
 
 import * as fs from "fs"
@@ -254,7 +254,7 @@ const locals:string[] = []
 export function enumerateAndConvert(dirpath:string, outType:string, outDir:string) {
     const files = fs.existsSync(dirpath) ? fs.readdirSync(dirpath) : []
     files.forEach(file => {
-        if(file.match(/.tbcm?$/)) {
+        if(file.match(/.jvcm?$/)) {
             const info = readComponent(path.join(dirpath, file))
             let fileout = path.join(outDir, file.substring(0, file.lastIndexOf('.')))
 

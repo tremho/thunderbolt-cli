@@ -179,7 +179,7 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
     const files = fs.readdirSync(dirpath)
     let errs = 0;
     files.forEach(file => {
-        if(file.match(/.tbpg?$/)) {
+        if(file.match(/.jvpg?$/)) {
             // console.log('reading page from ', file)
             inScope = true
             procType = outType

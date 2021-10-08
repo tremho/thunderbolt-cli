@@ -26,8 +26,8 @@ let jovePath:string,  // path to the jove script itself. This establishes where 
     displayName:string,
     copyright: string,
     author: string,
-    frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
-    backMain:string,  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
+    frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (joveAppFront.ts)
+    backMain:string,  // name of entry module for the app Back (node) process code, fom project package.json file or default (joveAppBack.ts)
     clean: boolean, // true if we should remove any intermediate artifacts first
     prepare:boolean, // true if we should create intermediate files from sources
     compile: boolean, // true if we should compile and bundle with webpack
@@ -217,8 +217,8 @@ export function gatherInfo() {
         displayName,
         copyright,
         author,
-        frontMain, // name of entry module for the app Renderer code, from project package.json file or default (tbAppFront.ts)
-        backMain,  // name of entry module for the app Back (node) process code, fom project package.json file or default (tbAppBack.ts)
+        frontMain, // name of entry module for the app Renderer code, from project package.json file or default (joveAppFront.ts)
+        backMain,  // name of entry module for the app Back (node) process code, fom project package.json file or default (joveAppBack.ts)
         buildFlags: {
             clean,
             prepare,

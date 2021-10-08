@@ -126,12 +126,12 @@ function createNSProjectIfNotExist() {
             if(wantClean) {
                 fs.rmSync(nsRoot, {recursive:true})
             } else {
-                // verify nativescript.config.ts, package.json, app/tbAppBack.ts
+                // verify nativescript.config.ts, package.json, app/joveAppBack.ts
                 let okay = fs.existsSync(path.join(nsRoot, 'nativescript.config.ts'))
                 okay = okay && fs.existsSync(path.join(nsRoot, 'package.json'))
-                let tbAppSrcPath = pkgInfo.backMain || 'src/tbAppBack.ts'
-                tbAppSrcPath = tbAppSrcPath.substring(tbAppSrcPath.indexOf('/') + 1)
-                okay = okay && fs.existsSync(path.join(nsRoot, 'app', tbAppSrcPath))
+                let joveAppSrcPath = pkgInfo.backMain || 'src/joveAppBack.ts'
+                joveAppSrcPath = joveAppSrcPath.substring(joveAppSrcPath.indexOf('/') + 1)
+                okay = okay && fs.existsSync(path.join(nsRoot, 'app', joveAppSrcPath))
 
                 if (!okay) {
                     console.log(ac.bold.red('Error') + ': ' + nsRoot + ' exists but does not appear to be a prior export')
@@ -198,14 +198,14 @@ function readProjPackage() {
 }
 
 function migrateAppBack() {
-    // read our tbAppBack source
-    const tbAppSrcPath = pkgInfo.backMain || 'src/tbAppBack.ts'
-    // console.log('migrating '+ tbAppSrcPath+'...')
+    // read our joveAppBack source
+    const joveAppSrcPath = pkgInfo.backMain || 'src/joveAppBack.ts'
+    // console.log('migrating '+ joveAppSrcPath+'...')
     let source = ""
     try {
-        source = fs.readFileSync(path.join(projPath, tbAppSrcPath)).toString()
+        source = fs.readFileSync(path.join(projPath, joveAppSrcPath)).toString()
     } catch(e) {
-        throw Error('Unable to read app file "'+tbAppSrcPath+'"')
+        throw Error('Unable to read app file "'+joveAppSrcPath+'"')
     }
     // find "@tremho/jove-desktop" in either an import or require line
     let lines = source.split('\n')
@@ -224,7 +224,7 @@ function migrateAppBack() {
     }
     // write to dest
     source = lines.join('\n')
-    let dest = path.join(outPath, projName, 'app', 'tbAppBack.ts')
+    let dest = path.join(outPath, projName, 'app', 'joveAppBack.ts')
     try {
         if (fs.existsSync(dest)) {
             fs.unlinkSync(dest)

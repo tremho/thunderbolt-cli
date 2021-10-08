@@ -57,7 +57,7 @@ from items found in package.json
 // },
 // "files": [
 //     {
-//         "filter": "tbAppBack.js",
+//         "filter": "joveAppBack.js",
 //         "from": "build",
 //         "to": "."
 //     },
@@ -83,7 +83,7 @@ from items found in package.json
 //     }
 // ],
 //     "extraMetadata": {
-//     "main": "tbAppBack.js"
+//     "main": "joveAppBack.js"
 // }
 // }
 

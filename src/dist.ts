@@ -87,7 +87,7 @@ function appendBuildInfo(pkgJson:any):any {
             }
         ],
         extraMetadata: {
-            main: "tbAppBack.js"
+            main: "joveAppBack.js"
         }
     }
     const mac = pkgJson.mac || {

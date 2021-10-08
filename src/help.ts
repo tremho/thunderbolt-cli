@@ -69,7 +69,7 @@ function helpBuild() {
     console.log('Normal operation (no options) is to do both a prepare and compile step.  This will create a "build" folder that will contain' +
         'the assets for running the application, along with an executable file of the project\'s name.')
     console.log('Files are generated to a ".gen/" folder within the project directory.')
-    console.log('Generated files include conversion of .tbpg and .tbcm files into .riot files, and creation of CSS from the SCSS sources.')
+    console.log('Generated files include conversion of .jvpg and .jvcm files into .riot files, and creation of CSS from the SCSS sources.')
     console.log('Generated files are not replaced unless corresponding source file is newer.')
 }
 function helpRun() {
