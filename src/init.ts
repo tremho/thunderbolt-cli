@@ -108,7 +108,7 @@ async function createPackageJSON(oldPkg:any) {
     let shortDisplayName = shortFromDisplay(displayName)
     shortDisplayName = ask('Enter the short version (app icon) name ', 'shortDisplayName', oldPkg.shortDisplayName || shortDisplayName)
     let description = ask('Enter a brief description of this application (about box)', 'description', oldPkg.description || '')
-    let genId = 'app.jove.'+shortDisplayName.replace(/ ,-_"'!@#\$%\^&\*\(\):;`~/g, '')
+    let genId = 'app.jove.'+ (shortDisplayName.replace(/[\-_"'!@#\$%\^\&\*\(\):;\+=`~]/g, ''))
     let projId = ask('Enter a project Id (reverse domain form, e.g. "com.mydomain.myapp")', 'projId', oldPkg.projId || genId)
     let gitAuthor = await gitName()
     let author = ask('Enter your author name (e.g. github account name) (about box)', 'author', oldPkg.author || gitAuthor)
