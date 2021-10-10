@@ -10,6 +10,12 @@ import {translateScss} from "./tbFiles/MigrateScss";
 import {iconPrepNS} from "./tbFiles/IconPrepNS";
 import {metaMigrateNS} from "./tbFiles/MetadataMover"
 
+const spinner = require('text-spinner')({
+    interval: 100,
+    prefix: '\x1B[10G'
+})
+
+
 let nsRoot:string
 let nsVersion:string
 
@@ -169,9 +175,12 @@ function createNSProjectIfNotExist() {
             console.log(ac.green('Updating existing nativescript export at '+nsRoot))
         }
 
+        spinner.start()
         return Promise.resolve(p).then(() => {
+            spinner.stop()
             // console.log('exporting...')
         }).catch(e => {
+            spinner.stop()
             console.error(ac.bold.red('Error Creating Nativescript'))
             process.exit(-1)
         })
