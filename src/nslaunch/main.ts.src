@@ -1,4 +1,4 @@
-const frontApp =  require('../tbAppFront')
+const frontApp =  require('../joveAppFront')
 import {AppCore} from '@tremho/jove-common'
 //
 // Nativescript
