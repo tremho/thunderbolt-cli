@@ -5,6 +5,7 @@ import {doBuild} from "./build"
 import {executeCommand} from "./execCmd"
 import * as path from 'path'
 import * as fs from 'fs'
+import * as ac from 'ansi-colors'
 
 export function doTest() {
     console.log('setting up for test...')
@@ -16,10 +17,12 @@ export function doTest() {
         p = doBuild()
     }
     Promise.resolve(p).then(() => {
+        console.log(ac.bold.green(''))
         p = executeCommand('npm', ['test'], '', true)
+        console.log(ac.black(''))
         // write the ~dotest file out to signal a test
         const dtFile = path.resolve('build', '~dotest')
-        const contents = projName // just for something to write. really just need a touch.
+        const contents = 'exit' // disposition; exit after disconnect.  TODO: pull from cli args and implement in test runner.
         fs.writeFileSync(dtFile,contents)
     })
 
