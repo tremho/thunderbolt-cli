@@ -19,7 +19,6 @@ export function doTest() {
     Promise.resolve(p).then(() => {
         console.log(ac.bold.green(''))
         p = executeCommand('npm', ['test'], '', true)
-        console.log(ac.black(''))
         // write the ~dotest file out to signal a test
         const dtFile = path.resolve('build', '~dotest')
         const contents = 'exit' // disposition; exit after disconnect.  TODO: pull from cli args and implement in test runner.
@@ -30,6 +29,7 @@ export function doTest() {
     console.log('waiting...')
     // Launch client
     return Promise.resolve(p).then(() => {
+        console.log(ac.black(''))
         setTimeout(() => {
             executeCommand('.'+path.sep+projName, [], path.join(projPath, 'build'),true).then(()=> {})
 
