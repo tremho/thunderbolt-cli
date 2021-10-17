@@ -22,10 +22,19 @@ export function doTest() {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
                 console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<\n\n'))
-                let n = rt.stdStr.indexOf('> test')
-                n = rt.stdStr.indexOf('>', n)
-                n = rt.stdStr.indexOf('\n', n)
-                console.log(ac.green(rt.stdStr.substring(n)))
+                let lines = rt.stdStr.split('\n')
+                for(let ln of lines) {
+                    ln = ln.trim()
+                    if(ln.charAt(0) === '>') continue
+                    if(ln.substring(0,7) === './build') {
+                        console.log(ac.black.italic(ln))
+                    }
+                    if(ln.charAt(0) === '✓') {
+                        console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
+                    } else {
+                        console.log(ac.bold.black(ln))
+                    }
+                }
             }
         })
         // write the ~dotest file out to signal a test
