@@ -21,7 +21,7 @@ export function doTest() {
             if(rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
-                console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<\n\n'))
+                console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<'))
                 let lines = rt.stdStr.split('\n')
                 for(let ln of lines) {
                     ln = ln.trim()
