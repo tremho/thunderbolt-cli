@@ -30,6 +30,8 @@ export function doTest() {
                         console.log(ac.black.italic(ln))
                     } else if(ln.charAt(0) === '✓') {
                         console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
+                    } else if(isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
+                        console.log(ac.bold.red('    x'), ac.red(ln))
                     } else {
                         console.log(ac.bold.black(ln))
                     }
