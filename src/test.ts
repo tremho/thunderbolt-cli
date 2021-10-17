@@ -22,7 +22,10 @@ export function doTest() {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
                 console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<\n\n'))
-                console.log(ac.green(rt.stdStr))
+                let n = rt.stdStr.indexOf('> test')
+                n = rt.stdStr.indexOf('>', n)
+                n = rt.stdStr.indexOf('\n', n)
+                console.log(ac.green(rt.stdStr.substring(n)))
             }
         })
         // write the ~dotest file out to signal a test
