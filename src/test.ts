@@ -21,19 +21,21 @@ export function doTest() {
             if(rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
-                console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<'))
+                console.log(ac.bold.green('\n\n>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<'))
                 let lines = rt.stdStr.split('\n')
                 for(let ln of lines) {
                     ln = ln.trim()
-                    if(ln.charAt(0) === '>') continue
-                    if(ln.substring(0,7) === './build') {
-                        console.log(ac.black.italic(ln))
-                    } else if(ln.charAt(0) === '✓') {
-                        console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
-                    } else if(isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
-                        console.log(ac.bold.red('    x'), ac.red(ln))
-                    } else {
-                        console.log(ac.bold.black(ln))
+                    if(ln.length) {
+                        if (ln.charAt(0) === '>') continue
+                        if (ln.substring(0, 7) === './build') {
+                            console.log(ac.black.italic(ln))
+                        } else if (ln.charAt(0) === '✓') {
+                            console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
+                        } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
+                            console.log(ac.bold.red('    x'), ac.red(ln))
+                        } else {
+                            console.log(ac.bold.black(ln))
+                        }
                     }
                 }
             }
