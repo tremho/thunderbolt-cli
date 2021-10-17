@@ -17,8 +17,14 @@ export function doTest() {
         p = doBuild()
     }
     Promise.resolve(p).then(() => {
-        console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<'))
-        p = executeCommand('npm', ['test'], '', true)
+        p = executeCommand('npm', ['test']).then((rt:any) => {
+            if(rt.code) {
+                console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
+            } else {
+                console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<\n\n'))
+                console.log(ac.green(rt.stdStr))
+            }
+        })
         // write the ~dotest file out to signal a test
         const dtFile = path.resolve('build', '~dotest')
         const contents = 'exit' // disposition; exit after disconnect.  TODO: pull from cli args and implement in test runner.
@@ -29,7 +35,6 @@ export function doTest() {
     console.log('waiting...')
     // Launch client
     return Promise.resolve(p).then(() => {
-        console.log("----------------------------------", ac.black(''))
         setTimeout(() => {
             executeCommand('.'+path.sep+projName, [], path.join(projPath, 'build'),true).then(()=> {})
 
