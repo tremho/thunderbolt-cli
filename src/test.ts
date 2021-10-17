@@ -28,8 +28,7 @@ export function doTest() {
                     if(ln.charAt(0) === '>') continue
                     if(ln.substring(0,7) === './build') {
                         console.log(ac.black.italic(ln))
-                    }
-                    if(ln.charAt(0) === '✓') {
+                    } else if(ln.charAt(0) === '✓') {
                         console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
                     } else {
                         console.log(ac.bold.black(ln))
