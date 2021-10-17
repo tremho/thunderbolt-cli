@@ -17,7 +17,7 @@ export function doTest() {
         p = doBuild()
     }
     Promise.resolve(p).then(() => {
-        console.log(ac.bold.green(''))
+        console.log(ac.bold.green('>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<'))
         p = executeCommand('npm', ['test'], '', true)
         // write the ~dotest file out to signal a test
         const dtFile = path.resolve('build', '~dotest')
@@ -29,7 +29,7 @@ export function doTest() {
     console.log('waiting...')
     // Launch client
     return Promise.resolve(p).then(() => {
-        console.log(ac.black(''))
+        console.log("----------------------------------", ac.black(''))
         setTimeout(() => {
             executeCommand('.'+path.sep+projName, [], path.join(projPath, 'build'),true).then(()=> {})
 
