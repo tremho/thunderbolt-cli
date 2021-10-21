@@ -21,7 +21,10 @@ export function doTest() {
             if(rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
-                console.log(ac.bold.green('\n\n>>>>>>>>>>>> TEST RESULTS <<<<<<<<<<<<<<<<'))
+                console.log('\n\n')
+                console.log(ac.bold.blue('--------------------------------------------------'))
+                console.log(ac.bold.blue('               Test Results'))
+                console.log(ac.bold.blue('--------------------------------------------------'))
                 let lines = rt.stdStr.split('\n')
                 for(let ln of lines) {
                     ln = ln.trim()
@@ -38,11 +41,15 @@ export function doTest() {
                         }
                     }
                 }
+                // remove the test file
+                const dtFile = path.resolve('build', '~dotest')
+                fs.unlinkSync(dtFile)
+
             }
         })
         // write the ~dotest file out to signal a test
         const dtFile = path.resolve('build', '~dotest')
-        const contents = 'exit' // disposition; exit after disconnect.  TODO: pull from cli args and implement in test runner.
+        const contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
         fs.writeFileSync(dtFile,contents)
     })
 
