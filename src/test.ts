@@ -7,6 +7,10 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 
+import * as chromedriver from "chromedriver"
+
+
+
 export function doTest() {
     console.log('setting up for test...')
     let p:any
@@ -56,9 +60,19 @@ export function doTest() {
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
     const options = process.argv.slice(3)
-    console.log('options to choose from', options)
+    console.log('options specified', options)
     const appium = options.indexOf('appium') !== -1
-    console.log('we want appium', appium)
+
+    if(appium) {
+        const args = [
+            '--help'
+        ];
+        chromedriver.start(args, true).then((rt:any) => {
+            console.log('chromedriver start resolved ', rt)
+// run your tests
+            chromedriver.stop();
+        })
+    }
 
     console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
     process.exit(0)
