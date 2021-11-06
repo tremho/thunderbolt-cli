@@ -55,7 +55,10 @@ export function doTest() {
     })
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
-    console.log('argv reminder', process.argv)
+    const options = process.argv.slice(3)
+    console.log('options to choose from', options)
+    const appium = options.indexOf('appium') !== -1
+    console.log('we want appium', appium)
 
     console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
     process.exit(0)
