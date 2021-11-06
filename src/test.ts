@@ -10,6 +10,11 @@ import * as ac from 'ansi-colors'
 export function doTest() {
     console.log('setting up for test...')
     let p:any
+
+    console.log('argv reminder', process.argv)
+
+
+
     console.log('running tests...')
     let {projPath, projName, buildFlags} = gatherInfo()
     if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
