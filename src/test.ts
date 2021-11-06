@@ -11,10 +11,6 @@ export function doTest() {
     console.log('setting up for test...')
     let p:any
 
-    console.log('argv reminder', process.argv)
-
-
-
     console.log('running tests...')
     let {projPath, projName, buildFlags} = gatherInfo()
     if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
@@ -58,6 +54,11 @@ export function doTest() {
         fs.writeFileSync(dtFile,contents)
     })
 
+    console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
+    console.log('argv reminder', process.argv)
+
+    console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
+    process.exit(0)
 
     console.log('waiting...')
     // Launch client
