@@ -7,8 +7,9 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 
-import * as chromedriver from "chromedriver"
-
+import {Builder, Options, Capabilities} from "selenium-webdriver"
+import * as chrome from "selenium-webdriver/chrome"
+import {Options as ChromeOptions} from "selenium-webdriver/chrome"
 
 
 export function doTest() {
@@ -63,15 +64,17 @@ export function doTest() {
     console.log('options specified', options)
     const appium = options.indexOf('appium') !== -1
 
+    const pathToOurApp = '.'+path.sep+projName
     if(appium) {
-        const args = [
-            '--help'
-        ];
-        chromedriver.start(args, true).then((rt:any) => {
-            console.log('chromedriver start resolved ', rt)
-// run your tests
-            chromedriver.stop();
-        })
+        const copts = new ChromeOptions()
+        copts.setChromeBinaryPath(pathToOurApp)
+
+        let driver = new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(copts)
+            .build().then(() => {
+                console.log('driver is ready', driver)
+            })
     }
 
     console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
@@ -81,7 +84,7 @@ export function doTest() {
     // Launch client
     return Promise.resolve(p).then(() => {
         setTimeout(() => {
-            executeCommand('.'+path.sep+projName, [], path.join(projPath, 'build'),true).then(()=> {})
+            executeCommand(pathToOurApp, [], path.join(projPath, 'build'),true).then(()=> {})
 
         }, (p !== undefined ? 5000: 1)) // wait 5 seconds if we did a build to allow shell to clear out
         console.log('')
