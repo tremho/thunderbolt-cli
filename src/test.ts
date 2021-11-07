@@ -69,16 +69,21 @@ export function doTest() {
         const copts = new ChromeOptions()
         copts.setChromeBinaryPath(pathToOurApp)
 
+        console.log('for grins, the chromeOptions', copts)
+
         let driver = new Builder()
             .forBrowser('chrome')
             .setChromeOptions(copts)
             .build().then(() => {
                 console.log('driver is ready', driver)
             })
-    }
 
-    console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
-    process.exit(0)
+        console.log('waiting for driver ready', driver)
+
+        console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
+        process.exit(0)
+    }
+    // else... 
 
     console.log('waiting...')
     // Launch client
