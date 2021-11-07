@@ -64,7 +64,7 @@ export function doTest() {
     console.log('options specified', options)
     const appium = options.indexOf('appium') !== -1
 
-    const workingDirectoryOfOurApp = path.join(process.cwd(), 'build', projName)
+    const workingDirectoryOfOurApp = path.join(process.cwd(), 'build')
     const pathToOurApp = path.join(workingDirectoryOfOurApp, projName)
     if(appium) {
         const copts = new ChromeOptions()
