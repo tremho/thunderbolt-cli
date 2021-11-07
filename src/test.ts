@@ -73,6 +73,7 @@ export function doTest() {
 
         return Promise.resolve(p).then(() => {
             setTimeout(() => {
+                console.log("Running under Spectron...")
                 const app = new Application({
                     path: pathToOurApp
                 })
