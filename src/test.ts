@@ -67,6 +67,9 @@ export function doTest() {
 
     const workingDirectoryOfOurApp = path.join(process.cwd(), 'build')
     const pathToOurApp = path.join(workingDirectoryOfOurApp, projName)
+    /*
+     -- ABANDONING --
+
     if(appium) {
         return Promise.resolve(p).then(() => {
             setTimeout(() => {
@@ -102,6 +105,7 @@ export function doTest() {
             console.log('')
         })
     } else {
+     */
 
         console.log('waiting...')
         // Launch client
