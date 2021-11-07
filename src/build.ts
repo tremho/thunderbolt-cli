@@ -255,7 +255,13 @@ function mainAndExec() {
                 script += '#!/bin/bash\n\n'
             }
             script += `${electronExecPath} ${index}\n`
-            fs.writeFileSync(path.join(buildPath, '..', scriptFile), script, {mode: '777'})
+            const exePath = path.resolve(path.join(buildPath, '..', scriptFile))
+            console.log(`Creating executable to ${exePath}`)
+            fs.writeFileSync(exePath, script,  {mode: '777'})
+
+            let verified = fs.existsSync(exePath)
+            console.log('script written: ', verified)
+
         } catch (e) {
             console.error(`failed to create executable ${scriptFile} from ${index} using ${electronExecPath}`)
             throw Error()
