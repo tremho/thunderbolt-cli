@@ -76,6 +76,7 @@ export function doTest() {
                 console.log("Running under Spectron...")
                 const app = new Application({
                     path: pathToOurApp,
+                    cwd: workingDirectoryOfOurApp
                 })
                 console.log("About to call app.start")
                 app.start().then(() => {
