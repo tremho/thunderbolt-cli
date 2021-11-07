@@ -7,7 +7,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 
-import {Builder, Options, Capabilities} from "selenium-webdriver"
+import {Builder, By, Key, until, Options, Capabilities} from "selenium-webdriver"
 import * as chrome from "selenium-webdriver/chrome"
 import {Options as ChromeOptions} from "selenium-webdriver/chrome"
 
@@ -79,17 +79,19 @@ export function doTest() {
 
                 process.chdir(workingDirectoryOfOurApp)
 
-                let builder = new Builder()
-                    .forBrowser('chrome')
-                    .usingServer('localhost:4723')
-                    .setChromeOptions(copts)
-                builder.build().then((driver:any) => {
-                    console.log('driver is ready', driver)
-                }).catch((e:Error) => {
-                    console.error('Driver failed: ', e)
-                })
+                console.log('running example')
+                example()
+                // let builder = new Builder()
+                //     .forBrowser('chrome')
+                //     .usingServer('http://localhost:4723')
+                //     .setChromeOptions(copts)
+                // builder.build().then((driver:any) => {
+                //     console.log('driver is ready', driver)
+                // }).catch((e:Error) => {
+                //     console.error('Driver failed: ', e)
+                // })
 
-                console.log('waiting for driver ready', builder)
+                // console.log('waiting for driver ready', builder)
 
                 console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
 
@@ -108,5 +110,16 @@ export function doTest() {
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
             console.log('')
         })
+    }
+}
+
+async function example() {
+    let driver = await new Builder().forBrowser('chrome').build();
+    try {
+        await driver.get('http://www.google.com/ncr');
+        await driver.findElement(By.name('q')).sendKeys('webdriver', Key.RETURN);
+        await driver.wait(until.titleIs('webdriver - Google Search'), 1000);
+    } finally {
+        await driver.quit();
     }
 }
