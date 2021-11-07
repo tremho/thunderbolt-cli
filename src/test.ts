@@ -67,27 +67,34 @@ export function doTest() {
     const workingDirectoryOfOurApp = path.join(process.cwd(), 'build')
     const pathToOurApp = path.join(workingDirectoryOfOurApp, projName)
     if(appium) {
-        const copts = new ChromeOptions()
-        copts.setChromeBinaryPath(pathToOurApp)
+        return Promise.resolve(p).then(() => {
+            setTimeout(() => {
 
-        console.log('path to our app', pathToOurApp)
+                const copts = new ChromeOptions()
+                copts.setChromeBinaryPath(pathToOurApp)
 
-        console.log('for grins, the chromeOptions', copts)
+                console.log('path to our app', pathToOurApp)
 
-        process.chdir(workingDirectoryOfOurApp)
+                console.log('for grins, the chromeOptions', copts)
 
-        let builder = new Builder()
-            .forBrowser('chrome')
-            .setChromeOptions(copts)
-            builder.build().then((driver:any) => {
-                console.log('driver is ready', driver)
-            }).catch((e:Error) => {
-                console.error('Driver failed: ', e)
-            })
+                process.chdir(workingDirectoryOfOurApp)
 
-        console.log('waiting for driver ready', builder)
+                let builder = new Builder()
+                    .forBrowser('chrome')
+                    .setChromeOptions(copts)
+                builder.build().then((driver:any) => {
+                    console.log('driver is ready', driver)
+                }).catch((e:Error) => {
+                    console.error('Driver failed: ', e)
+                })
 
-        console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
+                console.log('waiting for driver ready', builder)
+
+                console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
+
+            }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
+            console.log('')
+        })
     } else {
 
         console.log('waiting...')
