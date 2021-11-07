@@ -86,6 +86,7 @@ export function doTest() {
                         app.client.getTitle().then((title:string) => {
                             console.log('title reports as ', title)
                             app.stop()
+                            process.exit(0)
                         })
                     })
                 }).catch((e:Error) => {
@@ -104,6 +105,7 @@ export function doTest() {
         return Promise.resolve(p).then(() => {
             setTimeout(() => {
                 executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true).then(() => {
+                    process.exit(0)
                 })
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
