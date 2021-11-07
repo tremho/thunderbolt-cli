@@ -7,17 +7,16 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 
-const Application = require('spectron').Application
+import {Builder, Options, Capabilities} from "selenium-webdriver"
+import * as chrome from "selenium-webdriver/chrome"
+import {Options as ChromeOptions} from "selenium-webdriver/chrome"
 
 
 export function doTest() {
     console.log('setting up for test...')
     let p:any
 
-    const dtFile = path.resolve('build', '~dotest')
-
-
-    console.log('running tests...', process.cwd())
+    console.log('running tests...')
     let {projPath, projName, buildFlags} = gatherInfo()
     if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
@@ -49,14 +48,13 @@ export function doTest() {
                     }
                 }
                 // remove the test file
+                const dtFile = path.resolve('build', '~dotest')
                 fs.unlinkSync(dtFile)
-
-                console.log('test done, will exit')
-                // process.exit(0)
 
             }
         })
         // write the ~dotest file out to signal a test
+        const dtFile = path.resolve('build', '~dotest')
         const contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
         fs.writeFileSync(dtFile,contents)
     })
@@ -66,29 +64,28 @@ export function doTest() {
     console.log('options specified', options)
     const appium = options.indexOf('appium') !== -1
 
-    const workingDirectoryOfOurApp = path.join(process.cwd(), 'build')
+    const workingDirectoryOfOurApp = path.join(process.cwd(), 'build', projName)
     const pathToOurApp = path.join(workingDirectoryOfOurApp, projName)
     if(appium) {
+        const copts = new ChromeOptions()
+        copts.setChromeBinaryPath(pathToOurApp)
 
         console.log('path to our app', pathToOurApp)
 
-        // process.chdir(workingDirectoryOfOurApp)
+        console.log('for grins, the chromeOptions', copts)
 
-        return Promise.resolve(p).then(() => {
-            setTimeout(() => {
-                console.log("Running under Spectron...")
-                const app = new Application({
-                    path: "/Users/sohmert/tbd/jove-test/node_modules/@tremho/jove-desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
-                    args: ['joveAppBack.js'],
-                    cwd: workingDirectoryOfOurApp
-                })
-                console.log("About to call app.start")
-                spectronRunner(app)
+        process.chdir(workingDirectoryOfOurApp)
 
-            }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
-            console.log('')
-        })
+        let driver = new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(copts)
+            .build().then(() => {
+                console.log('driver is ready', driver)
+            })
 
+        console.log('waiting for driver ready', driver)
+
+        console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
     } else {
 
         console.log('waiting...')
@@ -102,26 +99,4 @@ export function doTest() {
             console.log('')
         })
     }
-}
-
-async function waitForRunning(app:any) {
-    return new Promise(resolve => {
-        const it = setInterval(() => {
-            console.log('checking...')
-            if (app.isRunning()) {
-                console.log('RUNNING!')
-                clearInterval(it)
-                resolve(true)
-            }
-        }, 1000)
-    })
-}
-
-async function spectronRunner(app:any) {
-    console.log('spectronRunner top')
-    app.start().catch( (e:Error) => { console.error('Failed to start', e) } ).then((rt:any) => { console.log('APP Start returns', rt)})
-    await waitForRunning(app)
-    console.log('past app start, app reports running')
-    const count = app.client.getWindowCount()
-    console.log('we have a window count of ', count)
 }
