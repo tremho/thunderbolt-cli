@@ -69,13 +69,13 @@ export function doTest() {
 
         console.log('path to our app', pathToOurApp)
 
-        process.chdir(workingDirectoryOfOurApp)
+        // process.chdir(workingDirectoryOfOurApp)
 
         return Promise.resolve(p).then(() => {
             setTimeout(() => {
                 console.log("Running under Spectron...")
                 const app = new Application({
-                    path: pathToOurApp
+                    path: pathToOurApp,
                 })
                 console.log("About to call app.start")
                 app.start().then(() => {
@@ -84,6 +84,7 @@ export function doTest() {
                         console.log('window is visible? ', isVisible)
                         app.client.getTitle().then((title:string) => {
                             console.log('title reports as ', title)
+                            app.stop()
                         })
                     })
                 }).catch((e:Error) => {
