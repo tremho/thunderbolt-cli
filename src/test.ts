@@ -118,7 +118,7 @@ async function waitForRunning(app:any) {
 
 async function spectronRunner(app:any) {
     console.log('spectronRunner top')
-    app.start()
+    app.start().catch( (e:Error) => { console.error('Failed to start', e) } ).then((rt:any) => { console.log('APP Start returns', rt)})
     await waitForRunning(app)
     console.log('past app start, app reports running')
     const count = app.client.getWindowCount()
