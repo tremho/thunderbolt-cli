@@ -81,7 +81,7 @@ export function doTest() {
                     cwd: workingDirectoryOfOurApp
                 })
                 console.log("About to call app.start")
-                app.start().then(() => {
+                    app.start()
                     console.log('Spectron is running...')
                     app.browserWindow.isVisible().then((isVisible:boolean) => {
                         console.log('window is visible? ', isVisible)
@@ -90,9 +90,9 @@ export function doTest() {
                             app.stop()
                         })
                     })
-                }).catch((e:Error) => {
-                    console.error('Spectron failed', e)
-                })
+                // }).catch((e:Error) => {
+                //     console.error('Spectron failed', e)
+                // })
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
             console.log('')
