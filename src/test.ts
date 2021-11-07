@@ -64,10 +64,12 @@ export function doTest() {
     console.log('options specified', options)
     const appium = options.indexOf('appium') !== -1
 
-    const pathToOurApp = '.'+path.sep+projName
+    const pathToOurApp = path.join(projPath, 'build', path.sep+projName)
     if(appium) {
         const copts = new ChromeOptions()
         copts.setChromeBinaryPath(pathToOurApp)
+
+        console.log('path to our app', pathToOurApp)
 
         console.log('for grins, the chromeOptions', copts)
 
@@ -83,7 +85,7 @@ export function doTest() {
         console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
         process.exit(0)
     }
-    // else... 
+    // else...
 
     console.log('waiting...')
     // Launch client
