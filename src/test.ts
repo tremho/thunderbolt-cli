@@ -77,6 +77,7 @@ export function doTest() {
                 const app = new Application({
                     path: pathToOurApp
                 })
+                console.log("About to call app.start")
                 app.start().then(() => {
                     console.log('Spectron is running...')
                     app.browserWindow.isVisible().then((isVisible:boolean) => {
