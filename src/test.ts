@@ -81,19 +81,18 @@ export function doTest() {
                     cwd: workingDirectoryOfOurApp
                 })
                 console.log("About to call app.start")
-                // app.start().then(() => {
-                //     console.log('Spectron is running...')
-                //     app.browserWindow.isVisible().then((isVisible:boolean) => {
-                //         console.log('window is visible? ', isVisible)
-                //         app.client.getTitle().then((title:string) => {
-                //             console.log('title reports as ', title)
-                //             app.stop()
-                //         })
-                //     })
-                // }).catch((e:Error) => {
-                //     console.error('Spectron failed', e)
-                // })
-                // return seleniumPromise
+                app.start().then(() => {
+                    console.log('Spectron is running...')
+                    app.browserWindow.isVisible().then((isVisible:boolean) => {
+                        console.log('window is visible? ', isVisible)
+                        app.client.getTitle().then((title:string) => {
+                            console.log('title reports as ', title)
+                            app.stop()
+                        })
+                    })
+                }).catch((e:Error) => {
+                    console.error('Spectron failed', e)
+                })
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
             console.log('')
