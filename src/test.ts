@@ -79,9 +79,9 @@ export function doTest() {
 
                 process.chdir(workingDirectoryOfOurApp)
 
-                console.log('running example')
-                example().then(()=> {
-                    console.log('Example concludes')
+                console.log('running appDriver')
+                appDriver(copts).then(()=> {
+                    console.log('AppDriver concludes')
                 })
                 // let builder = new Builder()
                 //     .forBrowser('chrome')
@@ -124,4 +124,20 @@ async function example() {
     } finally {
         await driver.quit();
     }
+}
+
+async function appDriver(copts:any) {
+    let driver = await new Builder()
+        .forBrowser('chrome')
+        .setChromeOptions(copts)
+        .build()
+
+    try {
+        let rt = await driver.getCurrentUrl()
+        console.log('currentUrl=', rt)
+    } finally {
+        await driver.quit();
+    }
+
+
 }
