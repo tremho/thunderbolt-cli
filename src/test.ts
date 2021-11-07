@@ -80,7 +80,9 @@ export function doTest() {
                 process.chdir(workingDirectoryOfOurApp)
 
                 console.log('running example')
-                example()
+                example().then(()=> {
+                    console.log('Example concludes')
+                })
                 // let builder = new Builder()
                 //     .forBrowser('chrome')
                 //     .usingServer('http://localhost:4723')
@@ -93,7 +95,7 @@ export function doTest() {
 
                 // console.log('waiting for driver ready', builder)
 
-                console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
+                // console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
             console.log('')
