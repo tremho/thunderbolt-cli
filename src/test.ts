@@ -79,7 +79,8 @@ export function doTest() {
                 console.log("Running under Spectron...")
                 const app = new Application({
                     path: "/Users/sohmert/tbd/jove-test/node_modules/@tremho/jove-desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
-                    args: ['joveAppBack.js']
+                    args: ['joveAppBack.js'],
+                    cwd: workingDirectoryOfOurApp
                 })
                 console.log("About to call app.start")
                 spectronRunner(app)
