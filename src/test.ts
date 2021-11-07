@@ -83,17 +83,16 @@ export function doTest() {
         console.log('waiting for driver ready', driver)
 
         console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
-        process.exit(0)
     }
     // else...
 
-    console.log('waiting...')
-    // Launch client
-    return Promise.resolve(p).then(() => {
-        setTimeout(() => {
-            executeCommand(pathToOurApp, [], path.join(projPath, 'build'),true).then(()=> {})
-
-        }, (p !== undefined ? 5000: 1)) // wait 5 seconds if we did a build to allow shell to clear out
-        console.log('')
-    })
+    // console.log('waiting...')
+    // // Launch client
+    // return Promise.resolve(p).then(() => {
+    //     setTimeout(() => {
+    //         executeCommand(pathToOurApp, [], path.join(projPath, 'build'),true).then(()=> {})
+    //
+    //     }, (p !== undefined ? 5000: 1)) // wait 5 seconds if we did a build to allow shell to clear out
+    //     console.log('')
+    // })
 }
