@@ -81,18 +81,7 @@ export function doTest() {
                     cwd: workingDirectoryOfOurApp
                 })
                 console.log("About to call app.start")
-                    app.start()
-                    console.log('Spectron is running...')
-                    app.browserWindow.isVisible().then((isVisible:boolean) => {
-                        console.log('window is visible? ', isVisible)
-                        app.client.getTitle().then((title:string) => {
-                            console.log('title reports as ', title)
-                            app.stop()
-                        })
-                    })
-                // }).catch((e:Error) => {
-                //     console.error('Spectron failed', e)
-                // })
+                spectronRunner(app)
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
             console.log('')
@@ -111,4 +100,15 @@ export function doTest() {
             console.log('')
         })
     }
+}
+
+async function spectronRunner(app:any) {
+    console.log('spectronRunner top')
+    await app.start()
+    console.log('past app start')
+    if(app.isRunning()) {
+        console.log('app is running')
+    }
+    const count = app.client.getWindowCount()
+    console.log('we have a window count of ', count)
 }
