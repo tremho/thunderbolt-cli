@@ -64,7 +64,8 @@ export function doTest() {
     console.log('options specified', options)
     const appium = options.indexOf('appium') !== -1
 
-    const pathToOurApp = path.join(projPath, 'build', path.sep+projName)
+    const workingDirectoryOfOurApp = path.join('build', projName)
+    const pathToOurApp = path.join(workingDirectoryOfOurApp, projName)
     if(appium) {
         const copts = new ChromeOptions()
         copts.setChromeBinaryPath(pathToOurApp)
@@ -72,6 +73,8 @@ export function doTest() {
         console.log('path to our app', pathToOurApp)
 
         console.log('for grins, the chromeOptions', copts)
+
+        process.chdir(workingDirectoryOfOurApp)
 
         let driver = new Builder()
             .forBrowser('chrome')
@@ -83,16 +86,17 @@ export function doTest() {
         console.log('waiting for driver ready', driver)
 
         console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
-    }
-    // else...
+    } else {
 
-    // console.log('waiting...')
-    // // Launch client
-    // return Promise.resolve(p).then(() => {
-    //     setTimeout(() => {
-    //         executeCommand(pathToOurApp, [], path.join(projPath, 'build'),true).then(()=> {})
-    //
-    //     }, (p !== undefined ? 5000: 1)) // wait 5 seconds if we did a build to allow shell to clear out
-    //     console.log('')
-    // })
+        console.log('waiting...')
+        // Launch client
+        return Promise.resolve(p).then(() => {
+            setTimeout(() => {
+                executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true).then(() => {
+                })
+
+            }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
+            console.log('')
+        })
+    }
 }
