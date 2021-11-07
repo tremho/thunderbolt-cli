@@ -50,7 +50,6 @@ export function doTest() {
                     }
                 }
                 // remove the test file
-                const dtFile = path.resolve('build', '~dotest')
                 fs.unlinkSync(dtFile)
 
             }
@@ -77,16 +76,15 @@ export function doTest() {
 
         process.chdir(workingDirectoryOfOurApp)
 
-        let driver = new Builder()
-            .forBrowser('chrome')
+        let builder = new Builder()
             .setChromeOptions(copts)
-            .build().then(() => {
+            builder.build().then((driver:any) => {
                 console.log('driver is ready', driver)
             }).catch((e:Error) => {
                 console.error('Driver failed: ', e)
             })
 
-        console.log('waiting for driver ready', driver)
+        console.log('waiting for driver ready', builder)
 
         console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
     } else {
