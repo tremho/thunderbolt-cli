@@ -16,6 +16,9 @@ export function doTest() {
     console.log('setting up for test...')
     let p:any
 
+    const dtFile = path.resolve('build', '~dotest')
+
+
     console.log('running tests...', process.cwd())
     let {projPath, projName, buildFlags} = gatherInfo()
     if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
@@ -48,15 +51,11 @@ export function doTest() {
                     }
                 }
                 // remove the test file
-                console.log('removing test signal file', process.cwd())
-                const dtFile = path.resolve('build', '~dotest')
                 fs.unlinkSync(dtFile)
 
             }
         })
         // write the ~dotest file out to signal a test
-        console.log('creating test signal file', process.cwd())
-        const dtFile = path.resolve('build', '~dotest')
         const contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
         fs.writeFileSync(dtFile,contents)
     })
