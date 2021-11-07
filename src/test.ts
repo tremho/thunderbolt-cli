@@ -77,16 +77,17 @@ export function doTest() {
 
         process.chdir(workingDirectoryOfOurApp)
 
-        let driver = new Builder()
+        let seleniumPromise = new Builder()
             .forBrowser('chrome')
             .setChromeOptions(copts)
             .build().then(() => {
-                console.log('driver is ready', driver)
+                console.log('driver is ready')
             })
 
-        console.log('waiting for driver ready', driver)
 
-        console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
+        console.log('waiting for driver ready')
+        return seleniumPromise
+
     } else {
 
         console.log('waiting...')
