@@ -78,7 +78,7 @@ export function doTest() {
             setTimeout(() => {
                 console.log("Running under Spectron...")
                 const app = new Application({
-                    electronPath: "/Users/sohmert/tbd/jove-test/node_modules/@tremho/jove-desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+                    path: "/Users/sohmert/tbd/jove-test/node_modules/@tremho/jove-desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
                     args: ['joveAppBack.js']
                 })
                 console.log("About to call app.start")
