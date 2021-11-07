@@ -102,15 +102,22 @@ export function doTest() {
     }
 }
 
+async function waitForRunning(app:any) {
+    return new Promise(resolve => {
+        const it = setInterval(() => {
+            if (app.isRunning()) {
+                clearInterval(it)
+                resolve(true)
+            }
+        }, 1000)
+    })
+}
+
 async function spectronRunner(app:any) {
     console.log('spectronRunner top')
     app.start()
-    setTimeout(() => {
-            console.log('past app start')
-            if(app.isRunning()) {
-                console.log('app is running')
-            }
-            const count = app.client.getWindowCount()
-            console.log('we have a window count of ', count)
-    }, 1000)
+    await waitForRunning(app)
+    console.log('past app start, app reports running')
+    const count = app.client.getWindowCount()
+    console.log('we have a window count of ', count)
 }
