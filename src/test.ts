@@ -11,7 +11,6 @@ import {Builder, By, Key, until, Options, Capabilities} from "selenium-webdriver
 import * as chrome from "selenium-webdriver/chrome"
 import {Options as ChromeOptions} from "selenium-webdriver/chrome"
 
-
 export function doTest() {
     console.log('setting up for test...')
     let p:any
@@ -51,6 +50,8 @@ export function doTest() {
                 }
                 // remove the test file
                 fs.unlinkSync(dtFile)
+
+                process.exit(rt.code || 0)
 
             }
         })
@@ -138,6 +139,4 @@ async function appDriver(copts:any) {
     } finally {
         await driver.quit();
     }
-
-
 }
