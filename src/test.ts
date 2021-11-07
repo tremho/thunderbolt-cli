@@ -104,11 +104,13 @@ export function doTest() {
 
 async function spectronRunner(app:any) {
     console.log('spectronRunner top')
-    await app.start()
-    console.log('past app start')
-    if(app.isRunning()) {
-        console.log('app is running')
-    }
-    const count = app.client.getWindowCount()
-    console.log('we have a window count of ', count)
+    app.start()
+    setTimeout(() => {
+            console.log('past app start')
+            if(app.isRunning()) {
+                console.log('app is running')
+            }
+            const count = app.client.getWindowCount()
+            console.log('we have a window count of ', count)
+    }, 1000)
 }
