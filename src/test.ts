@@ -107,17 +107,16 @@ export function doTest() {
     } else {
      */
 
-        console.log('waiting...')
-        // Launch client
-        return Promise.resolve(p).then(() => {
-            setTimeout(() => {
-                executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true).then(() => {
-                })
+    console.log('waiting...')
+    // Launch client
+    return Promise.resolve(p).then(() => {
+        setTimeout(() => {
+            executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true).then(() => {
+            })
 
-            }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
-            console.log('')
-        })
-    }
+        }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
+        console.log('')
+    })
 }
 
 async function example() {
