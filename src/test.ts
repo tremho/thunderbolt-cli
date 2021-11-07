@@ -81,6 +81,8 @@ export function doTest() {
             .setChromeOptions(copts)
             .build().then(() => {
                 console.log('driver is ready', driver)
+            }).catch((e:Error) => {
+                console.error('Driver failed: ', e)
             })
 
         console.log('waiting for driver ready', driver)
