@@ -48,6 +48,7 @@ export function doTest() {
                     }
                 }
                 // remove the test file
+                console.log('removing test signal file', process.cwd())
                 const dtFile = path.resolve('build', '~dotest')
                 fs.unlinkSync(dtFile)
 
@@ -74,7 +75,7 @@ export function doTest() {
 
         console.log('for grins, the chromeOptions', copts)
 
-        // process.chdir(workingDirectoryOfOurApp)
+        process.chdir(workingDirectoryOfOurApp)
 
         let driver = new Builder()
             .forBrowser('chrome')
