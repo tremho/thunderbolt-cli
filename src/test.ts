@@ -7,9 +7,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 
-import {Builder, Options, Capabilities} from "selenium-webdriver"
-import * as chrome from "selenium-webdriver/chrome"
-import {Options as ChromeOptions} from "selenium-webdriver/chrome"
+const Application = require('spectron').Application
 
 
 export function doTest() {
@@ -68,26 +66,27 @@ export function doTest() {
     const workingDirectoryOfOurApp = path.join(process.cwd(), 'build')
     const pathToOurApp = path.join(workingDirectoryOfOurApp, projName)
     if(appium) {
-        const copts = new ChromeOptions()
-        copts.setChromeBinaryPath(pathToOurApp)
 
         console.log('path to our app', pathToOurApp)
-
-        console.log('for grins, the chromeOptions', copts)
 
         process.chdir(workingDirectoryOfOurApp)
 
         return Promise.resolve(p).then(() => {
             setTimeout(() => {
-                new Builder()
-                    .forBrowser('chrome')
-                    .setChromeOptions(copts)
-                    .build().then((driver:any) => {
-                        console.log('driver is ready',driver)
+                const app = new Application({
+                    path: pathToOurApp
+                })
+                app.start().then(() => {
+                    console.log('Spectron is running...')
+                    app.browserWindow.isVisible().then((isVisible:boolean) => {
+                        console.log('window is visible? ', isVisible)
+                        app.client.getTitle().then((title:string) => {
+                            console.log('title reports as ', title)
+                        })
                     })
-
-
-                console.log('waiting for driver ready')
+                }).catch((e:Error) => {
+                    console.error('Spectron failed', e)
+                })
                 // return seleniumPromise
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
