@@ -16,7 +16,7 @@ export function doTest() {
     console.log('setting up for test...')
     let p:any
 
-    console.log('running tests...')
+    console.log('running tests...', process.cwd())
     let {projPath, projName, buildFlags} = gatherInfo()
     if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
@@ -55,6 +55,7 @@ export function doTest() {
             }
         })
         // write the ~dotest file out to signal a test
+        console.log('creating test signal file', process.cwd())
         const dtFile = path.resolve('build', '~dotest')
         const contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
         fs.writeFileSync(dtFile,contents)
