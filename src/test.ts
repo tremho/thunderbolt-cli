@@ -77,7 +77,7 @@ export function doTest() {
         process.chdir(workingDirectoryOfOurApp)
 
         let builder = new Builder()
-            .forBrowser('electron')
+            .forBrowser('chrome')
             .setChromeOptions(copts)
             builder.build().then((driver:any) => {
                 console.log('driver is ready', driver)
