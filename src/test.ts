@@ -77,16 +77,22 @@ export function doTest() {
 
         process.chdir(workingDirectoryOfOurApp)
 
-        let seleniumPromise = new Builder()
-            .forBrowser('chrome')
-            .setChromeOptions(copts)
-            .build().then(() => {
-                console.log('driver is ready')
-            })
+        return Promise.resolve(p).then(() => {
+            setTimeout(() => {
+                new Builder()
+                    .forBrowser('chrome')
+                    .setChromeOptions(copts)
+                    .build().then((driver:any) => {
+                        console.log('driver is ready',driver)
+                    })
 
 
-        console.log('waiting for driver ready')
-        return seleniumPromise
+                console.log('waiting for driver ready')
+                // return seleniumPromise
+
+            }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
+            console.log('')
+        })
 
     } else {
 
