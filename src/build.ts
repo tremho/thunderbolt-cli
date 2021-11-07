@@ -75,7 +75,7 @@ function readPackageInfoAtPath(directory:string):any {
 function doWebpackBuild() {
     // console.log('Framework mapped to ', tbBuildSrc)
     return new Promise(resolve => {
-        console.log('packing...')
+        console.log('prepare to pack...')
         const genDir = path.join(projPath, '.gen')
         const srcDir = path.join(projPath, 'src')
         /*
@@ -156,22 +156,23 @@ function doWebpackBuild() {
             }
         }
         // console.log('webpack config = ', wpconf)
+        console.log('webpack...')
         webpack(wpconf).run((err:any, stats:any) => {
-            // console.log('webpack results', err, stats)
+            console.log('webpack process complete')
             if(err) {
                 console.error('Webpack error', err)
             }
-            stats.compilation.errors.forEach((err:any) => {
+            stats?.compilation?.errors?.forEach((err:any) => {
                 console.error(ac.bold.red('Error:'), err.message)
             })
-            stats.compilation.warnings.forEach((warn:any) => {
+            stats?.compilation?.warnings?.forEach((warn:any) => {
                 const msg = warn.message
                 if(msg.indexOf('Module not found') === -1) {
                     console.warn(ac.blue('Warning:'), warn.message)
                 }
             })
 
-            // console.log('webpack stats', stats.toString('summary'))
+            console.log('webpack stats', stats.toString('summary'))
             if(err || stats.hasErrors()) {
                 process.exit(-1)
             }
