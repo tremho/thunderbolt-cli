@@ -51,7 +51,8 @@ export function doTest() {
                 // remove the test file
                 fs.unlinkSync(dtFile)
 
-                process.exit(0)
+                console.log('test done, will exit')
+                // process.exit(0)
 
             }
         })
@@ -105,7 +106,9 @@ export function doTest() {
 async function waitForRunning(app:any) {
     return new Promise(resolve => {
         const it = setInterval(() => {
+            console.log('checking...')
             if (app.isRunning()) {
+                console.log('RUNNING!')
                 clearInterval(it)
                 resolve(true)
             }
