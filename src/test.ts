@@ -81,6 +81,7 @@ export function doTest() {
 
                 let builder = new Builder()
                     .forBrowser('chrome')
+                    .usingServer('localhost:4723')
                     .setChromeOptions(copts)
                 builder.build().then((driver:any) => {
                     console.log('driver is ready', driver)
