@@ -51,6 +51,8 @@ export function doTest() {
                 // remove the test file
                 fs.unlinkSync(dtFile)
 
+                process.exit(0)
+
             }
         })
         // write the ~dotest file out to signal a test
@@ -79,19 +81,18 @@ export function doTest() {
                     cwd: workingDirectoryOfOurApp
                 })
                 console.log("About to call app.start")
-                app.start().then(() => {
-                    console.log('Spectron is running...')
-                    app.browserWindow.isVisible().then((isVisible:boolean) => {
-                        console.log('window is visible? ', isVisible)
-                        app.client.getTitle().then((title:string) => {
-                            console.log('title reports as ', title)
-                            app.stop()
-                            process.exit(0)
-                        })
-                    })
-                }).catch((e:Error) => {
-                    console.error('Spectron failed', e)
-                })
+                // app.start().then(() => {
+                //     console.log('Spectron is running...')
+                //     app.browserWindow.isVisible().then((isVisible:boolean) => {
+                //         console.log('window is visible? ', isVisible)
+                //         app.client.getTitle().then((title:string) => {
+                //             console.log('title reports as ', title)
+                //             app.stop()
+                //         })
+                //     })
+                // }).catch((e:Error) => {
+                //     console.error('Spectron failed', e)
+                // })
                 // return seleniumPromise
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
@@ -105,7 +106,6 @@ export function doTest() {
         return Promise.resolve(p).then(() => {
             setTimeout(() => {
                 executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true).then(() => {
-                    process.exit(0)
                 })
 
             }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
