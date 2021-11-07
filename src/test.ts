@@ -74,7 +74,7 @@ export function doTest() {
 
         console.log('for grins, the chromeOptions', copts)
 
-        process.chdir(workingDirectoryOfOurApp)
+        // process.chdir(workingDirectoryOfOurApp)
 
         let driver = new Builder()
             .forBrowser('chrome')
