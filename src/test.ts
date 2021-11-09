@@ -2,27 +2,42 @@
 import {gatherInfo} from './gatherInfo'
 import {doCheckIsBuildNeeded} from "./makecheck";
 import {doBuild} from "./build"
+import {doNativeScript} from "./exportNS";
 import {executeCommand} from "./execCmd"
 import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
 
-import {Builder, By, Key, until, Options, Capabilities} from "selenium-webdriver"
-import * as chrome from "selenium-webdriver/chrome"
-import {Options as ChromeOptions} from "selenium-webdriver/chrome"
-
 export function doTest() {
     console.log('setting up for test...')
     let p:any
 
-    const dtFile = path.resolve('build', '~dotest')
-
     console.log('running tests...')
     let {projPath, projName, buildFlags} = gatherInfo()
-    if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
+    let nsproject = path.resolve('..', 'nativescript', projName)
+    const options = process.argv.slice(3)
+    let appium = options.indexOf('appium') !== -1
+    let android = options.indexOf('android') !== -1
+    let ios = options.indexOf('ios') !== -1
+    let target = ''
+    let ti = options.indexOf('target')
+    if(ti !== -1) target = options[ti+1]
+    let platform = ''
+    if(android) platform = 'android'
+    else if(ios) platform = 'ios'
+
+    let nativescript = !!platform
+
+    const dtFile = path.resolve('build', '~dotest')
+
+    let nsExists = fs.existsSync(nsproject)
+
+    if(buildFlags.clean || nativescript || doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
-        p = doBuild()
+        p = doBuild().then(() => {
+            return doNativeScript()
+        })
     }
     Promise.resolve(p).then(() => {
         p = executeCommand('npm', ['test']).then((rt:any) => {
@@ -59,22 +74,7 @@ export function doTest() {
     })
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
-    const options = process.argv.slice(3)
     console.log('options specified', options)
-    let appium = options.indexOf('appium') !== -1
-    let android = options.indexOf('android') !== -1
-    let ios = options.indexOf('android') !== -1
-
-
-    let target = ''
-    let ti = options.indexOf('target')
-    if(ti !== -1) target = options[ti+1]
-
-    let platform = ''
-    if(android) platform = 'android'
-    if(ios) platform = 'ios'
-
-    let nativescript = !!platform
 
     let contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
     if(nativescript) {
@@ -118,36 +118,9 @@ function runNativescript(projName:string, platform:string, target:string) {
     }
     let nsproject = path.resolve('..', 'nativescript', projName)
 
-    console.log('running ns from ', nsproject)
+    console.log('running ns '+ args +' from ', nsproject)
     return executeCommand('ns',args, nsproject)
 }
-
-
-async function example() {
-    let driver = await new Builder().forBrowser('chrome').build();
-    try {
-        await driver.get('http://www.google.com/ncr');
-        await driver.findElement(By.name('q')).sendKeys('webdriver', Key.RETURN);
-        await driver.wait(until.titleIs('webdriver - Google Search'), 1000);
-    } finally {
-        await driver.quit();
-    }
-}
-
-async function appDriver(copts:any) {
-    let driver = await new Builder()
-        .forBrowser('chrome')
-        .setChromeOptions(copts)
-        .build()
-
-    try {
-        let rt = await driver.getCurrentUrl()
-        console.log('currentUrl=', rt)
-    } finally {
-        await driver.quit();
-    }
-}
-
 
 function getHostIP() {
 
