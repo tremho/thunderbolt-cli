@@ -29,9 +29,7 @@ export function doTest() {
 
     let nativescript = !!platform
 
-    const dtFile = path.resolve('build', '~dotest')
-
-    let nsExists = fs.existsSync(nsproject)
+    const dtFile = nativescript ? path.resolve(nsproject, 'app', '~dotest') : path.resolve('build', '~dotest')
 
     if(buildFlags.clean || nativescript || doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
