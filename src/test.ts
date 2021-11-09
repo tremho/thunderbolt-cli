@@ -40,7 +40,7 @@ export function doTest() {
     // setTimeout(() => {
         Promise.resolve(p).then(() => {
             console.log('RUNNING TAP TEST SCRIPT (Server)')
-            p = executeCommand('npm', ['test']).then((rt:any) => {
+            p = executeCommand('npm', ['test'],'', true).then((rt:any) => {
                 if(rt.code) {
                     console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
                 } else {
@@ -119,7 +119,7 @@ function runNativescript(projName:string, platform:string, target:string) {
     console.log('   run ns run android --device medium from the nativescript dir now yourself.')
     console.log('_______________________')
     return Promise.resolve()
-    
+
     let args = ['run', platform]
     if(target) {
         args.push('--device')
