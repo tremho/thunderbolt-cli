@@ -6,6 +6,7 @@ import {executeCommand} from "./execCmd"
 import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
+import { networkInterfaces } from 'os'
 
 import {Builder, By, Key, until, Options, Capabilities} from "selenium-webdriver"
 import * as chrome from "selenium-webdriver/chrome"
@@ -55,69 +56,72 @@ export function doTest() {
 
             }
         })
-        // write the ~dotest file out to signal a test
-        const contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
-        fs.writeFileSync(dtFile,contents)
     })
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
     const options = process.argv.slice(3)
     console.log('options specified', options)
-    const appium = options.indexOf('appium') !== -1
+    let appium = options.indexOf('appium') !== -1
+    let android = options.indexOf('android') !== -1
+    let ios = options.indexOf('android') !== -1
+
+
+    let target = ''
+    let ti = options.indexOf('target')
+    if(ti !== -1) target = options[ti+1]
+
+    let platform = ''
+    if(android) platform = 'android'
+    if(ios) platform = 'ios'
+
+    let nativescript = !!platform
+
+    let contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
+    if(nativescript) {
+        // write out host as part of dotest
+        const host = getHostIP()
+        contents += ' host='+host+'\n'
+    }
+    // write the ~dotest file out to signal a test
+    fs.writeFileSync(dtFile,contents)
+
+    // now run the app client we will test against
 
     const workingDirectoryOfOurApp = path.join(process.cwd(), 'build')
     const pathToOurApp = path.join(workingDirectoryOfOurApp, projName)
-    /*
-     -- ABANDONING --
-
-    if(appium) {
-        return Promise.resolve(p).then(() => {
-            setTimeout(() => {
-
-                const copts = new ChromeOptions()
-                copts.setChromeBinaryPath(pathToOurApp)
-
-                console.log('path to our app', pathToOurApp)
-
-                console.log('for grins, the chromeOptions', copts)
-
-                process.chdir(workingDirectoryOfOurApp)
-
-                console.log('running appDriver')
-                appDriver(copts).then(()=> {
-                    console.log('AppDriver concludes')
-                })
-                // let builder = new Builder()
-                //     .forBrowser('chrome')
-                //     .usingServer('http://localhost:4723')
-                //     .setChromeOptions(copts)
-                // builder.build().then((driver:any) => {
-                //     console.log('driver is ready', driver)
-                // }).catch((e:Error) => {
-                //     console.error('Driver failed: ', e)
-                // })
-
-                // console.log('waiting for driver ready', builder)
-
-                // console.log('<<<<<<<<<<<<<<<<<<<<<< That\'s All Folks! >>>>>>>>>>>>>>>>>>>>>>>>>>')
-
-            }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
-            console.log('')
-        })
-    } else {
-     */
 
     console.log('waiting...')
     // Launch client
     return Promise.resolve(p).then(() => {
         setTimeout(() => {
-            executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true).then(() => {
+            if(nativescript) {
+                // launch via ns
+                p  = runNativescript(projName, platform, target)
+            } else {
+                // run the electron app
+                p = executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true)
+            }
+            Promise.resolve(p).then(() => {
+
             })
 
         }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
         console.log('')
     })
 }
+
+function runNativescript(projName:string, platform:string, target:string) {
+    let args = ['run', platform]
+    if(target) {
+        args.push('--device')
+        args.push(target)
+    }
+    let nsproject = path.resolve('..', 'nativescript', projName)
+
+    console.log('running ns from ', nsproject)
+    return executeCommand('ns',args, nsproject)
+}
+
 
 async function example() {
     let driver = await new Builder().forBrowser('chrome').build();
@@ -142,4 +146,33 @@ async function appDriver(copts:any) {
     } finally {
         await driver.quit();
     }
+}
+
+
+function getHostIP() {
+
+    const nets = networkInterfaces()
+    const results = Object.create(null); // Or just '{}', an empty object
+
+    for (const name of Object.keys(nets)) {
+        // @ts-ignore
+        for (const net of nets[name]) {
+            // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+            if (net.family === 'IPv4' && !net.internal) {
+                if (!results[name]) {
+                    results[name] = [];
+                }
+                results[name].push(net.address);
+            }
+        }
+    }
+// console.log('interfaces', results)
+
+    let iface
+    for (let nm of Object.getOwnPropertyNames(results)) {
+        iface = results[nm]
+        break;
+    }
+    const ipAddr = (iface && iface[0]) || 'localhost'
+    return ipAddr
 }
