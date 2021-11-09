@@ -39,6 +39,7 @@ export function doTest() {
     }
     setTimeout(() => {
         Promise.resolve(p).then(() => {
+            console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test']).then((rt:any) => {
                 if(rt.code) {
                     console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
@@ -71,7 +72,7 @@ export function doTest() {
                 }
             })
         })
-    }, nativescript ? 10000 : 1)
+    }, nativescript ? 1 : 1)
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
     console.log('options specified', options)
@@ -116,7 +117,6 @@ function runNativescript(projName:string, platform:string, target:string) {
         args.push('--device')
         args.push(target)
     }
-    args.push('&')
     let nsproject = path.resolve('..', 'nativescript', projName)
 
     console.log('running ns '+ args +' from ', nsproject)
