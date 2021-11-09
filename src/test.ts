@@ -37,7 +37,7 @@ export function doTest() {
             return doNativeScript()
         })
     }
-    // setTimeout(() => {
+    setTimeout(() => {
         Promise.resolve(p).then(() => {
             console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test']).then((rt:any) => {
@@ -72,7 +72,7 @@ export function doTest() {
                 }
             })
         })
-    // }, nativescript ? 1 : 1)
+    }, nativescript ? 100 : 1)
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
     console.log('options specified', options)
