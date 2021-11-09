@@ -72,7 +72,7 @@ export function doTest() {
                 }
             })
         })
-    }, nativescript ? 100 : 1)
+    }, nativescript ? 10000 : 1)
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
     console.log('options specified', options)
