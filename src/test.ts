@@ -116,6 +116,7 @@ function runNativescript(projName:string, platform:string, target:string) {
         args.push('--device')
         args.push(target)
     }
+    args.push('&')
     let nsproject = path.resolve('..', 'nativescript', projName)
 
     console.log('running ns '+ args +' from ', nsproject)
