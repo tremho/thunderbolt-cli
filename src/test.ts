@@ -37,42 +37,46 @@ export function doTest() {
             return doNativeScript()
         })
     }
-    // setTimeout(() => {
+    // TODO: If nativescript, build first
+    if(nativescript) {
         Promise.resolve(p).then(() => {
-            console.log('RUNNING TAP TEST SCRIPT (Server)')
-            p = executeCommand('npm', ['test'],'', true).then((rt:any) => {
-                if(rt.code) {
-                    console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
-                } else {
-                    console.log('\n\n')
-                    console.log(ac.bold.blue('--------------------------------------------------'))
-                    console.log(ac.bold.blue('               Test Results'))
-                    console.log(ac.bold.blue('--------------------------------------------------'))
-                    let lines = rt.stdStr.split('\n')
-                    for(let ln of lines) {
-                        ln = ln.trim()
-                        if(ln.length) {
-                            if (ln.charAt(0) === '>') continue
-                            if (ln.substring(0, 7) === './build') {
-                                console.log(ac.black.italic(ln))
-                            } else if (ln.charAt(0) === '✓') {
-                                console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
-                            } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
-                                console.log(ac.bold.red('    x'), ac.red(ln))
-                            } else {
-                                console.log(ac.bold.black(ln))
-                            }
+            p = buildNativescript(projName, platform)
+        })
+    }
+    Promise.resolve(p).then(() => {
+        console.log('RUNNING TAP TEST SCRIPT (Server)')
+        p = executeCommand('npm', ['test'],'', true).then((rt:any) => {
+            if(rt.code) {
+                console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
+            } else {
+                console.log('\n\n')
+                console.log(ac.bold.blue('--------------------------------------------------'))
+                console.log(ac.bold.blue('               Test Results'))
+                console.log(ac.bold.blue('--------------------------------------------------'))
+                let lines = rt.stdStr.split('\n')
+                for(let ln of lines) {
+                    ln = ln.trim()
+                    if(ln.length) {
+                        if (ln.charAt(0) === '>') continue
+                        if (ln.substring(0, 7) === './build') {
+                            console.log(ac.black.italic(ln))
+                        } else if (ln.charAt(0) === '✓') {
+                            console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
+                        } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
+                            console.log(ac.bold.red('    x'), ac.red(ln))
+                        } else {
+                            console.log(ac.bold.black(ln))
                         }
                     }
-                    // remove the test file
-                    fs.unlinkSync(dtFile)
-
-                    process.exit(rt.code || 0)
-
                 }
-            })
+                // remove the test file
+                fs.unlinkSync(dtFile)
+
+                process.exit(rt.code || 0)
+
+            }
         })
-    // }, nativescript ? 10000 : 1)
+    })
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
     console.log('options specified', options)
@@ -111,23 +115,25 @@ export function doTest() {
     })
 }
 
+function buildNativescript(projName:string, platform:string) {
+    let args = ['build', platform]
+    let nsproject = path.resolve('..', 'nativescript', projName)
+
+    console.log('building ns '+ args.join(' ') +' from ', nsproject)
+    return executeCommand('ns',args, nsproject,true)
+
+}
+
 function runNativescript(projName:string, platform:string, target:string) {
 
-    console.log('_______________________')
-    console.log('        HEY!')
-    console.log('                HEY!')
-    console.log('   run ns run android --device medium from the nativescript dir now yourself.')
-    console.log('_______________________')
-    return Promise.resolve()
-
-    let args = ['run', platform]
+    let args = ['run', platform, '--no-watch']
     if(target) {
         args.push('--device')
         args.push(target)
     }
     let nsproject = path.resolve('..', 'nativescript', projName)
 
-    console.log('running ns '+ args +' from ', nsproject)
+    console.log('running ns '+ args.join(' ') +' from ', nsproject)
     return executeCommand('ns',args, nsproject,true)
 }
 
