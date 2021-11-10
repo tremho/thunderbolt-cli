@@ -39,9 +39,13 @@ export function doTest() {
     }
     // TODO: If nativescript, build first
 
+    console.log('----------------------------')
+    console.log('    if nativescript, build first')
+    console.log('----------------------------')
+
     if(nativescript) {
         p = Promise.resolve(p).then(() => {
-            buildNativescript(projName, platform)
+            return buildNativescript(projName, platform)
         })
     }
     Promise.resolve(p).then(() => {
@@ -121,7 +125,7 @@ function buildNativescript(projName:string, platform:string) {
     let nsproject = path.resolve('..', 'nativescript', projName)
 
     console.log('>>>> Building ns '+ args.join(' ') +' from ', nsproject)
-    return executeCommand('ns',args, nsproject,true)
+    return executeCommand('ns',args, nsproject,false)
 
 }
 
@@ -135,7 +139,7 @@ function runNativescript(projName:string, platform:string, target:string) {
     let nsproject = path.resolve('..', 'nativescript', projName)
 
     console.log('>>>> Running ns '+ args.join(' ') +' from ', nsproject)
-    return executeCommand('ns',args, nsproject,true)
+    return executeCommand('ns',args, nsproject,false)
 }
 
 function getHostIP() {
