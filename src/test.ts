@@ -45,18 +45,19 @@ export function doTest() {
 
      */
 
-    console.log('----------------------------')
-    console.log('    if nativescript, build first')
-    console.log('----------------------------')
-
     if(nativescript) {
         p = Promise.resolve(p).then(() => {
             return buildNativescript(projName, platform)
         })
     }
     Promise.resolve(p).then(() => {
+        if(nativescript) {
+            console.log(ac.bold.green('--------------------------------------------------'))
+            console.log(ac.bold.green('       testing will begin shortly...'))
+            console.log(ac.bold.green('--------------------------------------------------'))
+        }
         setTimeout(()=> {
-            console.log('RUNNING TAP TEST SCRIPT (Server)')
+            // console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
                 if (rt.code) {
                     console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
@@ -88,11 +89,11 @@ export function doTest() {
 
                 }
             })
-        }, 10000)
+        }, nativescript ? 10000 : 1)
     })
 
-    console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
-    console.log('options specified', options)
+    // console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
+    // console.log('options specified', options)
 
     let contents = process.argv.slice(3).join(' ') // disposition (see app-core test handling)
     if(nativescript) {
