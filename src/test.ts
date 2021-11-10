@@ -38,9 +38,10 @@ export function doTest() {
         })
     }
     // TODO: If nativescript, build first
+
     if(nativescript) {
-        Promise.resolve(p).then(() => {
-            p = buildNativescript(projName, platform)
+        p = Promise.resolve(p).then(() => {
+            buildNativescript(projName, platform)
         })
     }
     Promise.resolve(p).then(() => {
@@ -119,7 +120,7 @@ function buildNativescript(projName:string, platform:string) {
     let args = ['build', platform]
     let nsproject = path.resolve('..', 'nativescript', projName)
 
-    console.log('building ns '+ args.join(' ') +' from ', nsproject)
+    console.log('>>>> Building ns '+ args.join(' ') +' from ', nsproject)
     return executeCommand('ns',args, nsproject,true)
 
 }
@@ -133,7 +134,7 @@ function runNativescript(projName:string, platform:string, target:string) {
     }
     let nsproject = path.resolve('..', 'nativescript', projName)
 
-    console.log('running ns '+ args.join(' ') +' from ', nsproject)
+    console.log('>>>> Running ns '+ args.join(' ') +' from ', nsproject)
     return executeCommand('ns',args, nsproject,true)
 }
 
