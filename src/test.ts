@@ -53,7 +53,7 @@ export function doTest() {
     Promise.resolve(p).then(() => {
         if(nativescript) {
             console.log(ac.bold.green('--------------------------------------------------'))
-            console.log(ac.bold.green('       testing will begin shortly...'))
+            console.log(ac.bold.green(`      ${platform} testing will begin shortly...`))
             console.log(ac.bold.green('--------------------------------------------------'))
         }
         setTimeout(()=> {
@@ -155,7 +155,7 @@ function runNativescript(projName:string, platform:string, target:string) {
     }
     let nsproject = path.resolve('..', 'nativescript', projName)
 
-    console.log('>>>> Running ns '+ args.join(' ') +' from ', nsproject)
+    // console.log('>>>> Running ns '+ args.join(' ') +' from ', nsproject)
     return executeCommand('ns',args, nsproject,false)
 }
 
