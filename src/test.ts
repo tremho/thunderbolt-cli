@@ -38,6 +38,12 @@ export function doTest() {
         })
     }
     // TODO: If nativescript, build first
+    /*
+    Discussion:
+    This still doesn't work.
+    Go back to manual launching and try to tease out timing.
+
+     */
 
     console.log('----------------------------')
     console.log('    if nativescript, build first')
@@ -130,6 +136,14 @@ function buildNativescript(projName:string, platform:string) {
 }
 
 function runNativescript(projName:string, platform:string, target:string) {
+
+    // -->> Run it manually until we figure this shit out
+    console.log('_______________________')
+    console.log('        HEY!')
+    console.log('                HEY!')
+    console.log('   run ns run android --device medium from the nativescript dir now yourself.')
+    console.log('_______________________')
+    return Promise.resolve()
 
     let args = ['run', platform, '--no-watch']
     if(target) {
