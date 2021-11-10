@@ -55,38 +55,40 @@ export function doTest() {
         })
     }
     Promise.resolve(p).then(() => {
-        console.log('RUNNING TAP TEST SCRIPT (Server)')
-        p = executeCommand('npm', ['test'],'', true).then((rt:any) => {
-            if(rt.code) {
-                console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
-            } else {
-                console.log('\n\n')
-                console.log(ac.bold.blue('--------------------------------------------------'))
-                console.log(ac.bold.blue('               Test Results'))
-                console.log(ac.bold.blue('--------------------------------------------------'))
-                let lines = rt.stdStr.split('\n')
-                for(let ln of lines) {
-                    ln = ln.trim()
-                    if(ln.length) {
-                        if (ln.charAt(0) === '>') continue
-                        if (ln.substring(0, 7) === './build') {
-                            console.log(ac.black.italic(ln))
-                        } else if (ln.charAt(0) === '✓') {
-                            console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
-                        } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
-                            console.log(ac.bold.red('    x'), ac.red(ln))
-                        } else {
-                            console.log(ac.bold.black(ln))
+        setTimeout(()=> {
+            console.log('RUNNING TAP TEST SCRIPT (Server)')
+            p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
+                if (rt.code) {
+                    console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
+                } else {
+                    console.log('\n\n')
+                    console.log(ac.bold.blue('--------------------------------------------------'))
+                    console.log(ac.bold.blue('               Test Results'))
+                    console.log(ac.bold.blue('--------------------------------------------------'))
+                    let lines = rt.stdStr.split('\n')
+                    for (let ln of lines) {
+                        ln = ln.trim()
+                        if (ln.length) {
+                            if (ln.charAt(0) === '>') continue
+                            if (ln.substring(0, 7) === './build') {
+                                console.log(ac.black.italic(ln))
+                            } else if (ln.charAt(0) === '✓') {
+                                console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
+                            } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
+                                console.log(ac.bold.red('    x'), ac.red(ln))
+                            } else {
+                                console.log(ac.bold.black(ln))
+                            }
                         }
                     }
+                    // remove the test file
+                    fs.unlinkSync(dtFile)
+
+                    process.exit(rt.code || 0)
+
                 }
-                // remove the test file
-                fs.unlinkSync(dtFile)
-
-                process.exit(rt.code || 0)
-
-            }
-        })
+            })
+        }, 10000)
     })
 
     console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
