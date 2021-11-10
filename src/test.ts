@@ -156,7 +156,7 @@ function runNativescript(projName:string, platform:string, target:string) {
     let nsproject = path.resolve('..', 'nativescript', projName)
 
     // console.log('>>>> Running ns '+ args.join(' ') +' from ', nsproject)
-    return executeCommand('ns',args, nsproject,false)
+    return executeCommand('ns',args, nsproject,true)
 }
 
 function getHostIP() {
