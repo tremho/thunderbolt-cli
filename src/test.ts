@@ -46,16 +46,14 @@ export function doTest() {
      */
 
     if(nativescript) {
+        console.log(ac.bold.green('--------------------------------------------------'))
+        console.log(ac.bold.green(`     ${platform} testing will commence shortly...`))
+        console.log(ac.bold.green('--------------------------------------------------'))
         p = Promise.resolve(p).then(() => {
             return buildNativescript(projName, platform)
         })
     }
     Promise.resolve(p).then(() => {
-        if(nativescript) {
-            console.log(ac.bold.green('--------------------------------------------------'))
-            console.log(ac.bold.green('       testing will begin shortly...'))
-            console.log(ac.bold.green('--------------------------------------------------'))
-        }
         setTimeout(()=> {
             // console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
