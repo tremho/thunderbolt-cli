@@ -54,8 +54,8 @@ export function doTest() {
         })
     }
     Promise.resolve(p).then(() => {
-        setTimeout(()=> {
-            // console.log('RUNNING TAP TEST SCRIPT (Server)')
+        // setTimeout(()=> {
+            console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
                 if (rt.code) {
                     console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
@@ -87,7 +87,7 @@ export function doTest() {
 
                 }
             })
-        }, nativescript ? 10000 : 1)
+        // }, nativescript ? 10000 : 1)
     })
 
     // console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
@@ -136,7 +136,7 @@ function buildNativescript(projName:string, platform:string) {
 
 }
 
-function runNativescript(projName:string, platform:string, target:string) {
+function runNativescript(projName:string, platform:string, target:string):Promise<void> {
 
     // -->> Run it manually until we figure this shit out
     // console.log('_______________________')
@@ -146,15 +146,21 @@ function runNativescript(projName:string, platform:string, target:string) {
     // console.log('_______________________')
     // return Promise.resolve()
 
-    let args = ['run', platform, '--no-watch']
-    if(target) {
-        args.push('--device')
-        args.push(target)
-    }
-    let nsproject = path.resolve('..', 'nativescript', projName)
+    return new Promise(resolve => {
+        setTimeout(() => {
+            let args = ['run', platform, '--no-watch']
+            if (target) {
+                args.push('--device')
+                args.push(target)
+            }
+            let nsproject = path.resolve('..', 'nativescript', projName)
 
-    console.log('>>>> Running ns '+ args.join(' ') +' from ', nsproject)
-    return executeCommand('ns',args, nsproject,true)
+            console.log('>>>> Running ns ' + args.join(' ') + ' from ', nsproject)
+            executeCommand('ns', args, nsproject, true).then(() => {
+                resolve()
+            })
+        }, 10000)
+    }
 }
 
 function getHostIP() {
