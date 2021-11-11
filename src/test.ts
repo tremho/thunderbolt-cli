@@ -57,8 +57,9 @@ export function doTest() {
     }
     Promise.resolve(p).then(() => {
         setTimeout(()=> {
-            // console.log('RUNNING TAP TEST SCRIPT (Server)')
+            console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
+                console.log('executeCommand returns')
                 if (rt.code) {
                     console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
                 } else {
