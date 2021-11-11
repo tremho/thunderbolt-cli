@@ -50,13 +50,13 @@ export function doTest() {
             return buildNativescript(projName, platform)
         })
     }
-    if(nativescript) {
-        console.log(ac.bold.green('--------------------------------------------------'))
-        console.log(ac.bold.green(`      ${platform} testing will begin shortly...`))
-        console.log(ac.bold.green('--------------------------------------------------'))
-    }
+    // if(nativescript) {
+    //     console.log(ac.bold.green('--------------------------------------------------'))
+    //     console.log(ac.bold.green(`      ${platform} testing will begin shortly...`))
+    //     console.log(ac.bold.green('--------------------------------------------------'))
+    // }
     Promise.resolve(p).then(() => {
-        setTimeout(()=> {
+        // setTimeout(()=> {
             console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
                 console.log('executeCommand returns')
@@ -90,7 +90,7 @@ export function doTest() {
 
                 }
             })
-        }, nativescript ? 1 : 1)
+        // }, nativescript ? 1 : 1)
     })
 
     // console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
