@@ -160,7 +160,7 @@ function runNativescript(projName:string, platform:string, target:string):Promis
                 resolve()
             })
         }, 10000)
-    }
+    })
 }
 
 function getHostIP() {
