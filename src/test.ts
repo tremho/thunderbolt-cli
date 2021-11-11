@@ -159,7 +159,7 @@ function runNativescript(projName:string, platform:string, target:string):Promis
             executeCommand('ns', args, nsproject, true).then(() => {
                 resolve()
             })
-        }, 10000)
+        }, 1)
     })
 }
 
