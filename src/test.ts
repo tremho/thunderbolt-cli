@@ -50,12 +50,12 @@ export function doTest() {
             return buildNativescript(projName, platform)
         })
     }
+    if(nativescript) {
+        console.log(ac.bold.green('--------------------------------------------------'))
+        console.log(ac.bold.green(`      ${platform} testing will begin shortly...`))
+        console.log(ac.bold.green('--------------------------------------------------'))
+    }
     Promise.resolve(p).then(() => {
-        if(nativescript) {
-            console.log(ac.bold.green('--------------------------------------------------'))
-            console.log(ac.bold.green(`      ${platform} testing will begin shortly...`))
-            console.log(ac.bold.green('--------------------------------------------------'))
-        }
         setTimeout(()=> {
             // console.log('RUNNING TAP TEST SCRIPT (Server)')
             p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
@@ -89,7 +89,7 @@ export function doTest() {
 
                 }
             })
-        }, nativescript ? 15000 : 1)
+        }, nativescript ? 1 : 1)
     })
 
     // console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
@@ -141,12 +141,12 @@ function buildNativescript(projName:string, platform:string) {
 function runNativescript(projName:string, platform:string, target:string) {
 
     // -->> Run it manually until we figure this shit out
-    // console.log('_______________________')
-    // console.log('        HEY!')
-    // console.log('                HEY!')
-    // console.log('   run ns run android --device medium from the nativescript dir now yourself.')
-    // console.log('_______________________')
-    // return Promise.resolve()
+    console.log('_______________________')
+    console.log('        HEY!')
+    console.log('                HEY!')
+    console.log('   run ns run android --device medium from the nativescript dir now yourself.')
+    console.log('_______________________')
+    return Promise.resolve()
 
     let args = ['run', platform, '--no-watch']
     if(target) {
