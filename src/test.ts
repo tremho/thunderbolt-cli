@@ -89,7 +89,7 @@ export function doTest() {
 
                 }
             })
-        }, nativescript ? 5000 : 1)
+        }, nativescript ? 15000 : 1)
     })
 
     // console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
