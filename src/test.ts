@@ -20,9 +20,9 @@ export function doTest() {
     let appium = options.indexOf('appium') !== -1
     let android = options.indexOf('android') !== -1
     let ios = options.indexOf('ios') !== -1
-    let target = ''
-    let ti = options.indexOf('target')
-    if(ti !== -1) target = options[ti+1]
+    let deviceName = ''
+    let ti = options.indexOf('device')
+    if(ti !== -1) deviceName = options[ti+1]
     let platform = ''
     if(android) platform = 'android'
     else if(ios) platform = 'ios'
@@ -112,11 +112,11 @@ export function doTest() {
                   p = runAppiumServer()
                   // start appium target runner script
                   p = p.then(() => {
-                      p = runAppiumTarget(target, nsproject, projName)
+                      p = runAppiumTarget(deviceName, platform, nsproject, projName)
                   })
                 } else {
                     // launch via ns
-                    p = runNativescript(projName, platform, target)
+                    p = runNativescript(projName, platform, deviceName)
                 }
             } else {
                 // run the electron app
@@ -140,7 +140,7 @@ function buildNativescript(projName:string, platform:string) {
 
 }
 
-function runNativescript(projName:string, platform:string, target:string):Promise<void> {
+function runNativescript(projName:string, platform:string, deviceName:string):Promise<void> {
 
     // -->> Run it manually until we figure this shit out
     // console.log('_______________________')
@@ -153,9 +153,9 @@ function runNativescript(projName:string, platform:string, target:string):Promis
     return new Promise(resolve => {
         setTimeout(() => {
             let args = ['run', platform, '--no-watch']
-            if (target) {
+            if (deviceName) {
                 args.push('--device')
-                args.push(target)
+                args.push(deviceName)
             }
             let nsproject = path.resolve('..', 'nativescript', projName)
 
@@ -169,10 +169,10 @@ function runNativescript(projName:string, platform:string, target:string):Promis
 
 function runAppiumServer() {
     console.log(ac.bold.grey.italic('>> Running appium server now...'))
-    executeCommand('appium', [], '', true)
+    executeCommand('appium', [], '', false)
     return new Promise(resolve => {setTimeout(resolve, 2000)})
 }
-function runAppiumTarget(target:string, nsproject:string, projName:string) {
+function runAppiumTarget(deviceName:string, platform:string, nsproject:string, projName:string) {
     console.log(ac.bold('>> starting appium target script...'))
     const wdio = require("webdriverio");
 
@@ -181,12 +181,13 @@ function runAppiumTarget(target:string, nsproject:string, projName:string) {
         path: '/wd/hub',
         port: 4723,
         capabilities: {
+            isHeadless: true,
+            logcatFormat: "brief",
             platformName: "Android",
             platformVersion: "9",
             deviceName: "Android Emulator",
+            avd: "medium",
             app: '',
-            //appPackage: "io.appium.android.apis",
-            //appActivity: ".view.TextFields",
             automationName: "UiAutomator2"
         }
     };
@@ -204,20 +205,57 @@ function runAppiumTarget(target:string, nsproject:string, projName:string) {
         // now, if we're going to do any fancy interop, we do that now
     }
 
-    //app: "/Users/sohmert/tbd/puppet-test-ws/nativescript/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
-    // /Users/sohmert/tbd/nativescript/jove-test/platforms/ios/build/Debug-iphonesimulator/jovetest.app
-    const apkPath = path.resolve(nsproject, 'platforms', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk')
-    const iosname = projName.split('-').join('') + '.app'
-    const iosPath = path.resolve(nsproject, 'platforms', 'ios', 'build', 'Debug-iphonesimulator', iosname)
-    if(opts.capabilities.platformName === "Android") {
-        opts.capabilities.app = apkPath
-    }
-    if(opts.capabilities.platformName === 'iOS') {
-        opts.capabilities.app = iosPath
-    }
-    console.log('constructed opts', opts)
-    return main();
+    getNSDeviceInfo(nsproject, platform, deviceName).then((info:any) => {
+        console.log('found device info for ', platform, deviceName, info)
+        //app: "/Users/sohmert/tbd/puppet-test-ws/nativescript/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
+        // /Users/sohmert/tbd/nativescript/jove-test/platforms/ios/build/Debug-iphonesimulator/jovetest.app
+        const apkPath = path.resolve(nsproject, 'platforms', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk')
+        const iosname = projName.split('-').join('') + '.app'
+        const iosPath = path.resolve(nsproject, 'platforms', 'ios', 'build', 'Debug-iphonesimulator', iosname)
+        if(platform === 'android') {
+            opts.capabilities.platformName === "Android"
+            opts.capabilities.platformVersion = info.platVer
+            opts.capabilities.app = apkPath
+            opts.capabilities.deviceName = "Android Emulator"
+            opts.capabilities.avd = info.id
+            opts.capabilities.automationName = "UiAutomator2"
+        }
+        if(platform === 'ios') {
+            opts.capabilities.platformName === "iOS"
+            opts.capabilities.platformVersion = info.platVer
+            opts.capabilities.app = apkPath
+            opts.capabilities.deviceName = deviceName
+            opts.capabilities.automationName = "XCUITest"
+        }
+        console.log('constructed opts', opts)
+        return main();
+    })
 
+}
+
+async function getNSDeviceInfo(nsproject:string, platform:string, deviceName:string) {
+    const p = executeCommand('ns', ['devices', platform, '--available-devices'], nsproject).then((rt:any)=> {
+        if(rt.code) {
+            console.error(ac.red.bold(`Failed to enumerate available ${platform} device options`), ac.blue(rt.errStr))
+        } else {
+            //│ medium         │ Android  │ 9.0.0   │ emulator-5554     │ medium           │            │
+            const NAME=1, PLAT=2, VER=3, ID=4, NAME2=5
+            let lines = rt.stdStr.split('\n')
+            for(let ln of lines) {
+                const col = ln.split('│')
+                let name = col[NAME].trim()
+                let plat = col[PLAT].trim().toLowerCase()
+                let platVer = col[VER].trim()
+                if(plat === platform && name === deviceName) {
+                    return {
+                        id: col[NAME2].trim() || name,
+                        platVer: platVer
+                    }
+                }
+            }
+        }
+
+    })
 }
 
 function getHostIP() {
