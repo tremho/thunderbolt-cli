@@ -242,6 +242,7 @@ async function getNSDeviceInfo(nsproject:string, platform:string, deviceName:str
             const NAME=1, PLAT=2, VER=3, ID=4, NAME2=5
             let lines = rt.stdStr.split('\n')
             for(let ln of lines) {
+                console.log(ac.green.dim.italic(ln))
                 const col = ln.split('│')
                 let name = col[NAME].trim()
                 let plat = col[PLAT].trim().toLowerCase()
@@ -252,6 +253,7 @@ async function getNSDeviceInfo(nsproject:string, platform:string, deviceName:str
                         platVer: platVer
                     }
                 }
+                console.error(ac.red.bold(`device ${deviceName} not found among available ${platform} device options`))
             }
         }
 
