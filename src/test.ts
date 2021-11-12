@@ -222,7 +222,7 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
         if(platform === 'ios') {
             opts.capabilities.platformName = "iOS"
             opts.capabilities.platformVersion = info.platVer
-            opts.capabilities.app = apkPath
+            opts.capabilities.app = iosPath
             opts.capabilities.deviceName = deviceName
             opts.capabilities.automationName = "XCUITest"
         }
