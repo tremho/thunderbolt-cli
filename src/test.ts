@@ -199,14 +199,13 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
     async function main () {
         const client = await wdio.remote(opts);
 
-        let status = await client.status()
-        console.log('start status', status)
+        // let status = await client.status()
+        // console.log('start status', status)
 
         // now, if we're going to do any fancy interop, we do that now
     }
 
     getNSDeviceInfo(nsproject, platform, deviceName).then((info:any) => {
-        console.log('found device info for ', platform, deviceName, info)
         //app: "/Users/sohmert/tbd/puppet-test-ws/nativescript/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
         // /Users/sohmert/tbd/nativescript/jove-test/platforms/ios/build/Debug-iphonesimulator/jovetest.app
         const apkPath = path.resolve(nsproject, 'platforms', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk')
@@ -227,7 +226,6 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
             opts.capabilities.deviceName = deviceName
             opts.capabilities.automationName = "XCUITest"
         }
-        console.log('constructed opts', opts)
         return main();
     })
 
@@ -241,15 +239,14 @@ async function getNSDeviceInfo(nsproject:string, platform:string, deviceName:str
             //│ medium         │ Android  │ 9.0.0   │ emulator-5554     │ medium           │            │
             const NAME=1, PLAT=2, VER=3, ID=4, NAME2=5
             let lines = rt.stdStr.split('\n')
-            console.log('sanity check lines=', lines)
             for(let ln of lines) {
-                console.log(ac.green.dim.italic(ln))
                 const col = ln.split('│')
                 if(col.length > NAME2) {
                     let name = col[NAME].trim()
                     let plat = col[PLAT].trim().toLowerCase()
                     let platVer = col[VER].trim()
                     if (plat === platform && name === deviceName) {
+                        console.log(ac.green.dim.italic(ln))
                         return {
                             id: col[NAME2].trim() || name,
                             platVer: platVer
