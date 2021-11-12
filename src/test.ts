@@ -41,6 +41,8 @@ export function doTest() {
     }
 
     if(nativescript) {
+        // note: the problem with the timing here is that doBuild and doNativesript (above) do not wait
+        // until all the output is concluded before resolving, so this message appears prematurely.
         p = Promise.resolve(p).then(() => {
             console.log(ac.bold.green('--------------------------------------------------'))
             console.log(ac.bold.green(`     ${platform} testing will commence shortly...`))
@@ -107,15 +109,10 @@ export function doTest() {
             if(nativescript) {
                 if(appium) {
                   // start appium server
-                  p = new Promise(resolve => {
-                      console.log(ac.bgBlack.yellowBright.bold('Start appium server now'))
-                      setTimeout(resolve, 2500)
-                  })
+                  p = runAppiumServer()
+                  // start appium target runner script
                   p = p.then(() => {
-                      p = new Promise(resolve => {
-                          console.log(ac.bgBlue.whiteBright.bold(`Run appium script for ${target}`))
-                          setTimeout(resolve, 2500)
-                      })
+                      p = runAppiumTarget(target, nsproject, projName)
                   })
                 } else {
                     // launch via ns
@@ -168,6 +165,57 @@ function runNativescript(projName:string, platform:string, target:string):Promis
             })
         }, 1)
     })
+}
+
+function runAppiumServer() {
+    return executeCommand('appium', [])
+}
+function runAppiumTarget(target:string, nsproject:string, projName:string) {
+    const wdio = require("webdriverio");
+
+// javascript
+    const opts = {
+        path: '/wd/hub',
+        port: 4723,
+        capabilities: {
+            platformName: "Android",
+            platformVersion: "9",
+            deviceName: "Android Emulator",
+            app: '',
+            //appPackage: "io.appium.android.apis",
+            //appActivity: ".view.TextFields",
+            automationName: "UiAutomator2"
+        }
+    };
+
+    async function delay(ms:number) {
+        return new Promise(resolve => {setTimeout(resolve, ms)})
+    }
+
+    async function main () {
+        const client = await wdio.remote(opts);
+
+        let status = await client.status()
+        console.log('start status', status)
+
+        // now, if we're going to do any fancy interop, we do that now
+    }
+
+    //app: "/Users/sohmert/tbd/puppet-test-ws/nativescript/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
+    // /Users/sohmert/tbd/nativescript/jove-test/platforms/ios/build/Debug-iphonesimulator/jovetest.app
+    const apkPath = path.resolve(nsproject, 'platforms', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk')
+    const iosname = projName.split('-').join('') + '.app'
+    const iosPath = path.resolve(nsproject, 'platforms', 'ios', 'build', 'Debug-iphonesimulator', iosname)
+    if(opts.capabilities.platformName === "Android") {
+        opts.capabilities.app = apkPath
+    }
+    if(opts.capabilities.platformName === 'iOS') {
+        opts.capabilities.app = iosPath
+    }
+
+
+    return main();
+
 }
 
 function getHostIP() {
