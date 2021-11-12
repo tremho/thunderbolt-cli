@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.204",
+  "version": "0.6.9-pre-release.205",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -53,6 +53,7 @@
     "text-spinner": "^0.0.4",
     "ts-loader": "^9.2.5",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
+    "webdriverio": "^7.16.7",
     "webpack": "^5.47.0",
     "xml-js": "^1.6.11"
   },
