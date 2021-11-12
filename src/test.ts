@@ -34,60 +34,53 @@ export function doTest() {
     if(buildFlags.clean || nativescript || doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
         p = doBuild().then(() => {
-            return doNativeScript()
+            if(nativescript) {
+                return doNativeScript()
+            }
         })
     }
-    // TODO: If nativescript, build first
-    /*
-    Discussion:
-    This still doesn't work.
-    Go back to manual launching and try to tease out timing.
-
-     */
 
     if(nativescript) {
-        console.log(ac.bold.green('--------------------------------------------------'))
-        console.log(ac.bold.green(`     ${platform} testing will commence shortly...`))
-        console.log(ac.bold.green('--------------------------------------------------'))
         p = Promise.resolve(p).then(() => {
+            console.log(ac.bold.green('--------------------------------------------------'))
+            console.log(ac.bold.green(`     ${platform} testing will commence shortly...`))
+            console.log(ac.bold.green('--------------------------------------------------'))
             return buildNativescript(projName, platform)
         })
     }
     Promise.resolve(p).then(() => {
-        // setTimeout(()=> {
-            console.log('RUNNING TAP TEST SCRIPT (Server)')
-            p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
-                if (rt.code) {
-                    console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
-                } else {
-                    console.log('\n\n')
-                    console.log(ac.bold.blue('--------------------------------------------------'))
-                    console.log(ac.bold.blue('               Test Results'))
-                    console.log(ac.bold.blue('--------------------------------------------------'))
-                    let lines = rt.stdStr.split('\n')
-                    for (let ln of lines) {
-                        ln = ln.trim()
-                        if (ln.length) {
-                            if (ln.charAt(0) === '>') continue
-                            if (ln.substring(0, 7) === './build') {
-                                console.log(ac.black.italic(ln))
-                            } else if (ln.charAt(0) === '✓') {
-                                console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
-                            } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
-                                console.log(ac.bold.red('    x'), ac.red(ln))
-                            } else {
-                                console.log(ac.bold.black(ln))
-                            }
+        console.log('RUNNING TAP TEST SCRIPT (Server)')
+        p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
+            if (rt.code) {
+                console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
+            } else {
+                console.log('\n\n')
+                console.log(ac.bold.blue('--------------------------------------------------'))
+                console.log(ac.bold.blue('               Test Results'))
+                console.log(ac.bold.blue('--------------------------------------------------'))
+                let lines = rt.stdStr.split('\n')
+                for (let ln of lines) {
+                    ln = ln.trim()
+                    if (ln.length) {
+                        if (ln.charAt(0) === '>') continue
+                        if (ln.substring(0, 7) === './build') {
+                            console.log(ac.black.italic(ln))
+                        } else if (ln.charAt(0) === '✓') {
+                            console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
+                        } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
+                            console.log(ac.bold.red('    x'), ac.red(ln))
+                        } else {
+                            console.log(ac.bold.black(ln))
                         }
                     }
-                    // remove the test file
-                    fs.unlinkSync(dtFile)
-
-                    process.exit(rt.code || 0)
-
                 }
-            })
-        // }, nativescript ? 10000 : 1)
+                // remove the test file
+                fs.unlinkSync(dtFile)
+
+                process.exit(rt.code || 0)
+
+            }
+        })
     })
 
     // console.log('>>>>>>>>>>>Determining how to run test build >>>>>>>>>>>>>>')
@@ -112,14 +105,28 @@ export function doTest() {
     return Promise.resolve(p).then(() => {
         setTimeout(() => {
             if(nativescript) {
-                // launch via ns
-                p  = runNativescript(projName, platform, target)
+                if(appium) {
+                  // start appium server
+                  p = new Promise(resolve => {
+                      console.log(ac.bgBlack.yellowBright.bold('Start appium server now'))
+                      setTimeout(resolve, 2500)
+                  })
+                  p = p.then(() => {
+                      p = new Promise(resolve => {
+                          console.log(ac.bgBlue.whiteBright.bold(`Run appium script for ${target}`))
+                          setTimeout(resolve, 2500)
+                      })
+                  })
+                } else {
+                    // launch via ns
+                    p = runNativescript(projName, platform, target)
+                }
             } else {
                 // run the electron app
                 p = executeCommand(pathToOurApp, [], workingDirectoryOfOurApp, true)
             }
             Promise.resolve(p).then(() => {
-
+                console.log(ac.blue.italic('application launched for testing'))
             })
 
         }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
