@@ -212,7 +212,7 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
         const iosname = projName.split('-').join('') + '.app'
         const iosPath = path.resolve(nsproject, 'platforms', 'ios', 'build', 'Debug-iphonesimulator', iosname)
         if(platform === 'android') {
-            opts.capabilities.platformName === "Android"
+            opts.capabilities.platformName = "Android"
             opts.capabilities.platformVersion = info.platVer
             opts.capabilities.app = apkPath
             opts.capabilities.deviceName = "Android Emulator"
@@ -220,7 +220,7 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
             opts.capabilities.automationName = "UiAutomator2"
         }
         if(platform === 'ios') {
-            opts.capabilities.platformName === "iOS"
+            opts.capabilities.platformName = "iOS"
             opts.capabilities.platformVersion = info.platVer
             opts.capabilities.app = apkPath
             opts.capabilities.deviceName = deviceName
@@ -236,8 +236,9 @@ async function getNSDeviceInfo(nsproject:string, platform:string, deviceName:str
         if(rt.code) {
             console.error(ac.red.bold(`Failed to enumerate available ${platform} device options`), ac.blue(rt.errStr))
         } else {
-            //│ medium         │ Android  │ 9.0.0   │ emulator-5554     │ medium           │            │
-            const NAME=1, PLAT=2, VER=3, ID=4, NAME2=5
+            //│ medium  │ Android  │ 9.0.0   │ emulator-5554     │ medium           │            │
+            //│ medium  │ iOS      │ 15.0    │ C952149A-CA8C-4D6A-9BEF-83E733A5A438 │ C952149A-CA8C-4D6A-9BEF-83E733A5A438 │            │
+            let NAME=1, PLAT=2, VER=3, ID=4, NAME2=5
             let lines = rt.stdStr.split('\n')
             for(let ln of lines) {
                 const col = ln.split('│')
