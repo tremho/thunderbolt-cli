@@ -234,7 +234,7 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
 }
 
 async function getNSDeviceInfo(nsproject:string, platform:string, deviceName:string) {
-    const p = executeCommand('ns', ['devices', platform, '--available-devices'], nsproject).then((rt:any)=> {
+    return executeCommand('ns', ['devices', platform, '--available-devices'], nsproject).then((rt:any)=> {
         if(rt.code) {
             console.error(ac.red.bold(`Failed to enumerate available ${platform} device options`), ac.blue(rt.errStr))
         } else {
