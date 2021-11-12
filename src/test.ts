@@ -170,7 +170,7 @@ function runNativescript(projName:string, platform:string, target:string):Promis
 function runAppiumServer() {
     console.log(ac.bold('>> Running appium server now...'))
     executeCommand('appium', [], '', true)
-    return Promise.resolve()
+    return new Promise(resolve => ()=>{setTimeout(resolve, 2000)})
 }
 function runAppiumTarget(target:string, nsproject:string, projName:string) {
     console.log(ac.bold('>> starting appium target script...'))
