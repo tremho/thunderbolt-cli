@@ -45,7 +45,8 @@ export function doTest() {
         // until all the output is concluded before resolving, so this message appears prematurely.
         p = Promise.resolve(p).then(() => {
             console.log(ac.bold.green('--------------------------------------------------'))
-            console.log(ac.bold.green(`     ${platform} testing will commence shortly...`))
+            console.log(ac.bold.green(` Preparing for ${platform} testing`))
+            console.log(ac.italic.green(` Please be patient...`))
             console.log(ac.bold.green('--------------------------------------------------'))
             return buildNativescript(projName, platform)
         })
@@ -142,13 +143,9 @@ function buildNativescript(projName:string, platform:string) {
 
 function runNativescript(projName:string, platform:string, deviceName:string):Promise<void> {
 
-    // -->> Run it manually until we figure this shit out
-    // console.log('_______________________')
-    // console.log('        HEY!')
-    // console.log('                HEY!')
-    // console.log('   run ns run android --device medium from the nativescript dir now yourself.')
-    // console.log('_______________________')
-    // return Promise.resolve()
+    console.log(ac.bold.green('--------------------------------------------------------------'))
+    console.log(ac.bold.green(`${platform} testing will commence shortly on device ${deviceName}...`))
+    console.log(ac.bold.green('--------------------------------------------------------------'))
 
     return new Promise(resolve => {
         setTimeout(() => {
