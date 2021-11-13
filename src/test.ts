@@ -8,6 +8,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
+import {exec} from "child_process";
 
 export function doTest() {
     console.log('setting up for test...')
@@ -30,6 +31,9 @@ export function doTest() {
     let mi = options.indexOf('match')
     if(mi !== -1) match=options[mi+1]
     if(!match) match = '*'
+
+    console.log('a foolish test only')
+    return executeCommand('echo', ['${MATCH}'], '', true, {MATCH:'Foolish Test'})
 
     let nativescript = !!platform
 
