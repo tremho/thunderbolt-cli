@@ -32,9 +32,6 @@ export function doTest() {
     if(mi !== -1) match=options[mi+1]
     if(!match) match = '*'
 
-    console.log('a foolish test only')
-    return executeCommand('echo', ['${MATCH}'], '', true, {MATCH:'Foolish Test'})
-
     let nativescript = !!platform
 
     const dtFile = nativescript ? path.resolve(nsproject, 'app', '~dotest') : path.resolve('build', '~dotest')
@@ -62,7 +59,7 @@ export function doTest() {
     Promise.resolve(p).then(() => {
         console.log('RUNNING TAP TEST SCRIPT (Server)')
         let matchset = './build/tests/'+match+'.test.js'
-        p = executeCommand('npm', ['test'], '', true, {MATCH: matchset}).then((rt: any) => {
+        p = executeCommand(`MATCH="${matchset}"; npm`, ['test'], '', true, {MATCH: matchset}).then((rt: any) => {
             if (rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
