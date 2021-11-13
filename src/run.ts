@@ -5,14 +5,14 @@ import {executeCommand} from "./execCmd"
 import * as path from 'path'
 
 export function doRun() {
-    console.log('do run...')
+    // console.log('do run...')
     let p:any
     let {projPath, projName, buildFlags} = gatherInfo()
     if(buildFlags.clean || doCheckIsBuildNeeded(projPath, projName)) {
-        console.log('build first...')
+        // console.log('build first...')
         p = doBuild()
     }
-    console.log('waiting...')
+    // console.log('waiting...')
     return Promise.resolve(p).then(() => {
         setTimeout(() => {
             executeCommand('.'+path.sep+projName, [], path.join(projPath, 'build'),true)

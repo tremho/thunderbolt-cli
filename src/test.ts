@@ -14,7 +14,7 @@ export function doTest() {
     console.log('setting up for test...')
     let p:any
 
-    console.log('running tests...')
+    // console.log('running tests...')
     let {projPath, projName, buildFlags} = gatherInfo()
     let nsproject = path.resolve('..', 'nativescript', projName)
     const options = process.argv.slice(3)
@@ -30,7 +30,7 @@ export function doTest() {
     let match= ''
     let mi = options.indexOf('match')
     if(mi !== -1) match=options[mi+1]
-    if(!match) match = '*'
+    if(!match) match = '**/*'
 
     let nativescript = !!platform
 
@@ -57,7 +57,7 @@ export function doTest() {
         })
     }
     Promise.resolve(p).then(() => {
-        console.log('RUNNING TAP TEST SCRIPT (Server)')
+        // console.log('RUNNING TAP TEST SCRIPT (Server)')
         let matchset = './build/tests/'+match+'.test.js'
         p = executeCommand(`MATCH="${matchset}"; npm`, ['test'], '', true, {MATCH: matchset}).then((rt: any) => {
             if (rt.code) {

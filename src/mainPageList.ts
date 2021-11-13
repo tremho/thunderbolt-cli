@@ -38,7 +38,7 @@ $$$PageList$$$
           cm.bindComponent()
         },
         onBeforeUpdate(props, state) {
-          console.log('App Page Context Updating', this.b('navInfo.pageId'))              
+          // console.log('App Page Context Updating', this.b('navInfo.pageId'))              
         }
       }
     </script>

@@ -54,6 +54,6 @@ export function createSMX() {
         console.error(ac.red('Unable to write source map info'))
         throw e
     }
-    console.log('smx-info created')
+    // console.log('smx-info created')
 
 }
