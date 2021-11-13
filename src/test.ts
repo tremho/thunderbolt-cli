@@ -57,8 +57,8 @@ export function doTest() {
     }
     Promise.resolve(p).then(() => {
         console.log('RUNNING TAP TEST SCRIPT (Server)')
-        let matchset = 'MATCH=./build/tests/'+match+'.test.js'
-        p = executeCommand(matchset+' npm', ['test'], '', true).then((rt: any) => {
+        let matchset = './build/tests/'+match+'.test.js'
+        p = executeCommand('npm', ['test'], '', true, {MATCH: matchset}).then((rt: any) => {
             if (rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {

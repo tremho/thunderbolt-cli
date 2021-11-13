@@ -2,7 +2,7 @@
 import {exec} from 'child_process'
 import * as path from 'path'
 
-export function executeCommand(cmd:string, args:any[],  cwd = '', consolePass = false):Promise<any> {
+export function executeCommand(cmd:string, args:any[],  cwd = '', consolePass = false, env:any = {}):Promise<any> {
   const out = {
     stdStr: '',
     errStr: '',
@@ -11,7 +11,11 @@ export function executeCommand(cmd:string, args:any[],  cwd = '', consolePass = 
   return  new Promise(resolve => {
     let cmdstr = cmd + ' ' + args.join(' ')
     // console.log('executing ', cmdstr, 'at', cwd)
-    const proc = exec(cmdstr, {cwd})
+    const opts = {
+      cwd:cwd,
+      env: Object.assign(env, process.env)
+    }
+    const proc = exec(cmdstr, opts)
     if(proc.stdout) proc.stdout.on('data', data => {
       out.stdStr += data.toString()
       if(consolePass) console.log(data.toString().trim())
