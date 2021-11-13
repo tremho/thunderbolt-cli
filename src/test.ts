@@ -26,6 +26,10 @@ export function doTest() {
     let platform = ''
     if(android) platform = 'android'
     else if(ios) platform = 'ios'
+    let match= ''
+    let mi = options.indexOf('match')
+    if(mi !== -1) match=options[mi+1]
+    if(!match) match = '*'
 
     let nativescript = !!platform
 
@@ -53,7 +57,8 @@ export function doTest() {
     }
     Promise.resolve(p).then(() => {
         console.log('RUNNING TAP TEST SCRIPT (Server)')
-        p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
+        let matchset = 'MATCH=./build/tests/'+match+'.test.js'
+        p = executeCommand('npm', [matchset, 'test'], '', true).then((rt: any) => {
             if (rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
