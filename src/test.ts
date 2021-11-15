@@ -9,7 +9,7 @@ import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
 
-import {registerAppiumHandler} from "./appiumWSClient";
+import {registerAppiumHandler, clientAppium} from "./appiumWSClient";
 
 export function doTest() {
     console.log('setting up for test...')
@@ -214,7 +214,7 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
             }
             return Promise.resolve(rt)
         })
-
+        clientAppium('ws://localhost:51610')
     }
 
     getNSDeviceInfo(nsproject, platform, deviceName).then((info:any) => {
