@@ -8,7 +8,8 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
-import {exec} from "child_process";
+
+import {registerAppiumHandler} from "./appiumWSClient";
 
 export function doTest() {
     console.log('setting up for test...')
@@ -202,10 +203,15 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
     async function main () {
         const client = await wdio.remote(opts);
 
-        // let status = await client.status()
-        // console.log('start status', status)
+        registerAppiumHandler((directive:string) => {
+            console.log('Appium sees directive ', directive)
+            let rt:any
+            if(directive === 'screenshot') {
+                rt = client.takeScreenshot()
+            }
+            return Promise.resolve(rt)
+        })
 
-        // now, if we're going to do any fancy interop, we do that now
     }
 
     getNSDeviceInfo(nsproject, platform, deviceName).then((info:any) => {
