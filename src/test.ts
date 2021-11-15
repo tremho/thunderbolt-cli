@@ -206,6 +206,9 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
         registerAppiumHandler((directive:string) => {
             console.log('Appium sees directive ', directive)
             let rt:any
+            if(directive === 'hello') {
+                rt = 'Well, hello to you too!'
+            }
             if(directive === 'screenshot') {
                 rt = client.takeScreenshot()
             }
