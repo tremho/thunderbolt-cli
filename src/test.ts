@@ -203,6 +203,7 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
     async function main () {
         const client = await wdio.remote(opts);
 
+        console.log('registering appium handler')
         registerAppiumHandler((directive:string) => {
             console.log('Appium sees directive ', directive)
             let rt:any
@@ -214,7 +215,10 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
             }
             return Promise.resolve(rt)
         })
-        clientAppium('ws://localhost:51610')
+        console.log('starting appium listening client')
+        clientAppium('ws://localhost:51610').then(() => {
+            console.log('appium client connected, listening to handler')
+        })
     }
 
     getNSDeviceInfo(nsproject, platform, deviceName).then((info:any) => {
