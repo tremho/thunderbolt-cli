@@ -49,10 +49,11 @@ export async function connectClient(service:string):Promise<WSClient> {
 
 let rcount = 1
 let code = 1000
-export function clientAppium(service:string):Promise<number> {
+export function clientAppium(service:string):Promise<void> {
     return new Promise(resolve => {
         // console.log('starting client test')
         connectClient(service).then((client:any) => {
+            console.log('appium client connection made..')
             client.on('close', (data:any) => {
                 if(data.code === 1000) {// normal close
                     // console.log('client closed normally', data.reason)
@@ -76,6 +77,7 @@ export function clientAppium(service:string):Promise<number> {
                     client.send(srep)
                 })
             })
+            resolve()
         })
     })
 }
