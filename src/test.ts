@@ -9,7 +9,7 @@ import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
 
-import {registerAppiumHandler, clientAppium} from "./appiumWSClient";
+// import {registerAppiumHandler, clientAppium} from "./appiumWSClient";
 
 export function doTest() {
     console.log('setting up for test...')
@@ -203,22 +203,22 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
     async function main () {
         const client = await wdio.remote(opts);
 
-        console.log('registering appium handler')
-        registerAppiumHandler((directive:string) => {
-            console.log('Appium sees directive ', directive)
-            let rt:any
-            if(directive === 'hello') {
-                rt = 'Well, hello to you too!'
-            }
-            if(directive === 'screenshot') {
-                rt = client.takeScreenshot()
-            }
-            return Promise.resolve(rt)
-        })
-        console.log('starting appium listening client')
-        clientAppium('ws://localhost:51610').then(() => {
-            console.log('appium client connected, listening to handler')
-        })
+        // console.log('registering appium handler')
+        // registerAppiumHandler((directive:string) => {
+        //     console.log('Appium sees directive ', directive)
+        //     let rt:any
+        //     if(directive === 'hello') {
+        //         rt = 'Well, hello to you too!'
+        //     }
+        //     if(directive === 'screenshot') {
+        //         rt = client.takeScreenshot()
+        //     }
+        //     return Promise.resolve(rt)
+        // })
+        // console.log('starting appium listening client')
+        // clientAppium('ws://localhost:51610').then(() => {
+        //     console.log('appium client connected, listening to handler')
+        // })
     }
 
     getNSDeviceInfo(nsproject, platform, deviceName).then((info:any) => {
