@@ -26,6 +26,10 @@ export function doTest() {
     let platform = ''
     if(android) platform = 'android'
     else if(ios) platform = 'ios'
+    let match= ''
+    let mi = options.indexOf('match')
+    if(mi !== -1) match=options[mi+1]
+    if(!match) match = '**/*'
 
     let nativescript = !!platform
 
@@ -45,14 +49,16 @@ export function doTest() {
         // until all the output is concluded before resolving, so this message appears prematurely.
         p = Promise.resolve(p).then(() => {
             console.log(ac.bold.green('--------------------------------------------------'))
-            console.log(ac.bold.green(`     ${platform} testing will commence shortly...`))
+            console.log(ac.bold.green(` Preparing for ${platform} testing`))
+            console.log(ac.italic.green(` Please be patient...`))
             console.log(ac.bold.green('--------------------------------------------------'))
             return buildNativescript(projName, platform)
         })
     }
     Promise.resolve(p).then(() => {
-        console.log('RUNNING TAP TEST SCRIPT (Server)')
-        p = executeCommand('npm', ['test'], '', true).then((rt: any) => {
+        // console.log('RUNNING TAP TEST SCRIPT (Server)')
+        let matchset = './build/tests/'+match+'.test.js'
+        p = executeCommand(`MATCH="${matchset}"; npm`, ['test'], '', true, {MATCH: matchset}).then((rt: any) => {
             if (rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
