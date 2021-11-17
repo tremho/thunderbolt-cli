@@ -9,11 +9,13 @@ import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
 
+// import {registerAppiumHandler, clientAppium} from "./appiumWSClient";
+
 export function doTest() {
     console.log('setting up for test...')
     let p:any
 
-    console.log('running tests...')
+    // console.log('running tests...')
     let {projPath, projName, buildFlags} = gatherInfo()
     let nsproject = path.resolve('..', 'nativescript', projName)
     const options = process.argv.slice(3)
@@ -148,13 +150,9 @@ function buildNativescript(projName:string, platform:string) {
 
 function runNativescript(projName:string, platform:string, deviceName:string):Promise<void> {
 
-    // -->> Run it manually until we figure this shit out
-    // console.log('_______________________')
-    // console.log('        HEY!')
-    // console.log('                HEY!')
-    // console.log('   run ns run android --device medium from the nativescript dir now yourself.')
-    // console.log('_______________________')
-    // return Promise.resolve()
+    console.log(ac.bold.green('--------------------------------------------------------------'))
+    console.log(ac.bold.green(`${platform} testing will commence shortly on device ${deviceName}...`))
+    console.log(ac.bold.green('--------------------------------------------------------------'))
 
     return new Promise(resolve => {
         setTimeout(() => {
@@ -205,10 +203,22 @@ function runAppiumTarget(deviceName:string, platform:string, nsproject:string, p
     async function main () {
         const client = await wdio.remote(opts);
 
-        // let status = await client.status()
-        // console.log('start status', status)
-
-        // now, if we're going to do any fancy interop, we do that now
+        // console.log('registering appium handler')
+        // registerAppiumHandler((directive:string) => {
+        //     console.log('Appium sees directive ', directive)
+        //     let rt:any
+        //     if(directive === 'hello') {
+        //         rt = 'Well, hello to you too!'
+        //     }
+        //     if(directive === 'screenshot') {
+        //         rt = client.takeScreenshot()
+        //     }
+        //     return Promise.resolve(rt)
+        // })
+        // console.log('starting appium listening client')
+        // clientAppium('ws://localhost:51610').then(() => {
+        //     console.log('appium client connected, listening to handler')
+        // })
     }
 
     getNSDeviceInfo(nsproject, platform, deviceName).then((info:any) => {

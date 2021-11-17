@@ -471,12 +471,12 @@ export function doBuild() {
         }
         if(info.buildFlags.compile) {
             p = npmInstall().then(() => {
-                doWebpackBuild().then(() => {
+                return doWebpackBuild().then(() => {
                     console.log('completing build...')
                     createSMX()
                     copyAssets()
-                    mainAndExec().then(() => {
-                        summary()
+                    return mainAndExec().then(() => {
+                        return summary()
                     })
                 })
             })

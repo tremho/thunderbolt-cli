@@ -60,7 +60,7 @@ export function doNativeScript() {
     console.log(ac.bold('Exporting to a mobile project under Nativescript...'))
     collectInfo()
     readProjPackage()
-    createNSProjectIfNotExist().then(() => {
+    return createNSProjectIfNotExist().then(() => {
         // console.log('copySources')
         copySources()
         // console.log('migrateAppBack')
@@ -77,9 +77,9 @@ export function doNativeScript() {
         // migrate metadata
         metaMigrateNS(path.join(outPath, projName))
         // make icons
-        iconPrepNS(projPath, path.join(outPath, projName)).then(() => {
+        return iconPrepNS(projPath, path.join(outPath, projName)).then(() => {
             // console.log('npm install')
-            npmInstall().then(() => {
+            return npmInstall().then(() => {
                 console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
             })
         })

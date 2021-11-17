@@ -99,9 +99,10 @@ also: on publish run IconPrepElectron to make icon for that side of things.
 
 import * as path from 'path'
 import * as fs from 'fs'
+import * as ac from 'ansi-colors'
 
 export function metaMigrateNS(outPath:string) {
-    console.log('metaMigrateNS...')
+    console.log(ac.dim.italic('metaMigrateNS...'))
     const pkgJson = readPackageJSON()
     let {version, displayName, shortDisplayName, projId} = pkgJson
 
@@ -148,11 +149,11 @@ export function metaMigrateNS(outPath:string) {
     let min = vparts[1] || 0
     let rev = vparts[2] || 0
     let build = vparts[3] || 0
-    console.log('maj,min,rev, build = ', maj, min, rev, build)
+    // console.log('maj,min,rev, build = ', maj, min, rev, build)
     // @ts-ignore
     let avc = maj * 1000000000000 + min * 1000000000 + rev * 1000000 + prc * 1000 + build % 1000
 
-    console.log('avc = ', avc)
+    // console.log('avc = ', avc)
 
     // update the plist items
     updatePListItems(outPath, version, displayName, shortDisplayName)
