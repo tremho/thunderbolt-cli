@@ -47,8 +47,7 @@ export function doTest() {
     }
 
     if(nativescript) {
-        // note: the problem with the timing here is that doBuild and doNativesript (above) do not wait
-        // until all the output is concluded before resolving, so this message appears prematurely.
+
         p = Promise.resolve(p).then(() => {
             console.log(ac.bold.green('--------------------------------------------------'))
             console.log(ac.bold.green(` Preparing for ${platform} testing`))
