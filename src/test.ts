@@ -68,6 +68,7 @@ export function doTest() {
                 console.log(ac.bold.blue('               Test Results'))
                 console.log(ac.bold.blue('--------------------------------------------------'))
                 let lines = rt.stdStr.split('\n')
+                let errCode = rt.code
                 for (let ln of lines) {
                     ln = ln.trim()
                     if (ln.length) {
@@ -77,6 +78,7 @@ export function doTest() {
                         } else if (ln.charAt(0) === '✓') {
                             console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
                         } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
+                            errCode = 1
                             console.log(ac.bold.red('    x'), ac.red(ln))
                         } else {
                             console.log(ac.bold.black(ln))
@@ -86,7 +88,7 @@ export function doTest() {
                 // remove the test file
                 fs.unlinkSync(dtFile)
 
-                process.exit(rt.code || 0)
+                process.exit(errCode)
 
             }
         })
