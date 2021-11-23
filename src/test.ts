@@ -160,6 +160,7 @@ function runNativescript(projName:string, platform:string, deviceName:string, de
         const cmd = debug ? 'debug' : 'run'
         setTimeout(() => {
             let args = [cmd, platform, '--no-watch']
+            if(debug) args.push('--debug-brk')
             if (deviceName) {
                 args.push('--device')
                 args.push(deviceName)
