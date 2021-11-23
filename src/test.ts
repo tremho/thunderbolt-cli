@@ -21,6 +21,7 @@ export function doTest() {
     const options = process.argv.slice(3)
     let appium = options.indexOf('appium') !== -1
     let android = options.indexOf('android') !== -1
+    let debug = options.indexOf('debug') !== -1
     let ios = options.indexOf('ios') !== -1
     let deviceName = ''
     let ti = options.indexOf('device')
@@ -125,7 +126,7 @@ export function doTest() {
                   })
                 } else {
                     // launch via ns
-                    p = runNativescript(projName, platform, deviceName)
+                    p = runNativescript(projName, platform, deviceName, debug)
                 }
             } else {
                 // run the electron app
@@ -149,15 +150,16 @@ function buildNativescript(projName:string, platform:string) {
 
 }
 
-function runNativescript(projName:string, platform:string, deviceName:string):Promise<void> {
+function runNativescript(projName:string, platform:string, deviceName:string, debug:boolean):Promise<void> {
 
     console.log(ac.bold.green('--------------------------------------------------------------'))
     console.log(ac.bold.green(`${platform} testing will commence shortly on device ${deviceName}...`))
     console.log(ac.bold.green('--------------------------------------------------------------'))
 
     return new Promise(resolve => {
+        const cmd = debug ? 'debug' : 'run'
         setTimeout(() => {
-            let args = ['run', platform, '--no-watch']
+            let args = [cmd, platform, '--no-watch']
             if (deviceName) {
                 args.push('--device')
                 args.push(deviceName)
