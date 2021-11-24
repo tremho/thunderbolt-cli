@@ -83,7 +83,7 @@ export function doTest() {
                             const cline = ln.substring(1).trim()
                             if(cline.substring(0,13) === '>remoteTitle:') {
                                 const rttl = cline.substring(14).trim()
-                                console.log(ac.bold.magenta(rttl))
+                                console.log(ac.bold.magenta('  '+rttl))
                             } else {
                                 console.log(ac.bold.green('    ✓'), ac.green(cline))
                             }
