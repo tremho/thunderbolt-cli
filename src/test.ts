@@ -80,7 +80,13 @@ export function doTest() {
                         if (ln.substring(0, 7) === './build') {
                             console.log(ac.black.italic(ln))
                         } else if (ln.charAt(0) === '✓') {
-                            console.log(ac.bold.green('    ✓'), ac.green(ln.substring(1)))
+                            const cline = ln.substring(1).trim()
+                            if(cline.substring(0,13) === '>remoteTitle:') {
+                                const rttl = cline.substring(14).trim()
+                                console.log(ac.bold.magenta(rttl))
+                            } else {
+                                console.log(ac.bold.green('    ✓'), ac.green(cline))
+                            }
                         } else if (isFinite(Number(ln.charAt(0))) && ln.charAt(1) === ')') {
                             errCode = 1
                             console.log(ac.bold.red('    x'), ac.red(ln))
