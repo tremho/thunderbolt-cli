@@ -38,6 +38,9 @@ export function doTest() {
 
     const dtFile = nativescript ? path.resolve(nsproject, 'app', '~dotest') : path.resolve('build', '~dotest')
 
+    const rpath = createCurrentReportFolder(platform)
+    console.log('Report folder created:', rpath)
+
     if(buildFlags.clean || nativescript || doCheckIsBuildNeeded(projPath, projName)) {
         console.log('build first...')
         p = doBuild().then(() => {
@@ -60,7 +63,7 @@ export function doTest() {
     Promise.resolve(p).then(() => {
         // console.log('RUNNING TAP TEST SCRIPT (Server)')
         let matchset = './build/tests/'+match+'.test.js'
-        p = executeCommand(`JOVE_TEST_MATCH="${matchset}"; npm`, ['test'], '', true, {MATCH: matchset}).then((rt: any) => {
+        p = executeCommand(`MATCH="${matchset}"; npm`, ['test'], '', true, {MATCH: matchset}).then((rt: any) => {
             if (rt.code) {
                 console.log(ac.bold.red('Error'), ac.blue(rt.errStr))
             } else {
@@ -308,4 +311,33 @@ function getHostIP() {
     }
     const ipAddr = (iface && iface[0]) || 'localhost'
     return ipAddr
+}
+
+function createCurrentReportFolder(jplat:string) {
+    const month = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+    let dt = new Date()
+    let rplat = 'electron'
+    if(jplat === 'android' || jplat === 'ios') rplat = 'mobile'
+    let nm = `${month[dt.getMonth()]}-${dt.getDate()}`
+    const rootPath = path.resolve('.')
+    let cpth:string = path.join(rootPath, 'report', nm)
+    // console.log("TEST REPORT ROOT PATH", rootPath)
+    if(fs.existsSync(path.join(rootPath, 'package.json'))) {
+        let ordinal = 0
+        let cpth:string = path.join(rootPath, 'report', nm)
+        while (++ordinal) {
+            cpth = path.join(rootPath, 'report', nm, '' + ordinal)
+            if (!fs.existsSync(cpth)) {
+                break;
+            }
+        }
+        const folderPath = path.join(cpth, rplat)
+        fs.mkdirSync(folderPath, {recursive:true})
+        let lnpth = path.join(rootPath, 'report', 'latest')
+        if(fs.existsSync(lnpth)) fs.unlinkSync(lnpth)
+        fs.symlinkSync(folderPath, lnpth)
+        return folderPath
+    } else {
+        console.error('TEST REPORT: Root path not detected at ', rootPath)
+    }
 }
