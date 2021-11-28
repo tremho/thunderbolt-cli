@@ -324,7 +324,17 @@
       background-color: yellow;
     }
   }
+  .LabeledValue {
+    .label {
+      font-weight: bold;
+    }
+    .value {
+      padding-left: 1em;
+    }
+  }
 }
+
+
 
 // experimental, not part of theme definition
 
