@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.313",
+  "version": "0.6.9-pre-release.314",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -16,6 +16,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "mk-template": "rm -f ns-template.tgz && cd ../tbns-template && rm -fr node_modules && tar czf ../thunderbolt-cli/ns-template.tgz ."
   },
+  "files": [
+    "build/**/*",
+    "ns-template.tgz",
+    "index.d.ts"
+  ],
   "keywords": [
     "Jove",
     "framework",
