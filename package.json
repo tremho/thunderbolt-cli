@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.315",
+  "version": "0.6.9-pre-release.316",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -18,8 +18,11 @@
   },
   "files": [
     "build/**/*",
+    "src/**/*",
     "ns-template.tgz",
-    "index.d.ts"
+    "index.d.ts",
+    "README.md",
+    "tsconfig.json"
   ],
   "keywords": [
     "Jove",
