@@ -21,6 +21,9 @@ let nsVersion:string
 
 let outPath:string, appId:string, projName:string, projPath:string, pkgInfo:any, jovePath:string
 let wantClean = false;
+let runCmd = ''
+let platform = ''
+let device = ''
 
 function readCommandOptions() {
     const opts = process.argv.slice(3)
@@ -36,6 +39,13 @@ function readCommandOptions() {
         }
         if(opt === '--clean') {
             wantClean = true;
+        }
+        if(opt === 'run' || opt === 'debug') {
+            runCmd = opt
+            platform = opts[++i]
+        }
+        if(opt === 'device') {
+            device = opts[++i]
         }
         i++
     }
@@ -81,6 +91,18 @@ export function doNativeScript() {
             // console.log('npm install')
             return npmInstall().then(() => {
                 console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
+
+                if(runCmd) {
+                    let opts = []
+                    opts.push(runCmd)
+                    opts.push(platform)
+                    if(device) {
+                        opts.push('--device')
+                        opts.push(device)
+                    }
+                    executeCommand('ns', opts, nsRoot, true)
+                }
+
             })
         })
     })
@@ -184,7 +206,7 @@ function createNSProjectIfNotExist() {
                     console.error(ac.bold.red('Error Finalizing Nativescript export'))
                     console.log(ac.magenta(rt.errStr))
                     process.exit(rt.code)
-                }         
+                }
             })
             // console.log('exporting...')
         }).catch(e => {
