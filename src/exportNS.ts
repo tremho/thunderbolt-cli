@@ -178,7 +178,14 @@ function createNSProjectIfNotExist() {
 
         spinner.start()
         return Promise.resolve(p).then(() => {
-            spinner.stop()
+            executeCommand('npm', ['install'], nsRoot).then((rt:any)=> {
+                spinner.stop()
+                if(rt.code) {
+                    console.error(ac.bold.red('Error Finalizing Nativescript export'))
+                    console.log(ac.magenta(rt.errStr))
+                    process.exit(rt.code)
+                }         
+            })
             // console.log('exporting...')
         }).catch(e => {
             spinner.stop()
