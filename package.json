@@ -1,13 +1,13 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.314",
+  "version": "0.6.9-pre-release.315",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
     "jove": "build/jove.js"
   },
   "scripts": {
-    "prepublish": "rm -fr build && npm run build && npm run mk-template",
+    "prepublish": "rm -fr build && npm run build && if [ -e ../tbns-template ]; then npm run mk-template; fi",
     "clean": "rm -fr build node_modules && npm install",
     "build": "run-script-os",
     "check-cd": "chromedriver --version",
