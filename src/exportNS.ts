@@ -150,8 +150,9 @@ function createNSProjectIfNotExist() {
 
         let p
         if(!existing) {
+            let templatePath = path.resolve(projPath, 'node_modules', '@tremho', 'jove-cli','ns-template.tgz')
             console.log(ac.bold.green('Creating new nativescript project export at '+nsRoot))
-            p =  ns(`create ${projName} --appid ${appId} --template @tremho/jove-app-template --path ${outPath}`).then(ret => {
+            p =  ns(`create ${projName} --appid ${appId} --template ${templatePath} --path ${outPath}`).then(ret => {
                 if(ret.retcode) {
                     console.log(ac.bold.red('Error') + ': Unable to create Nativescript export')
                     console.log(ret.errStr || ret.stdStr)
