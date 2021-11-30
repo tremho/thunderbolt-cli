@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.319",
+  "version": "0.6.9-pre-release.320",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -8,7 +8,9 @@
   },
   "scripts": {
     "prepublish": "rm -fr build && npm run build && npm run indev",
-    "clean": "rm -fr build node_modules && npm install",
+    "clean": "run-script-os",
+    "clean:windows": "Remove-Item -LiteralPath \".\\build\" -Force -Recurse && Remove-Item -LiteralPath \".\\node_modules\" -Force -Recurse && npm install",
+    "clean:nix": "rm -fr build node_modules && npm install",
     "build": "run-script-os",
     "check-cd": "chromedriver --version",
     "build:windows": "tsc",
