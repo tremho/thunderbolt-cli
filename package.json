@@ -1,18 +1,14 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.321",
+  "version": "0.6.9-pre-release.322",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
     "jove": "build/jove.js"
   },
   "scripts": {
-    "prepublish": "run-script-os",
-    "prepublish:windows": "Remove-Item -LiteralPath \".\\build\" -Force -Recurse && npm run build && npm run indev",
-    "prepublish:nix": "rm -fr build && npm run build && npm run indev",
-    "clean": "run-script-os",
-    "clean:windows": "Remove-Item -LiteralPath \".\\build\" -Force -Recurse && Remove-Item -LiteralPath \".\\node_modules\" -Force -Recurse && npm install",
-    "clean:nix": "rm -fr build node_modules && npm install",
+    "prepublish": "rimraf build && npm run build && npm run indev",
+    "clean": "rimraf build && rimraf node_modules && npm install",
     "build": "run-script-os",
     "check-cd": "chromedriver --version",
     "build:windows": "tsc",
@@ -74,6 +70,7 @@
     "@types/node": "^16.4.12",
     "@types/selenium-webdriver": "^4.0.16",
     "@types/ws": "^8.2.0",
+    "rimraf": "^3.0.2",
     "run-script-os": "^1.1.6"
   }
 }
