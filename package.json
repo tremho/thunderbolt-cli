@@ -1,19 +1,22 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.318",
+  "version": "0.6.9-pre-release.319",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
     "jove": "build/jove.js"
   },
   "scripts": {
-    "prepublish": "rm -fr build && npm run build && if [ -e ../tbns-template ]; then npm run mk-template; fi",
+    "prepublish": "rm -fr build && npm run build && npm run indev",
     "clean": "rm -fr build node_modules && npm install",
     "build": "run-script-os",
     "check-cd": "chromedriver --version",
     "build:windows": "tsc",
     "build:nix": "tsc && chmod +x build/jove.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "indev": "run-script-os",
+    "indev:nix": "if [ -e ../tbns-template ]; then npm run mk-template; fi",
+    "indev:windows": "echo ",
     "mk-template": "rm -f ns-template.tgz && cd ../tbns-template && rm -fr node_modules && tar czf ../thunderbolt-cli/ns-template.tgz ."
   },
   "files": [
