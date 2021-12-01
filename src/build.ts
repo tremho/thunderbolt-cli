@@ -155,7 +155,7 @@ function doWebpackBuild() {
                 ]
             }
         }
-        // console.log('webpack config = ', wpconf)
+        console.log('webpack config = ', wpconf)
         console.log('webpack...')
         webpack(wpconf).run((err:any, stats:any) => {
             console.log('webpack process complete')
