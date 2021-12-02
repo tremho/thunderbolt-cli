@@ -306,7 +306,10 @@ export function pageStart(app:any) {
 
 function checkGH() {
     return executeCommand('gh', ['--version']).then((rt:any) => {
-        return rt.code === 0
+        if(rt.code) {
+            console.error(ac.dim.red.italic('gh not not found '+rt.code))
+        }
+        return true
     })
 }
 
