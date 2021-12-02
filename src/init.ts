@@ -4,6 +4,7 @@ import path from 'path'
 import {executeCommand} from "./execCmd";
 import {hyphenate} from "./tbFiles/CaseUtils"
 import {shortFromDisplay} from "./tbFiles/MetadataMover"
+import is from "@sindresorhus/is";
 
 const readlineSync = require("readline-sync")
 
@@ -370,72 +371,29 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                         console.error(ac.red('  git add failed with code ' + rt.code))
                         return resolve()
                     }
-                    gitName().then((author:string)=> {
-                        makeRepoAtGitHub(repoName, author, isPrivate).then((d:any) => {
-                            const origin = d.clone_url || 'https://github.com/'+author+'/'+repoName+'.git'
-                            executeCommand('git', ['remote', 'add', 'origin', origin]).then((rt:any) => {
-                                if (rt.code) {
-                                    console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                                    console.error(ac.red('  git remote add origin failed with code ' + rt.code))
-                                    return resolve()
-                                }
-                                executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt:any)=> {
-                                    if (rt.code) {
-                                        console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                                        console.error(ac.red('  git push failed with code ' + rt.code))
-                                        return resolve()
-                                    }
+                    makeRepoAtGitHub(repoName, isPrivate).then((d:any) => {
+                        executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt:any)=> {
+                            if (rt.code) {
+                                console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                                console.error(ac.red('  git push failed with code ' + rt.code))
+                                return resolve()
+                            }
 
-                                })
-                            })
-                            resolve()
                         })
+                        resolve()
                     })
                 })
             })
         })
     })
 }
-function makeRepoAtGitHub(repoName:string, user:string, isPrivate:boolean) {
-    const https = require('https')
 
-    const data = JSON.stringify({
-        name: repoName,
-        private: isPrivate
-    })
+function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
 
-    const options = {
-        hostname: 'api.github.com',
-        port: 443,
-        path: '/' + user + '/repos',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        }
-    }
+    let desc = pkgJson.description || `Jove app ${pkgJson.displayName}`
+    let lic = pkgJson.license || 'UNLICENSED'
+    let access = isPrivate ? '--private' : '--public'
 
-    return new Promise(resolve => {
+    return executeCommand('gh', ['repo', 'create', repoName, '-d', desc, '-l', lic, access], '', true)
 
-        const req = https.request(options, (res: any) => {
-            console.log(`statusCode: ${res.statusCode}`)
-
-            res.on('data', (d: any) => {
-                if(d) d = d.toString()
-                try {
-                    d = JSON.parse(d)
-                } catch(e) {}
-                console.log('repo creation request returns:\n', d)
-                resolve(d)
-            })
-        })
-
-        req.on('error', (error: any) => {
-            console.error(error)
-            resolve('')
-        })
-
-        req.write(data)
-        req.end()
-    })
 }
