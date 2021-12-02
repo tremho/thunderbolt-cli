@@ -23,7 +23,7 @@ export async function doInit(args:string[]) {
     let dirName = args[0] || ''
     if(dirName) {
         dirPath = path.resolve(dirName)
-        console.log('go to or make ', dirPath)
+        console.log('>> go to or make ', dirPath)
         if ( fs.existsSync(dirPath) ) {
             process.chdir(dirPath)
             if(!readlineSync.keyInYN('init a Jove project at '+dirPath)) {
@@ -400,6 +400,6 @@ function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
     let access = isPrivate ? '--private' : '--public'
 
     console.log('>> ...creating GitHub repository '+repoName)
-    return executeCommand('gh', ['repo', 'create', repoName, access, '--description', desc, '--license', lic], '', true)
+    return executeCommand('gh', ['repo', 'create', repoName, access, '--description', '"'+desc+'"', '--license', lic], '', true)
 
 }
