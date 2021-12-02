@@ -421,6 +421,10 @@ function makeRepoAtGitHub(repoName:string, user:string, isPrivate:boolean) {
             console.log(`statusCode: ${res.statusCode}`)
 
             res.on('data', (d: any) => {
+                if(d) d = d.toString()
+                try {
+                    d = JSON.parse(d)
+                } catch(e) {}
                 console.log('repo creation request returns:\n', d)
                 resolve(d)
             })
