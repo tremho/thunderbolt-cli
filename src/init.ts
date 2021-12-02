@@ -13,7 +13,7 @@ const spinner = require('text-spinner')({
     prefix: '\x1B[10G'
 })
 
-let dirPath
+let dirPath:string
 let pkgJson:any = {}
 
 let repoName: string
@@ -78,7 +78,9 @@ export async function doInit(args:string[]) {
         } else {
             let p
             if(repoName) {
+                console.log(">> going to make repo named", repoName)
                 p = checkGH().then((haveGH:boolean) => {
+                    console.log('>> haveGH', haveGH)
                     if(!haveGH) {
                         console.error(ac.red.bold('Unable to create repository -- gh command is not available'))
                         console.log(ac.blue('please visit https://cli.github.com and install this GitHub command line utility to allow this feature in the future'))
@@ -89,7 +91,9 @@ export async function doInit(args:string[]) {
                 })
             }
             Promise.resolve(p).then(() => {
+                console.log(">> all that is done, and here we are...")
                 console.log(ac.green.bold(`${pkgJson.displayName} is ready`))
+                console.log(ac.blue("go to the directory")+' '+ac.gray(dirPath))
                 console.log(ac.blue("type jove run to run the empty stub project"))
                 console.log(ac.gray('then add your own code to complete the app'))
             })
@@ -317,7 +321,10 @@ function checkGH() {
 function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void> {
     return new Promise(resolve => {
 
+        console.log(">> makeProjectRepository...")
+
         executeCommand('git', ['init']).then((rt:any) => {
+            console.log('git init returns', rt.code)
             if(rt.code) {
                 console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
                 console.error(ac.red('  git init failed with code '+rt.code))
@@ -344,6 +351,7 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                     'report/dec-*\n' +
                     'report/latest'
 
+                console.log(">> Writing .gitignore")
                 fs.writeFileSync('.gitignore', gitignore)
 
                 let readme = `# ${pkgJson.displayName}\n` +
@@ -352,6 +360,7 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                     `${pkgJson.copyright}\n` +
                     `${pkgJson.license}\n`
 
+                console.log(">> Writing README.md")
                 fs.writeFileSync('README.md', readme)
             }
             catch(e:any) {
@@ -359,29 +368,25 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                 console.error(ac.red('  failure to write .gitignore and/or README.md files '+e.toString()))
                 return resolve()
             }
+            console.log(">> Adding all files")
             executeCommand('git', ['add', '.']).then((rt:any) => {
+                console.log(">> return is", rt.code)
                 if (rt.code) {
                     console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
                     console.error(ac.red('  git add failed with code ' + rt.code))
                     return resolve()
                 }
-                executeCommand('git', ['add', '.']).then((rt: any) => {
-                    if (rt.code) {
-                        console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                        console.error(ac.red('  git add failed with code ' + rt.code))
-                        return resolve()
-                    }
-                    makeRepoAtGitHub(repoName, isPrivate).then((d:any) => {
-                        executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt:any)=> {
-                            if (rt.code) {
-                                console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                                console.error(ac.red('  git push failed with code ' + rt.code))
-                                return resolve()
-                            }
+                console.log(">> making repo at github")
+                makeRepoAtGitHub(repoName, isPrivate).then((d:any) => {
+                    executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt:any)=> {
+                        if (rt.code) {
+                            console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                            console.error(ac.red('  git push failed with code ' + rt.code))
+                            return resolve()
+                        }
 
-                        })
-                        resolve()
                     })
+                    resolve()
                 })
             })
         })
@@ -394,6 +399,7 @@ function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
     let lic = pkgJson.license || 'UNLICENSED'
     let access = isPrivate ? '--private' : '--public'
 
-    return executeCommand('gh', ['repo', 'create', repoName, '-d', desc, '-l', lic, access], '', true)
+    console.log('>> ...creating GitHub repository '+repoName)
+    return executeCommand('gh', ['repo', 'create', repoName, access, '--description', desc, '--license', lic], '', true)
 
 }
