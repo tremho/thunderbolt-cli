@@ -15,6 +15,9 @@ const spinner = require('text-spinner')({
 let dirPath
 let pkgJson:any = {}
 
+let repoName: string
+let isRepoPrivate:any // boolean
+
 export async function doInit(args:string[]) {
     let dirName = args[0] || ''
     if(dirName) {
@@ -72,9 +75,23 @@ export async function doInit(args:string[]) {
             console.error('while...')
             console.error(ac.green.dim(rt.stdStr))
         } else {
-            console.log(ac.green.bold(`${pkgJson.displayName} is ready`))
-            console.log(ac.blue("type jove run to run the empty stub project"))
-            console.log(ac.gray('then add your own code to complete the app'))
+            let p
+            if(repoName) {
+                p = checkGH().then((haveGH:boolean) => {
+                    if(!haveGH) {
+                        console.error(ac.red.bold('Unable to create repository -- gh command is not available'))
+                        console.log(ac.blue('please visit https://cli.github.com and install this GitHub command line utility to allow this feature in the future'))
+                        console.log(ac.green('for this project, please create the repository on GitHub and add the files manually'))
+                        return;
+                    }
+                    return makeProjectRepository(repoName, isRepoPrivate)
+                })
+            }
+            Promise.resolve(p).then(() => {
+                console.log(ac.green.bold(`${pkgJson.displayName} is ready`))
+                console.log(ac.blue("type jove run to run the empty stub project"))
+                console.log(ac.gray('then add your own code to complete the app'))
+            })
         }
     })
 
@@ -116,6 +133,18 @@ async function createPackageJSON(oldPkg:any) {
     let copyright = ask('Enter any copyright information (about box)', 'copyright', oldPkg.copyright || defCopy)
     let license = ask('Enter a license type SPDX code (e.g. MIT)', 'license', oldPkg.licence || 'UNLICENSED')
 
+    if(gitAuthor) {
+        let makeRepo = ask(`Create a GitHub repository for this project under user ${gitAuthor}?`, 'y/n', 'yes')
+        makeRepo = makeRepo.toLowerCase()
+        makeRepo = (makeRepo === 'y' || makeRepo === 'yes')
+        if(makeRepo) {
+            repoName = ask(`Name for the repository`, `repo name`, name)
+            isRepoPrivate = ask('Is this a private repository?', 'y/n', 'no')
+            isRepoPrivate = isRepoPrivate.toLowerCase()
+            isRepoPrivate = (isRepoPrivate === 'y' || isRepoPrivate === 'yes')
+        }
+    }
+
 
     // TODO: keep jove versions named here in sync with tbns-template also....
 
@@ -131,7 +160,10 @@ async function createPackageJSON(oldPkg:any) {
         backMain: oldPkg.backMain || 'src/joveAppBack.ts',
         frontMain: oldPkg.frontMain || 'src/joveAppFront.ts',
         scripts: {
-            postinstall: "npm run initDesktop && npm run initCli",
+            postinstall: "npm run initDesktop && npm run initCli && npm run tscinst && mkdir -p src/assets; mkdir -p src/scss",
+            tscinst: "run-script-os",
+            "tscinst:nix": "which tsc || npm install -g typescript",
+            "tscinst:windows": "where.exe tsc || npm install -g typescript",
             initDesktop: "cd node_modules/@tremho/jove-desktop && npm install && cd buildPack && npm install",
             initCli: "cd node_modules/@tremho/jove-cli && npm install",
             test: "echo \"Error: no test specified\" && exit 1"
@@ -147,6 +179,7 @@ async function createPackageJSON(oldPkg:any) {
             "@tremho/jove-cli": "^0.6.9-pre-release",
             "electron-builder": "^22.11.7",
             "readline-sync": "^1.4.10",
+            "run-script-os": "^1.1.6",
             "typescript": "^4.3.5",
             "webpack": "^4.46.0"
         }
@@ -271,3 +304,131 @@ export function pageStart(app:any) {
     fs.writeFileSync('src/pages/main-page.ts', logic)
 }
 
+function checkGH() {
+    return executeCommand('gh', ['--version']).then((rt:any) => {
+        return rt.code === 0
+    })
+}
+
+function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void> {
+    return new Promise(resolve => {
+
+        executeCommand('git', ['init']).then((rt:any) => {
+            if(rt.code) {
+                console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                console.error(ac.red('  git init failed with code '+rt.code))
+                return resolve()
+            }
+            try {
+                let gitignore = '.gen\n' +
+                    'build/\n' +
+                    'node_modules/\n' +
+                    'package-lock.json\n' +
+                    '.nyc_output\n' +
+                    '**/.DS_Store\n' +
+                    'report/jan-*\n' +
+                    'report/feb-*\n' +
+                    'report/mar-*\n' +
+                    'report/apr-*\n' +
+                    'report/may-*\n' +
+                    'report/jun-*\n' +
+                    'report/jul-*\n' +
+                    'report/aug-*\n' +
+                    'report/sep-*\n' +
+                    'report/oct-*\n' +
+                    'report/nov-*\n' +
+                    'report/dec-*\n' +
+                    'report/latest'
+
+                fs.writeFileSync('.gitignore', gitignore)
+
+                let readme = `# ${pkgJson.displayName}\n` +
+                    `a [Jove](https://tremho.com) creation by ${pkgJson.author}\n\n ` +
+                    `${pkgJson.description}\n` +
+                    `${pkgJson.copyright}\n` +
+                    `${pkgJson.license}\n`
+
+                fs.writeFileSync('README.md', readme)
+            }
+            catch(e:any) {
+                console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                console.error(ac.red('  failure to write .gitignore and/or README.md files '+e.toString()))
+                return resolve()
+            }
+            executeCommand('git', ['add', '.']).then((rt:any) => {
+                if (rt.code) {
+                    console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                    console.error(ac.red('  git add failed with code ' + rt.code))
+                    return resolve()
+                }
+                executeCommand('git', ['add', '.']).then((rt: any) => {
+                    if (rt.code) {
+                        console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                        console.error(ac.red('  git add failed with code ' + rt.code))
+                        return resolve()
+                    }
+                    gitName().then((author:string)=> {
+                        makeRepoAtGitHub(repoName, author, isPrivate).then((d:any) => {
+                            const origin = d.clone_url || 'https://github.com/'+author+'/'+repoName+'.git'
+                            executeCommand('git', ['remote', 'add', 'origin', origin]).then((rt:any) => {
+                                if (rt.code) {
+                                    console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                                    console.error(ac.red('  git remote add origin failed with code ' + rt.code))
+                                    return resolve()
+                                }
+                                executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt:any)=> {
+                                    if (rt.code) {
+                                        console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                                        console.error(ac.red('  git push failed with code ' + rt.code))
+                                        return resolve()
+                                    }
+
+                                })
+                            })
+                            resolve()
+                        })
+                    })
+                })
+            })
+        })
+    })
+}
+function makeRepoAtGitHub(repoName:string, user:string, isPrivate:boolean) {
+    const https = require('https')
+
+    const data = JSON.stringify({
+        name: repoName,
+        private: isPrivate
+    })
+
+    const options = {
+        hostname: 'api.github.com',
+        port: 443,
+        path: '/' + user + '/repos',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length
+        }
+    }
+
+    return new Promise(resolve => {
+
+        const req = https.request(options, (res: any) => {
+            console.log(`statusCode: ${res.statusCode}`)
+
+            res.on('data', (d: any) => {
+                console.log('repo creation request returns:\n', d)
+                resolve(d)
+            })
+        })
+
+        req.on('error', (error: any) => {
+            console.error(error)
+            resolve('')
+        })
+
+        req.write(data)
+        req.end()
+    })
+}
