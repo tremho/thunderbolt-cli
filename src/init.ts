@@ -425,9 +425,12 @@ async function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
     return executeCommand('gh', ['repo', 'create', repoName, access, '-y', '--description', '"'+desc+'"'], '', true)
 
 }
-function isExistingRepo(repoName:string, user:string) {
+function isExistingRepo(repoName:string, user:string):Promise<boolean> {
     let repoUrl = `git@github.com:${user}/${repoName}.git`
-    return executeCommand('gh', ['repo', 'view', repoUrl]).then((rt:any) => {
-        return !(rt.code) // returns true if repository exists, false if not
+    return new Promise(resolve => {
+        console.log(">> checking for existing repo", repoUrl)
+        executeCommand('gh', ['repo', 'view', repoUrl], '', true).then((rt:any) => {
+            resolve(rt.code === 0) // returns true if repository exists, false if not
+        })
     })
 }
