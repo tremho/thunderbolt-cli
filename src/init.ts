@@ -400,6 +400,6 @@ function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
     let access = isPrivate ? '--private' : '--public'
 
     console.log('>> ...creating GitHub repository '+repoName)
-    return executeCommand('gh', ['repo', 'create', repoName, access, '-y', '--description', '"'+desc+'"', '--license', lic], '', true)
+    return executeCommand('gh', ['repo', 'create', repoName, access, '-y', '--description', '"'+desc+'"'], '', true)
 
 }
