@@ -418,6 +418,8 @@ async function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
             newName = ask('Please enter a different name', 'repository name', repoName)
             repoName = newName
             newName = ''
+        } else {
+            newName = repoName
         }
     }
 
