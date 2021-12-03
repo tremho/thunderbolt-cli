@@ -431,7 +431,7 @@ function isExistingRepo(repoName:string, user:string):Promise<boolean> {
     let repoUrl = `git@github.com:${user}/${repoName}.git`
     console.log(">> checking for existing repo", repoUrl)
     return executeCommand('gh', ['repo', 'view', repoUrl], '', true).then((rt:any) => {
-        console.log('retCode is', rt.retCode)
+        console.log('retCode is', rt.retCode, rt)
         return(rt.retCode !== 0) // returns true if repository exists, false if it's available
     })
 }
