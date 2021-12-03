@@ -69,8 +69,8 @@ export async function doInit(args:string[]) {
     spinner.start()
     executeCommand('npm install', ['--force']).then((rt:any) => {
         spinner.stop()
-        if(rt.retCode) {
-            console.error(ac.bold.red('error '+rt.retCode))
+        if(rt.retcode) {
+            console.error(ac.bold.red('error '+rt.retcode))
             console.error(ac.red("Jove Initialization failed on NPM Install:"))
             console.error(ac.black.dim(rt.errStr))
             console.error('while...')
@@ -112,8 +112,8 @@ function ask(desc:string, query:string, def:string) {
 function gitName() {
     return executeCommand('git', ['config', '--get', 'user.name']).then(rt => {
         let name = ''
-        if(rt.retCode) {
-            console.error('Error '+rt.retCode, rt.errStr)
+        if(rt.retcode) {
+            console.error('Error '+rt.retcode, rt.errStr)
         } else {
             name = rt.stdStr.trim().toLowerCase()
         }
@@ -311,8 +311,8 @@ export function pageStart(app:any) {
 
 function checkGH() {
     return executeCommand('gh', ['--version']).then((rt:any) => {
-        if(rt.retCode) {
-            console.error(ac.dim.red.italic('gh not not found '+rt.retCode))
+        if(rt.retcode) {
+            console.error(ac.dim.red.italic('gh not not found '+rt.retcode))
         }
         return true
     })
@@ -324,10 +324,10 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
         console.log(">> makeProjectRepository...")
 
         executeCommand('git', ['init']).then((rt:any) => {
-            console.log('git init returns', rt.retCode)
-            if(rt.retCode) {
+            console.log('git init returns', rt.retcode)
+            if(rt.retcode) {
                 console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                console.error(ac.red('  git init failed with code '+rt.retCode))
+                console.error(ac.red('  git init failed with code '+rt.retcode))
                 return resolve()
             }
 
@@ -372,26 +372,26 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
             }
             console.log(">> Adding all files")
             executeCommand('git', ['add', '.']).then((rt:any) => {
-                console.log(">> return is", rt.retCode)
-                if (rt.retCode) {
+                console.log(">> return is", rt.retcode)
+                if (rt.retcode) {
                     console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                    console.error(ac.red('  git add failed with code ' + rt.retCode))
+                    console.error(ac.red('  git add failed with code ' + rt.retcode))
                     return resolve()
                 }
                 executeCommand('git', ['commit', '-m"initial commit via Jove creation"']).then((rt:any) => {
-                    console.log(">> return is", rt.retCode)
-                    if (rt.retCode) {
+                    console.log(">> return is", rt.retcode)
+                    if (rt.retcode) {
                         console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                        console.error(ac.red('  git add failed with code ' + rt.retCode))
+                        console.error(ac.red('  git add failed with code ' + rt.retcode))
                         return resolve()
                     }
 
                     console.log(">> making repo at github")
                     makeRepoAtGitHub(repoName, isPrivate).then((d: any) => {
                         executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt: any) => {
-                            if (rt.retCode) {
+                            if (rt.retcode) {
                                 console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                                console.error(ac.red('  git push failed with code ' + rt.retCode))
+                                console.error(ac.red('  git push failed with code ' + rt.retcode))
                                 return resolve()
                             }
 
@@ -431,7 +431,7 @@ function isExistingRepo(repoName:string, user:string):Promise<boolean> {
     let repoUrl = `git@github.com:${user}/${repoName}.git`
     console.log(">> checking for existing repo", repoUrl)
     return executeCommand('gh', ['repo', 'view', repoUrl], '', true).then((rt:any) => {
-        console.log('retCode is', rt.retCode, rt)
-        return(rt.retCode !== 0) // returns true if repository exists, false if it's available
+        console.log('retcode is', rt.retcode, rt)
+        return(rt.retcode !== 0) // returns true if repository exists, false if it's available
     })
 }
