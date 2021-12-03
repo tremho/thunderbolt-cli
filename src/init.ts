@@ -330,6 +330,8 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                 console.error(ac.red('  git init failed with code '+rt.code))
                 return resolve()
             }
+
+
             try {
                 let gitignore = '.gen\n' +
                     'build/\n' +
@@ -376,30 +378,56 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                     console.error(ac.red('  git add failed with code ' + rt.code))
                     return resolve()
                 }
-                console.log(">> making repo at github")
-                makeRepoAtGitHub(repoName, isPrivate).then((d:any) => {
-                    executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt:any)=> {
-                        if (rt.code) {
-                            console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
-                            console.error(ac.red('  git push failed with code ' + rt.code))
-                            return resolve()
-                        }
+                executeCommand('git', ['commit', '-m"initial commit via Jove creation"']).then((rt:any) => {
+                    console.log(">> return is", rt.code)
+                    if (rt.code) {
+                        console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                        console.error(ac.red('  git add failed with code ' + rt.code))
+                        return resolve()
+                    }
 
+                    console.log(">> making repo at github")
+                    makeRepoAtGitHub(repoName, isPrivate).then((d: any) => {
+                        executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt: any) => {
+                            if (rt.code) {
+                                console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
+                                console.error(ac.red('  git push failed with code ' + rt.code))
+                                return resolve()
+                            }
+
+                        })
+                        resolve()
                     })
-                    resolve()
                 })
             })
         })
     })
 }
 
-function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
+async function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
 
     let desc = pkgJson.description || `Jove app ${pkgJson.displayName}`
     let lic = pkgJson.license || 'UNLICENSED'
     let access = isPrivate ? '--private' : '--public'
 
+    let newName = ''
+    while(!newName) {
+        let exists:boolean = await isExistingRepo(repoName, pkgJson.author)
+        if(exists)  {
+            console.warn(ac.black.bgYellow(` Repository ${repoName} already exists! `))
+            newName = ask('Please enter a different name', 'repository name', repoName)
+            repoName = newName
+            newName = ''
+        }
+    }
+
     console.log('>> ...creating GitHub repository '+repoName)
     return executeCommand('gh', ['repo', 'create', repoName, access, '-y', '--description', '"'+desc+'"'], '', true)
 
+}
+function isExistingRepo(repoName:string, user:string) {
+    let repoUrl = `git@github.com:${user}/${repoName}.git`
+    return executeCommand('gh', ['repo', 'view', repoUrl]).then((rt:any) => {
+        return !(rt.code) // returns true if repository exists, false if not
+    })
 }
