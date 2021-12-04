@@ -23,7 +23,7 @@ export async function doInit(args:string[]) {
     let dirName = args[0] || ''
     if(dirName) {
         dirPath = path.resolve(dirName)
-        console.log('>> go to or make ', dirPath)
+        // console.log('>> go to or make ', dirPath)
         if ( fs.existsSync(dirPath) ) {
             process.chdir(dirPath)
             if(!readlineSync.keyInYN('init a Jove project at '+dirPath)) {
@@ -66,6 +66,8 @@ export async function doInit(args:string[]) {
 // stub main page?
     makeMainPageStub()
 
+    let gitAuthor = await gitName();
+
     spinner.start()
     executeCommand('npm install', ['--force']).then((rt:any) => {
         spinner.stop()
@@ -76,11 +78,23 @@ export async function doInit(args:string[]) {
             console.error('while...')
             console.error(ac.green.dim(rt.stdStr))
         } else {
+            if(gitAuthor) {
+                let makeRepo = ask(`Create a GitHub repository for this project under user ${gitAuthor}?`, 'y/n', 'yes')
+                makeRepo = makeRepo.toLowerCase()
+                makeRepo = (makeRepo === 'y' || makeRepo === 'yes')
+                if(makeRepo) {
+                    repoName = ask(`Name for the repository`, `repo name`, pkgJson.name)
+                    isRepoPrivate = ask('Is this a private repository?', 'y/n', 'no')
+                    isRepoPrivate = isRepoPrivate.toLowerCase()
+                    isRepoPrivate = (isRepoPrivate === 'y' || isRepoPrivate === 'yes')
+                }
+            }
+
             let p
             if(repoName) {
-                console.log(">> going to make repo named", repoName)
+                // console.log(">> going to make repo named", repoName)
                 p = checkGH().then((haveGH:boolean) => {
-                    console.log('>> haveGH', haveGH)
+                    // console.log('>> haveGH', haveGH)
                     if(!haveGH) {
                         console.error(ac.red.bold('Unable to create repository -- gh command is not available'))
                         console.log(ac.blue('please visit https://cli.github.com and install this GitHub command line utility to allow this feature in the future'))
@@ -91,7 +105,7 @@ export async function doInit(args:string[]) {
                 })
             }
             Promise.resolve(p).then(() => {
-                console.log(">> all that is done, and here we are...")
+                // console.log(">> all that is done, and here we are...")
                 console.log(ac.green.bold(`${pkgJson.displayName} is ready`))
                 console.log(ac.blue("go to the directory")+' '+ac.gray(dirPath))
                 console.log(ac.blue("type jove run to run the empty stub project"))
@@ -137,19 +151,6 @@ async function createPackageJSON(oldPkg:any) {
     let defCopy = "© "+new Date().getFullYear()+" "+author+". All Rights Reserved"
     let copyright = ask('Enter any copyright information (about box)', 'copyright', oldPkg.copyright || defCopy)
     let license = ask('Enter a license type SPDX code (e.g. MIT)', 'license', oldPkg.licence || 'UNLICENSED')
-
-    if(gitAuthor) {
-        let makeRepo = ask(`Create a GitHub repository for this project under user ${gitAuthor}?`, 'y/n', 'yes')
-        makeRepo = makeRepo.toLowerCase()
-        makeRepo = (makeRepo === 'y' || makeRepo === 'yes')
-        if(makeRepo) {
-            repoName = ask(`Name for the repository`, `repo name`, name)
-            isRepoPrivate = ask('Is this a private repository?', 'y/n', 'no')
-            isRepoPrivate = isRepoPrivate.toLowerCase()
-            isRepoPrivate = (isRepoPrivate === 'y' || isRepoPrivate === 'yes')
-        }
-    }
-
 
     // TODO: keep jove versions named here in sync with tbns-template also....
 
@@ -321,7 +322,7 @@ function checkGH() {
 function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void> {
     return new Promise(resolve => {
 
-        console.log(">> makeProjectRepository...")
+        // console.log(">> makeProjectRepository...")
 
         executeCommand('git', ['init']).then((rt:any) => {
             console.log('git init returns', rt.retcode)
@@ -353,7 +354,7 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                     'report/dec-*\n' +
                     'report/latest'
 
-                console.log(">> Writing .gitignore")
+                // console.log(">> Writing .gitignore")
                 fs.writeFileSync('.gitignore', gitignore)
 
                 let readme = `# ${pkgJson.displayName}\n` +
@@ -362,7 +363,7 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                     `${pkgJson.copyright}\n` +
                     `${pkgJson.license}\n`
 
-                console.log(">> Writing README.md")
+                // console.log(">> Writing README.md")
                 fs.writeFileSync('README.md', readme)
             }
             catch(e:any) {
@@ -370,23 +371,23 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
                 console.error(ac.red('  failure to write .gitignore and/or README.md files '+e.toString()))
                 return resolve()
             }
-            console.log(">> Adding all files")
+            // console.log(">> Adding all files")
             executeCommand('git', ['add', '.']).then((rt:any) => {
-                console.log(">> return is", rt.retcode)
+                // console.log(">> return is", rt.retcode)
                 if (rt.retcode) {
                     console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
                     console.error(ac.red('  git add failed with code ' + rt.retcode))
                     return resolve()
                 }
                 executeCommand('git', ['commit', '-m"initial commit via Jove creation"']).then((rt:any) => {
-                    console.log(">> return is", rt.retcode)
+                    // console.log(">> return is", rt.retcode)
                     if (rt.retcode) {
                         console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
                         console.error(ac.red('  git add failed with code ' + rt.retcode))
                         return resolve()
                     }
 
-                    console.log(">> making repo at github")
+                    // console.log(">> making repo at github")
                     makeRepoAtGitHub(repoName, isPrivate).then((d: any) => {
                         executeCommand('git', ['push', '-u', 'origin', 'main']).then((rt: any) => {
                             if (rt.retcode) {
@@ -423,15 +424,15 @@ async function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
         }
     }
 
-    console.log('>> ...creating GitHub repository '+repoName)
+    // console.log('>> ...creating GitHub repository '+repoName)
     return executeCommand('gh', ['repo', 'create', repoName, access, '-y', '--description', '"'+desc+'"'], '', true)
 
 }
 function isExistingRepo(repoName:string, user:string):Promise<boolean> {
     let repoUrl = `git@github.com:${user}/${repoName}.git`
-    console.log(">> checking for existing repo", repoUrl)
+    // console.log(">> checking for existing repo", repoUrl)
     return executeCommand('gh', ['repo', 'view', repoUrl], '', true).then((rt:any) => {
-        console.log('retcode is', rt.retcode, rt)
+        // console.log('retcode is', rt.retcode, rt)
         return(rt.retcode === 0) // returns true if repository exists, false if it's available
     })
 }
