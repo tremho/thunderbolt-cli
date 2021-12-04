@@ -325,7 +325,7 @@ function makeProjectRepository(repoName:string, isPrivate:boolean):Promise<void>
         // console.log(">> makeProjectRepository...")
 
         executeCommand('git', ['init']).then((rt:any) => {
-            console.log('git init returns', rt.retcode)
+            // console.log('git init returns', rt.retcode)
             if(rt.retcode) {
                 console.error(ac.red.bold('Error: Failed to create GitHub repository!'))
                 console.error(ac.red('  git init failed with code '+rt.retcode))
@@ -431,7 +431,7 @@ async function makeRepoAtGitHub(repoName:string, isPrivate:boolean) {
 function isExistingRepo(repoName:string, user:string):Promise<boolean> {
     let repoUrl = `git@github.com:${user}/${repoName}.git`
     // console.log(">> checking for existing repo", repoUrl)
-    return executeCommand('gh', ['repo', 'view', repoUrl], '', true).then((rt:any) => {
+    return executeCommand('gh', ['repo', 'view', repoUrl]).then((rt:any) => {
         // console.log('retcode is', rt.retcode, rt)
         return(rt.retcode === 0) // returns true if repository exists, false if it's available
     })
