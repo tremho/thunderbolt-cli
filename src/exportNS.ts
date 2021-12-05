@@ -15,6 +15,8 @@ const spinner = require('text-spinner')({
     prefix: '\x1B[10G'
 })
 
+let trace = true;
+
 
 let nsRoot:string
 let nsVersion:string
@@ -71,24 +73,24 @@ export function doNativeScript() {
     collectInfo()
     readProjPackage()
     return createNSProjectIfNotExist().then(() => {
-        // console.log('copySources')
+        if(trace) console.log('copySources')
         copySources()
-        // console.log('migrateAppBack')
+        if(trace) console.log('migrateAppBack')
         migrateAppBack()
-        // console.log('makeNativeScriptComponents')
+        if(trace) console.log('makeNativeScriptComponents')
         makeNativeScriptComponents()
-        // console.log('migrateScss')
+        if(trace) console.log('migrateScss')
         migrateScss()
-        // console.log('migrateLaunch')
+        if(trace)  console.log('migrateLaunch')
         migrateLaunch()
-        // console.log('unify project identifier')
+        if(trace)  console.log('unify project identifier')
         unifyProjectId()
 
         // migrate metadata
         metaMigrateNS(path.join(outPath, projName))
         // make icons
         return iconPrepNS(projPath, path.join(outPath, projName)).then(() => {
-            // console.log('npm install')
+            if(trace)  console.log('npm install')
             return npmInstall().then(() => {
                 console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
 
@@ -200,6 +202,7 @@ function createNSProjectIfNotExist() {
 
         spinner.start()
         return Promise.resolve(p).then(() => {
+            if(trace) console.log('npm install')
             executeCommand('npm', ['install'], nsRoot).then((rt:any)=> {
                 spinner.stop()
                 if(rt.code) {
@@ -208,7 +211,7 @@ function createNSProjectIfNotExist() {
                     process.exit(rt.code)
                 }
             })
-            // console.log('exporting...')
+            if(trace)  console.log('exporting...')
         }).catch(e => {
             spinner.stop()
             console.error(ac.bold.red('Error Creating Nativescript'))
@@ -224,7 +227,7 @@ function createNSProjectIfNotExist() {
 
 function readProjPackage() {
     let pkgjson = path.join(projPath, 'package.json')
-    // console.log('reading package.json at '+pkgjson)
+    if(trace)  console.log('reading package.json at '+pkgjson)
     try {
         const contents = fs.readFileSync(pkgjson).toString()
         pkgInfo = JSON.parse(contents)
@@ -239,7 +242,7 @@ function readProjPackage() {
 function migrateAppBack() {
     // read our joveAppBack source
     const joveAppSrcPath = pkgInfo.backMain || 'src/joveAppBack.ts'
-    // console.log('migrating '+ joveAppSrcPath+'...')
+    if(trace)  console.log('migrating '+ joveAppSrcPath+'...')
     let source = ""
     try {
         source = fs.readFileSync(path.join(projPath, joveAppSrcPath)).toString()
@@ -252,12 +255,12 @@ function migrateAppBack() {
         const ln = lines[i]
         let n = ln.indexOf('@tremho/jove-desktop')
         if(n !== -1) {
-            // console.log('found "@tremho/jove-desktop"')
+            if(trace)  console.log('found "@tremho/jove-desktop"')
             if(ln.indexOf('import') !== -1 || ln.indexOf('require') !== -1) {
                 // change to "@tremho/jove-mobile"
-                // console.log('changing to "mobile"')
+                if(trace)  console.log('changing to "mobile"')
                 lines[i] = ln.replace('@tremho/jove-desktop','@tremho/jove-mobile')
-                // console.log(lines[i])
+                if(trace)  console.log(lines[i])
             }
         }
     }
@@ -268,14 +271,14 @@ function migrateAppBack() {
         if (fs.existsSync(dest)) {
             fs.unlinkSync(dest)
         }
-        // console.log('migrating ', source)
+        if(trace) console.log('migrating ', source)
         fs.writeFileSync(dest, source)
 
     } catch(e) {
         console.error('Unable to write '+dest)
         throw e
     }
-    // console.log('... okay')
+    if(trace)  console.log('... okay')
 }
 
 function testForUpdate(src:string, dest:string) {
@@ -300,14 +303,14 @@ function copySources() {
 
 function copySourceFile(src:string, dest:string) {
     if(testForUpdate(src,dest)) {
-        // console.log('copying ', src, dest)
+        if(trace)  console.log('copying ', src, dest)
         let destdir = dest.substring(0, dest.lastIndexOf(path.sep))
         if(!fs.existsSync(destdir)) {
             fs.mkdirSync(destdir, {recursive: true})
         }
         fs.copyFileSync(src, dest)
     } else {
-        // console.log('skipping ', src)
+        if(trace)  console.log('skipping ', src)
     }
 }
 function copySourceDirectory(src:string, dest:string) {
@@ -371,7 +374,7 @@ function npmInstall() {
 }
 
 function makeNativeScriptComponents() {
-    // console.log('ready to makeNativeScriptComponents', projPath, jovePath)
+    if(trace)  console.log('ready to makeNativeScriptComponents', projPath, jovePath)
     const componentsDir = path.join(projPath, 'src', 'components')
     let dest = path.join(outPath, projName, 'app', 'components')
 
@@ -391,7 +394,7 @@ function migrateScss() {
     const scssDest = path.join(outPath, projName, 'app', 'scss')
     const appScss = path.join(outPath, projName, 'app', 'app.scss')
     const imports:string[] = []
-    // console.log('migrate Scss', scssSource, scssDest)
+    if(trace) console.log('migrate Scss', scssSource, scssDest)
     importScss(scssSource, imports, scssDest)
     importScss(path.join(outPath, projName, 'app', 'components'), imports)
 
@@ -422,7 +425,7 @@ function isMobilePrefix(pfx:string):boolean {
 }
 
 function importScss(dirPath:string, imports:string[], destDir:string = dirPath) {
-    // console.log('importScss', dirPath)
+    if(trace) console.log('importScss', dirPath)
     const files = fs.readdirSync(dirPath) || []
     for(let i=0; i<files.length; i++) {
         const file = files[i]
