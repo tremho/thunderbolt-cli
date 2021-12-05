@@ -15,7 +15,7 @@ const spinner = require('text-spinner')({
     prefix: '\x1B[10G'
 })
 
-let trace = true;
+let trace = false;
 
 
 let nsRoot:string
