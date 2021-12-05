@@ -112,6 +112,7 @@ export function doNativeScript() {
 
 let nscwd = ''
 function ns(...args:any) {
+    if(trace) console.log('ns', ...args)
     return executeCommand('ns', args, nscwd, trace)
 }
 
