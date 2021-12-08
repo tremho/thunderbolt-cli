@@ -166,7 +166,7 @@ async function createPackageJSON(oldPkg:any) {
         backMain: oldPkg.backMain || 'src/joveAppBack.ts',
         frontMain: oldPkg.frontMain || 'src/joveAppFront.ts',
         scripts: {
-            postinstall: "npm run initDesktop && npm run initCli && npm run tscinst && mkdir -p src/assets; mkdir -p src/scss",
+            postinstall: "npm run initDesktop && npm run initCli && npm run tscinst && make-dir src/assets && make-dir src/scss",
             tscinst: "run-script-os",
             "tscinst:nix": "which tsc || npm install -g typescript",
             "tscinst:windows": "where.exe tsc || npm install -g typescript",
@@ -183,9 +183,13 @@ async function createPackageJSON(oldPkg:any) {
         },
         devDependencies: {
             "@tremho/jove-cli": "^0.6.9-pre-release",
+            "@tremho/jove-test": "^0.6.9-pre-release",
+            "@types/tap": "^15.0.5",
             "electron-builder": "^22.11.7",
+            "make-dir-cli": "^3.0.0",
             "readline-sync": "^1.4.10",
             "run-script-os": "^1.1.6",
+            "tap": "^15.1.5",
             "typescript": "^4.3.5",
             "webpack": "^4.46.0"
         }
