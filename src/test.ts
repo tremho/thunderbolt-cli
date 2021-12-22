@@ -144,6 +144,7 @@ export function doTest() {
             Promise.resolve(p).then(() => {
                 console.log(ac.blue.italic('application launched for testing ended unexpectedly'))
                 fs.unlinkSync(dtFile)
+                executeCommand('killall', ['node'])
                 process.exit(1)
             })
 
