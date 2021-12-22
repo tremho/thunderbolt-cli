@@ -144,6 +144,7 @@ export function doTest() {
             Promise.resolve(p).then(() => {
                 console.log(ac.blue.italic('application launched for testing ended unexpectedly'))
                 fs.unlinkSync(dtFile)
+                process.exit(1)
             })
 
         }, (p !== undefined ? 5000 : 1)) // wait 5 seconds if we did a build to allow shell to clear out
