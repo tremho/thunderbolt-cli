@@ -26,6 +26,7 @@ let wantClean = false;
 let runCmd = ''
 let platform = ''
 let device = ''
+let debugBrk = false
 
 function readCommandOptions() {
     const opts = process.argv.slice(3)
@@ -48,6 +49,9 @@ function readCommandOptions() {
         }
         if(opt === 'device') {
             device = opts[++i]
+        }
+        if(opt === '--debug-brk') {
+            debugBrk = true
         }
         i++
     }
@@ -98,6 +102,9 @@ export function doNativeScript() {
                     let opts = []
                     opts.push(runCmd)
                     opts.push(platform)
+                    if(debugBrk && runCmd === 'debug') {
+                        opts.push('--debug-brk')
+                    } 
                     if(device) {
                         opts.push('--device')
                         opts.push(device)
