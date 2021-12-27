@@ -104,7 +104,7 @@ export function doNativeScript() {
                     opts.push(platform)
                     if(debugBrk && runCmd === 'debug') {
                         opts.push('--debug-brk')
-                    } 
+                    }
                     if(device) {
                         opts.push('--device')
                         opts.push(device)
