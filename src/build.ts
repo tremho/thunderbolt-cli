@@ -209,6 +209,14 @@ function tscCompile(options:any, files:string[]) {
 function mainAndExec() {
     let p
     try {
+        if (!fs.existsSync(buildPath)) {
+            fs.mkdirSync(buildPath, {recursive: true})
+        }
+    } catch (e) {
+        console.error(`failed to find or create build path ${buildPath}`)
+        throw Error()
+    }
+    try {
         console.log(ac.bold(`Compiling ${projName} ${projVersion}`))
         p = tscCompile(
             {
@@ -223,18 +231,11 @@ function mainAndExec() {
         throw Error()
     }
     p.then(() => {
-        try {
-            if (!fs.existsSync(buildPath)) {
-                fs.mkdirSync(buildPath, {recursive: true})
-            }
-            if(!fs.existsSync(path.join(buildPath, 'joveAppBack.js'))) {
-                console.error(`failed to build joveAppBack.js`)
-            } else {
-                console.log(ac.italic.green('joveAppBack.js exists in build folder'))
-            }
-        } catch (e) {
-            console.error(`failed to find or create build path ${buildPath}`)
+        if(!fs.existsSync(path.join(buildPath, 'joveAppBack.js'))) {
+            console.error(`failed to build joveAppBack.js`)
             throw Error()
+        } else {
+            console.log(ac.italic.green('joveAppBack.js exists in build folder'))
         }
         try {
             fs.copyFileSync(path.join(packPath, 'index.html'), path.join(buildPath, 'index.html'))
