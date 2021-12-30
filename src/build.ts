@@ -232,7 +232,8 @@ function mainAndExec() {
         throw Error()
     }
     p.then(() => {
-        let jabjs = backMain.substring(0, backMain.lastIndexOf('.'))+'.js'
+        let jabjs = backMain.substring(backMain.indexOf('/')+1, backMain.lastIndexOf('.'))+'.js'
+
         let pt = path.join('build', 'src', jabjs)
         if(!fs.existsSync(pt)) {
             console.error(ac.bold.red(`failed to build ${pt}`))
