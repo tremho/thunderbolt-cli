@@ -227,6 +227,11 @@ function mainAndExec() {
             if (!fs.existsSync(buildPath)) {
                 fs.mkdirSync(buildPath, {recursive: true})
             }
+            if(!fs.existsSync(path.join(buildPath, 'joveAppBack.js'))) {
+                console.error(`failed to build joveAppBack.js`)
+            } else {
+                console.log(ac.italic.green('joveAppBack.js exists in build folder'))
+            }
         } catch (e) {
             console.error(`failed to find or create build path ${buildPath}`)
             throw Error()
