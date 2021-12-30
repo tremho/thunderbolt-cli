@@ -233,13 +233,13 @@ function mainAndExec() {
     }
     p.then(() => {
         let jabjs = backMain.substring(0, backMain.lastIndexOf('.'))+'.js'
-        let pt = path.join(buildPath, 'src', jabjs)
+        let pt = path.join('build', 'src', jabjs)
         if(!fs.existsSync(pt)) {
             console.error(ac.bold.red(`failed to build ${pt}`))
             throw Error()
         } else {
             console.log(ac.italic.green('joveAppBack.js exists in build/src folder'))
-            fs.renameSync(path.join(buildPath, 'src', jabjs), path.join(buildPath, jabjs))
+            fs.renameSync(path.join('build', 'src', jabjs), path.join('build', jabjs))
         }
         try {
             fs.copyFileSync(path.join(packPath, 'index.html'), path.join(buildPath, 'index.html'))
