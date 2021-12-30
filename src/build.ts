@@ -197,6 +197,7 @@ function tscCompile(options:any, files:string[]) {
     }
     let f
     while((f=files.pop())) argList.push(f)
+    console.log('>>>> tscCompile', argList)
     return executeCommand('tsc', argList, '', true)
 }
 
@@ -232,7 +233,7 @@ function mainAndExec() {
     }
     p.then(() => {
         if(!fs.existsSync(path.join(buildPath, 'joveAppBack.js'))) {
-            console.error(`failed to build joveAppBack.js`)
+            console.error(ac.bold.red(`failed to build joveAppBack.js`))
             throw Error()
         } else {
             console.log(ac.italic.green('joveAppBack.js exists in build folder'))
