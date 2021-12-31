@@ -229,7 +229,7 @@ function mainAndExec() {
              })
     } catch(e) {
         console.error(ac.red(`Failed to compile ${backMain}`))
-        throw Error()
+        throw e //Error()
     }
     p.then(() => {
         let jabjs = backMain.substring(backMain.indexOf('/')+1, backMain.lastIndexOf('.'))+'.js'
