@@ -197,7 +197,6 @@ function tscCompile(options:any, files:string[]) {
     }
     let f
     while((f=files.pop())) argList.push(f)
-    console.log('>>>> tscCompile', argList)
     return executeCommand('tsc', argList, '', true)
 }
 
@@ -232,29 +231,13 @@ function mainAndExec() {
         throw Error()
     }
     p.then(() => {
-        // let jabjs = backMain.substring(backMain.indexOf('/')+1, backMain.lastIndexOf('.'))+'.js'
-
-        // let pt = path.join('build', 'src', jabjs)
-        // let pts = path.join('build', jabjs)
-        // if(!fs.existsSync(pt)) {
-        //     console.error(ac.bold.red(`failed to create ${pt}`))
-        // }
-        // if(!fs.existsSync(pts)) {
-        //     console.error(ac.bold.red(`failed to create ${pts}`))
-        // }
-        // }
-        // } else {
-        //     console.log(ac.italic.green('joveAppBack.js exists in build/src folder'))
-        //     fs.renameSync(path.join('build', 'src', jabjs), path.join('build', jabjs))
-        // }
         try {
             fs.copyFileSync(path.join(packPath, 'index.html'), path.join(buildPath, 'index.html'))
         } catch (e) {
             console.error(`failed to copy index.html from ${packPath} to ${buildPath}`)
             throw Error()
         }
-
-
+        
         // write out an execution script in the name of the app
         // electron joveAppBack.js
 
