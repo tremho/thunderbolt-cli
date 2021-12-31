@@ -229,25 +229,30 @@ function mainAndExec() {
              })
     } catch(e) {
         console.error(ac.red(`Failed to compile ${backMain}`))
-        throw e //Error()
+        throw Error()
     }
     p.then(() => {
         let jabjs = backMain.substring(backMain.indexOf('/')+1, backMain.lastIndexOf('.'))+'.js'
 
         let pt = path.join('build', 'src', jabjs)
+        let pts = path.join('build', jabjs)
         if(!fs.existsSync(pt)) {
-            console.error(ac.bold.red(`failed to build ${pt}`))
-            throw Error()
-        } else {
-            console.log(ac.italic.green('joveAppBack.js exists in build/src folder'))
-            fs.renameSync(path.join('build', 'src', jabjs), path.join('build', jabjs))
+            console.error(ac.bold.red(`failed to create ${pt}`))
         }
-        try {
-            fs.copyFileSync(path.join(packPath, 'index.html'), path.join(buildPath, 'index.html'))
-        } catch (e) {
-            console.error(`failed to copy index.html from ${packPath} to ${buildPath}`)
-            throw Error()
+        if(!fs.existsSync(pts)) {
+            console.error(ac.bold.red(`failed to create ${pts}`))
         }
+        // }
+        // } else {
+        //     console.log(ac.italic.green('joveAppBack.js exists in build/src folder'))
+        //     fs.renameSync(path.join('build', 'src', jabjs), path.join('build', jabjs))
+        // }
+        // try {
+        //     fs.copyFileSync(path.join(packPath, 'index.html'), path.join(buildPath, 'index.html'))
+        // } catch (e) {
+        //     console.error(`failed to copy index.html from ${packPath} to ${buildPath}`)
+        //     throw Error()
+        // }
 
 
         // write out an execution script in the name of the app
