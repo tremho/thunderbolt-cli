@@ -232,16 +232,16 @@ function mainAndExec() {
         throw Error()
     }
     p.then(() => {
-        let jabjs = backMain.substring(backMain.indexOf('/')+1, backMain.lastIndexOf('.'))+'.js'
+        // let jabjs = backMain.substring(backMain.indexOf('/')+1, backMain.lastIndexOf('.'))+'.js'
 
-        let pt = path.join('build', 'src', jabjs)
-        let pts = path.join('build', jabjs)
-        if(!fs.existsSync(pt)) {
-            console.error(ac.bold.red(`failed to create ${pt}`))
-        }
-        if(!fs.existsSync(pts)) {
-            console.error(ac.bold.red(`failed to create ${pts}`))
-        }
+        // let pt = path.join('build', 'src', jabjs)
+        // let pts = path.join('build', jabjs)
+        // if(!fs.existsSync(pt)) {
+        //     console.error(ac.bold.red(`failed to create ${pt}`))
+        // }
+        // if(!fs.existsSync(pts)) {
+        //     console.error(ac.bold.red(`failed to create ${pts}`))
+        // }
         // }
         // } else {
         //     console.log(ac.italic.green('joveAppBack.js exists in build/src folder'))
