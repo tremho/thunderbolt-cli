@@ -190,6 +190,7 @@ export function enumerateAndConvert(dirpath:string, outType:string, outDir:strin
             let checkId = file.substring(0, file.indexOf('-page'))
             if(checkId !== info.id) {
                 console.warn(ac.bold.yellow.bgBlack(`WARNING:  File name is ${file} but page ID is ${info.id}`))
+                console.warn(ac.italic(`file name should be ${info.id}-page.jvpg for page ID ${info.id}`))
                 errs++
             }
 

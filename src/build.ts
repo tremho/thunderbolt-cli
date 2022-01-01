@@ -237,7 +237,7 @@ function mainAndExec() {
             console.error(`failed to copy index.html from ${packPath} to ${buildPath}`)
             throw Error()
         }
-        
+
         // write out an execution script in the name of the app
         // electron joveAppBack.js
 
