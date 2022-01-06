@@ -126,8 +126,8 @@ function readPage(filepath:string):PageInfo {
 
                     if(key === 'title') info.title = value
                     if(key === 'app-menu') info.menuId = 'main' // Updated in Dec. include or not, only one menu 'main'
-                    if(key === 'toolbar') info.toolbarId = 'main' // Updated in Dec. include or not, only one toolbar 'main'
-                    if(key === 'indicators') info.indicatorsId = 'main' // Updated in Dec. include or not, only one indicators 'main'
+                    if(key === 'toolbar-id') info.toolbarId = value
+                    if(key === 'indicators-id') info.indicatorsId = value
 
                     if(key === "orientationReload") {
                         info.orientationReload = (value === 'true')
