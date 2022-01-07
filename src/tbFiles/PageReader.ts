@@ -158,7 +158,6 @@ function readPage(filepath:string):PageInfo {
         // @ts-ignore
         console.error(e)
     }
-    console.log('================== page info gathered ==============\m', info, '========================')
     return info
 }
 
