@@ -390,7 +390,7 @@ async function migrateExtras():Promise<unknown> {
     let extras:any = {}
     if(fs.existsSync(extrasManifest)) {
         try {
-            extras = JSON.parse(fs.readFileSync(extrasManifest).toString())
+            extras = hjson.parse(fs.readFileSync(extrasManifest).toString())
         } catch (e) {
             console.error(ac.bold.red(e))
         }
