@@ -406,6 +406,9 @@ async function migrateExtras():Promise<any> {
     for(let p of extras.devModules || []) {
         await addModule(p, true)
     }
+    for(let cmd of extras.scriptActions || []) {
+        await runCommand(cmd)
+    }
     return Promise.resolve()
 }
 
@@ -415,11 +418,17 @@ async function addPlugin(name:string):Promise<any> {
     return executeCommand('ns', ['plugin', 'add', name], dest, true)
 }
 async function addModule(name:string, isDev:boolean):Promise<any> {
-    return new Promise(resolve => {
-        let flag = isDev ? '--save-dev ' : ''
-        console.log(ac.bold(`npm install ${flag}${name}`))
-        setTimeout(resolve, 1500)
-    })
+    const dest = path.resolve(path.join(outPath, projName))
+    let flag = isDev ? '--save-dev ' : ''
+    console.log(ac.bold(`npm install ${flag}${name}`))
+    let args = ['install']
+    if(isDev) args.push('--save-dev')
+    args.push(name)
+    return executeCommand('npm', args, dest, true)
+}
+function runCommand(cmd:string) {
+    console.log(ac.blue('executing "'+cmd+'"'))
+    return executeCommand(cmd, [], '', true)
 }
 
 function npmInstall() {
