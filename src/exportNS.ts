@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as ac from 'ansi-colors'
+import * as hjson from 'hjson'
 
 import {executeCommand} from "./execCmd";
 import {gatherInfo} from "./gatherInfo";
@@ -379,15 +380,45 @@ function migrateLaunch() {
     // // console.log("copy verified as "+verify)
 }
 
-function migrateExtras() {
+async function migrateExtras():Promise<unknown> {
     console.log('Migrate extras process starting...')
     const extrasManifest = path.resolve(path.join(projPath, 'nativescript-extras.conf'))
     console.log('We will want to read config from '+extrasManifest)
     const dest = path.resolve(path.join(outPath, projName))
     console.log('and put them to this destination '+dest)
 
+    let extras:any = {}
+    if(fs.existsSync(extrasManifest)) {
+        try {
+            extras = JSON.parse(fs.readFileSync(extrasManifest).toString())
+        } catch (e) {
+            console.error(ac.bold.red(e))
+        }
+    }
+    for(let p of extras.plugins || []) {
+        await addPlugin(p)
+    }
+    for(let p of extras.npmModules || []) {
+        await addModule(p, false)
+    }
+    for(let p of extras.devModules || []) {
+        await addModule(p, true)
+    }
     return Promise.resolve()
+}
 
+async function addPlugin(name:string):Promise<any> {
+    return new Promise(resolve => {
+        console.log(ac.bold(`plugin add ${name}`))
+        setTimeout(resolve, 1500)
+    })
+}
+async function addModule(name:string, isDev:boolean):Promise<any> {
+    return new Promise(resolve => {
+        let flag = isDev ? '--save-dev ' : ''
+        console.log(ac.bold(`npm install ${flag}${name}`))
+        setTimeout(resolve, 1500)
+    })
 }
 
 function npmInstall() {
