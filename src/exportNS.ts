@@ -94,24 +94,27 @@ export function doNativeScript() {
         metaMigrateNS(path.join(outPath, projName))
         // make icons
         return iconPrepNS(projPath, path.join(outPath, projName)).then(() => {
-            if(trace)  console.log('npm install')
-            return npmInstall().then(() => {
-                console.log(ac.bold.green('Project '+ projName+' exported to Nativescript project at '+path.join(outPath, projName)))
+            if(trace) console.log('migrateExtras')
+            return migrateExtras().then(()=> {
+                if (trace) console.log('npm install')
+                return npmInstall().then(() => {
+                    console.log(ac.bold.green('Project ' + projName + ' exported to Nativescript project at ' + path.join(outPath, projName)))
 
-                if(runCmd) {
-                    let opts = []
-                    opts.push(runCmd)
-                    opts.push(platform)
-                    if(debugBrk && runCmd === 'debug') {
-                        opts.push('--debug-brk')
+                    if (runCmd) {
+                        let opts = []
+                        opts.push(runCmd)
+                        opts.push(platform)
+                        if (debugBrk && runCmd === 'debug') {
+                            opts.push('--debug-brk')
+                        }
+                        if (device) {
+                            opts.push('--device')
+                            opts.push(device)
+                        }
+                        executeCommand('ns', opts, nsRoot, true)
                     }
-                    if(device) {
-                        opts.push('--device')
-                        opts.push(device)
-                    }
-                    executeCommand('ns', opts, nsRoot, true)
-                }
 
+                })
             })
         })
     })
@@ -374,6 +377,17 @@ function migrateLaunch() {
     // fs.copyFileSync(src, dest) // copy the file directly over
     // const verify = fs.existsSync(dest)
     // // console.log("copy verified as "+verify)
+}
+
+function migrateExtras() {
+    console.log('Migrate extras process starting...')
+    const extrasManifest = path.resolve(path.join(projPath, 'nativescript-extras.conf'))
+    console.log('We will want to read config from '+extrasManifest)
+    const dest = path.resolve(path.join(outPath, projName))
+    console.log('and put them to this destination '+dest)
+
+    return Promise.resolve()
+
 }
 
 function npmInstall() {
