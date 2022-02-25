@@ -393,6 +393,7 @@ async function migrateExtras():Promise<any> {
         try {
             extras = hjson.parse(fs.readFileSync(extrasManifest).toString())
         } catch (e) {
+            // @ts-ignore
             console.error(ac.bold.red(e))
         }
     }
