@@ -427,8 +427,9 @@ async function addModule(name:string, isDev:boolean):Promise<any> {
     return executeCommand('npm', args, dest, true)
 }
 function runCommand(cmd:string) {
+    const dest = path.resolve(path.join(outPath, projName))
     console.log(ac.blue('executing "'+cmd+'"'))
-    return executeCommand(cmd, [], '', true)
+    return executeCommand(cmd, [], dest, true)
 }
 
 function npmInstall() {
