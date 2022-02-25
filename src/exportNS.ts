@@ -10,6 +10,7 @@ import * as pageReader from "./tbFiles/PageReader";
 import {translateScss} from "./tbFiles/MigrateScss";
 import {iconPrepNS} from "./tbFiles/IconPrepNS";
 import {metaMigrateNS} from "./tbFiles/MetadataMover"
+import {exec} from "child_process";
 
 const spinner = require('text-spinner')({
     interval: 100,
@@ -408,10 +409,9 @@ async function migrateExtras():Promise<unknown> {
 }
 
 async function addPlugin(name:string):Promise<any> {
-    return new Promise(resolve => {
-        console.log(ac.bold(`plugin add ${name}`))
-        setTimeout(resolve, 1500)
-    })
+    const dest = path.resolve(path.join(outPath, projName))
+    console.log(ac.bold(`plugin add ${name}`))
+    return executeCommand('ns', ['plugin', 'add', name], dest, true)
 }
 async function addModule(name:string, isDev:boolean):Promise<any> {
     return new Promise(resolve => {
