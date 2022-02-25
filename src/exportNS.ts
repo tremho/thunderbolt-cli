@@ -381,7 +381,7 @@ function migrateLaunch() {
     // // console.log("copy verified as "+verify)
 }
 
-async function migrateExtras():Promise<unknown> {
+async function migrateExtras():Promise<any> {
     console.log('Migrate extras process starting...')
     const extrasManifest = path.resolve(path.join(projPath, 'nativescript-extras.conf'))
     console.log('We will want to read config from '+extrasManifest)
