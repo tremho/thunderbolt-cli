@@ -100,11 +100,13 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     export function onLoaded(args) {
         const page = args.object
         page.bindingContext = Observable.fromObject(AppCore.getTheApp().setPageBindings("${id}",activity, pageMethods)) 
-    }    
-    export function onNavigatedTo() {
-        AppCore.getTheApp().launchActivity("${id}",activity) 
     }
     `
+    // removed this because setPageBindings (above) does this now.
+    // onNavigatedTo is not being called for some reason
+    // export function onNavigatedTo() {
+    //     AppCore.getTheApp().launchActivity("${id}",activity)
+    // }
     //
     // console.log(out)
     //
