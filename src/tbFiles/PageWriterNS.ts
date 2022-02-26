@@ -33,7 +33,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
 
     // console.log('converted to xml', xml)
 
-    let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatingTo="onNavigatngTo"\n`
+    let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatingTo="onNavigatingTo"\n`
     out += `      xmlns:tb="~/components/tb-components"\n`
     out += `      actionBarHidden="true"\n`
     out += '>\n'
@@ -101,15 +101,10 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
         const page = args.object
         page.bindingContext = Observable.fromObject(AppCore.getTheApp().setPageBindings("${id}",activity, pageMethods)) 
     }
+    export function onNavigatedTo() {
+        AppCore.getTheApp().launchActivity("${id}",activity)
+    }
     `
-    // removed this because setPageBindings (above) does this now.
-    // onNavigatedTo is not being called for some reason
-    // export function onNavigatedTo() {
-    //     AppCore.getTheApp().launchActivity("${id}",activity)
-    // }
-    //
-    // console.log(out)
-    //
     src = path.join(srcpath, `${id}-page.jvpg`)
     dest = path.join(outDir, `${id}-page.ts`)
     if(testForUpdate(src,dest)) {

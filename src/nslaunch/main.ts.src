@@ -9,18 +9,15 @@ export async function onLoaded(args: EventData) { // navigatingTo
     // console.log('launch/main onloaded')
 
     let page: any = args.object
-
-    AppCore.setTheApp(coreApp, page.frame)
-    // console.log('we will now navigate to main-page')
-    coreApp.navigateToPage('main')
-}
-export async function onNavigatingTo(args: EventData) {
-    // console.log('launch/main onNavigatingTo')
-    if(!coreApp) {
-        coreApp = new AppCore()
-    }
-    let page: any = args.object
     AppCore.setTheApp(coreApp, page.frame)
     // console.log('starting app...')
     return coreApp.setupUIElements(frontApp)
+}
+export async function onNavigatedTo(args: EventData) {
+    // console.log('launch/main onNavigatingTo')
+
+    let page: any = args.object
+    AppCore.setTheApp(coreApp, page.frame)
+    // console.log('we will now navigate to main-page')
+    coreApp.navigateToPage('main')
 }
