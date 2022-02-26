@@ -5,21 +5,22 @@ import {AppCore} from '@tremho/jove-common'
 import { EventData, Page, Frame } from '@nativescript/core';
 
 let coreApp
-export function onLoaded(args: EventData) { // navigatingTo
+export async function onLoaded(args: EventData) { // navigatingTo
     // console.log('launch/main onloaded')
 
-    let page:any = args.object
-    // console.log('I think we have a frame here', page.frame)
+    let page: any = args.object
 
-    coreApp = new AppCore()
     AppCore.setTheApp(coreApp, page.frame)
-    console.log('starting app...')
-    coreApp.setupUIElements(frontApp).then(() => {
-        // nothing to do here for mobile
-    })
-}
-export function onNavigatingTo() {
-    // console.log('launch/main onnavigatingto')
     // console.log('we will now navigate to main-page')
     coreApp.navigateToPage('main')
+}
+export async function onNavigatingTo(args: EventData) {
+    // console.log('launch/main onNavigatingTo')
+    if(!coreApp) {
+        coreApp = new AppCore()
+    }
+    let page: any = args.object
+    AppCore.setTheApp(coreApp, page.frame)
+    // console.log('starting app...')
+    return coreApp.setupUIElements(frontApp)
 }

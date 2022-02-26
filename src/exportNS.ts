@@ -382,11 +382,7 @@ function migrateLaunch() {
 }
 
 async function migrateExtras():Promise<any> {
-    console.log('Migrate extras process starting...')
     const extrasManifest = path.resolve(path.join(projPath, 'nativescript-extras.conf'))
-    console.log('We will want to read config from '+extrasManifest)
-    const dest = path.resolve(path.join(outPath, projName))
-    console.log('and put them to this destination '+dest)
 
     let extras:any = {}
     if(fs.existsSync(extrasManifest)) {
