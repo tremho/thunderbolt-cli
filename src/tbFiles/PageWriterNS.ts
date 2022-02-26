@@ -33,7 +33,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
 
     // console.log('converted to xml', xml)
 
-    let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatingTo="onNavigatingTo"\n`
+    let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatedTo="onNavigatedTo"\n`
     out += `      xmlns:tb="~/components/tb-components"\n`
     out += `      actionBarHidden="true"\n`
     out += '>\n'
