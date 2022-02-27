@@ -104,7 +104,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     export function onNavigatedTo() {
         AppCore.getTheApp().launchActivity("${id}",activity)
     }
-    export function canvasReady(arg) { activity.canvasReady(arg) }
+    export function canvasReady(arg) { try { (activity as any).canvasReady(arg) } catch(e:any) { throw Error('Canvas Ready Error: '+e.message } }
     `
     src = path.join(srcpath, `${id}-page.jvpg`)
     dest = path.join(outDir, `${id}-page.ts`)
