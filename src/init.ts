@@ -306,8 +306,8 @@ title='Main Page'
 
 /* application code for main-page */
     
-export function pageStart(app:any) {
-    console.log('main page started')
+export function pageEnter(app:any) {
+    console.log('main page entered')
 }        
 `
     fs.writeFileSync('src/pages/main-page.jvpg', jvpg)
