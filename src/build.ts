@@ -57,8 +57,11 @@ let jovePath:string,  // path to the jove script itself. This establishes where 
     frontMain:string, // name of entry module for the app Renderer code, from project package.json file or default (joveAppFront.ts)
     backMain:string  // name of entry module for the app Back (node) process code, fom project package.json file or default (joveAppBack.ts)
 
+let verbose:boolean = false
+
 // TODO: Import from gatherInfo rather than repeat here
 function readPackageInfoAtPath(directory:string):any {
+    trace('readPackageInfoAtPath')
     const pkgFile = path.join(directory, 'package.json')
     if(!fs.existsSync(pkgFile)) {
         console.error(ac.red(`no package.json info found at ${pkgFile}`))
@@ -73,6 +76,7 @@ function readPackageInfoAtPath(directory:string):any {
  * renderer bundle
  */
 function doWebpackBuild() {
+    trace('doWebpackBuild')
     // console.log('Framework mapped to ', tbBuildSrc)
     return new Promise(resolve => {
         console.log('prepare to pack...')
@@ -186,6 +190,7 @@ function doWebpackBuild() {
 
 function tscCompile(options:any, files:string[]) {
 
+    trace('tscCompile')
     const argList:string[] = []
     if(options.outdir) { argList.push('--outDir '+options.outdir)}
     if(options.target) { argList.push('--target '+options.target) }
@@ -207,6 +212,7 @@ function tscCompile(options:any, files:string[]) {
  * - create an executable in the name of the app that runs electron and points to our main module
  */
 function mainAndExec() {
+    trace('mainAndExec')
     let p
     try {
         if (!fs.existsSync(buildPath)) {
@@ -271,6 +277,7 @@ function mainAndExec() {
 }
 
 function generateBuildEnvironment() {
+    trace('generateBuldEnvironment')
     const genDir = path.join(buildPath, '..')  // generate it at runtime cwd, not front
     if(!fs.existsSync(genDir)) {
         fs.mkdirSync(genDir, {recursive:true})
@@ -325,6 +332,7 @@ function generateBuildEnvironment() {
 }
 
 function makeAppScss(appScss:string) {
+    trace('makeAppScss')
     // enumerate the scss file for .scss files
     // (non-recursive.  folders may be used to import from by top-level scss files here.
     // although prefix selection is not supported at that level)
@@ -375,6 +383,7 @@ function makeAppScss(appScss:string) {
 
 }
 function isDesktopPrefix(pfx:string):boolean {
+    trace('isDesktopPrefix')
     return (pfx === 'desktop'
     || pfx === 'macos'
     || pfx === 'windows'
@@ -382,7 +391,8 @@ function isDesktopPrefix(pfx:string):boolean {
 }
 
 function compileScss() {
-    // console.log('compileScss')
+    trace('compileScss')
+
     const mainScss = 'app.scss'
     const appScss = path.join(projPath, '.gen', mainScss)
     if(fs.existsSync(appScss)) {
@@ -411,17 +421,19 @@ function compileScss() {
 }
 
 function makeRiotComponents() {
+    trace('makeRiotComponents')
     const componentsDir = path.join(projPath, 'src', 'components')
     if(fs.existsSync(componentsDir)) {
         componentReader.enumerateAndConvert(componentsDir, 'riot', componentsDir)
     }
 
-    console.log('converting pages to riot')
+    trace('converting pages to riot')
     const pageDir = path.join(projPath, 'src', 'pages')
     pageReader.enumerateAndConvert(pageDir, 'riot', pageDir)
 }
 
 function summary() {
+    trace('summary')
     console.log('')
     console.log(`${displayName} (${projName} ${projVersion})`)
     console.log(projDesc)
@@ -429,10 +441,12 @@ function summary() {
 }
 
 export function doBuild() {
+    trace('doBuild')
     console.log('building...')
     let p;
     try {
         const info = gatherInfo()
+        verbose = info.buildFlags.verbose || false
         jovePath = info.jovePath
         packPath = info.packPath
         projPath = info.projPath
@@ -454,6 +468,8 @@ export function doBuild() {
         author = info.author
         frontMain = info.frontMain
         backMain = info.backMain
+
+        trace('info gathered ', info)
 
         if(info.buildFlags.clean) {
             console.log('cleaning...')
@@ -496,6 +512,7 @@ export function doBuild() {
  * do an npm install if package.json is newer than node_modules, or node_modules does not exist
  */
 function npmInstall() {
+    trace('npmInstall')
     const pkgStat = fs.lstatSync('package.json')
     let ptime = pkgStat.mtimeMs
     let mtime = 0
@@ -525,6 +542,7 @@ function npmInstall() {
  * So this just moves it all under the webroot, where it will look for it the old-school way.
  */
 function copyAssets() {
+    trace('copyAssets')
     let src = path.join(projPath, 'src', 'assets')
     let rdest = path.join(buildPath, 'assets')
     let dest = rdest
@@ -573,27 +591,10 @@ function copyAssets() {
 }
 
 function doClean() {
-    // get rid of all .riot (components and pages), get rid of .gen and build
-    // let dirpath = path.join(projPath, 'src', 'components')
-    // recurseDirectory(dirpath, (filepath, stats) => {
-    //     if(stats.isFile()) {
-    //         let ext = filepath.substring(filepath.lastIndexOf('.'))tsc
-    //         if(ext === '.riot') {
-    //             fs.unlinkSync(filepath)
-    //         }
-    //     }
-    // })
-    // dirpath = path.join(projPath, 'src', 'pages')
-    // recurseDirectory(dirpath, (filepath, stats) => {
-    //     if(stats.isFile()) {
-    //         let ext = filepath.substring(filepath.lastIndexOf('.'))
-    //         if(ext === '.riot') {
-    //             fs.unlinkSync(filepath)
-    //         }
-    //     }
-    // })
+    trace('cleaning .gen')
     let dirpath = path.join(projPath, '.gen')
     fs.rmSync(dirpath, {recursive:true})
+    trace('cleaning build')
     dirpath = path.join(projPath, 'build')
     fs.rmSync(dirpath, {recursive:true})
 }
@@ -615,6 +616,7 @@ function recurseDirectory(dirpath:string, callback:RecurseCB) {
 let fontLoad = ''
 
 function enumerateFonts() {
+    trace('enumerateFonts')
     fontLoad = ''
     let fontsPath = path.join(projPath, 'src', 'fonts')
     if (fs.existsSync(fontsPath)) {
@@ -651,4 +653,12 @@ function enumerateFonts() {
         })
 
     }
+}
+
+let firstTrace = 0
+function trace(message:string, ...args:any) {
+    let now = Date.now()
+    if(!firstTrace) firstTrace = now
+    let time = firstTrace - now
+    if(verbose) console.log(ac.blue(time+' ms ')+ac.gray(message), ...args)
 }

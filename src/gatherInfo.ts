@@ -59,6 +59,9 @@ function resolvePaths() {
                 clean = true
                 compile = prepare = false
             }
+            else if(val === '--verbose') {
+                verbose = true
+            }
             else if(val) {
                 projPath = val
             }
@@ -222,7 +225,8 @@ export function gatherInfo() {
         buildFlags: {
             clean,
             prepare,
-            compile
+            compile,
+            verbose
         }
     }
 }
