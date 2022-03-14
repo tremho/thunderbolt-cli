@@ -95,20 +95,18 @@ export function doNativeScript() {
                     console.log(ac.bold.green('Project ' + projName + ' exported to Nativescript project at ' + path.join(outPath, projName)))
 
                     if (runCmd) {
-                        executeCommand('killall', ['ns', 'node']).then(() => {
-                            let opts = []
-                            opts.push(runCmd)
-                            opts.push(platform)
-                            if (debugBrk && runCmd === 'debug') {
-                                opts.push('--debug-brk')
-                            }
-                            if (device) {
-                                opts.push('--device')
-                                opts.push(device)
-                            }
-                            opts.push('--no-hmr')
-                            executeCommand('ns', opts, nsRoot, true)
-                        })
+                        let opts = []
+                        opts.push(runCmd)
+                        opts.push(platform)
+                        if (debugBrk && runCmd === 'debug') {
+                            opts.push('--debug-brk')
+                        }
+                        if (device) {
+                            opts.push('--device')
+                            opts.push(device)
+                        }
+                        opts.push('--no-hmr')
+                        executeCommand('ns', opts, nsRoot, true)
                     }
 
                 })
