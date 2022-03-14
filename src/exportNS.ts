@@ -105,6 +105,7 @@ export function doNativeScript() {
                             opts.push('--device')
                             opts.push(device)
                         }
+                        opts.push('--no-hmr')
                         executeCommand('ns', opts, nsRoot, true)
                     }
 
