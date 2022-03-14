@@ -2,6 +2,8 @@
 import {exec} from 'child_process'
 import * as path from 'path'
 
+let lastProc:any
+
 export function executeCommand(cmd:string, args:any[],  cwd = '', consolePass = false, env:any = {}):Promise<any> {
   const out = {
     stdStr: '',
@@ -15,7 +17,11 @@ export function executeCommand(cmd:string, args:any[],  cwd = '', consolePass = 
       cwd:cwd,
       env: Object.assign(env, process.env)
     }
+    if(lastProc) {
+      lastProc.kill()
+    }
     const proc = exec(cmdstr, opts)
+    lastProc = proc
     if(proc.stdout) proc.stdout.on('data', data => {
       out.stdStr += data.toString()
       if(consolePass) console.log(data.toString().trim())
