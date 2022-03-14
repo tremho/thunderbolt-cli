@@ -95,7 +95,7 @@ export function doNativeScript() {
                     console.log(ac.bold.green('Project ' + projName + ' exported to Nativescript project at ' + path.join(outPath, projName)))
 
                     if (runCmd) {
-                        executeCommand('killall', ['node']).then(() => {
+                        executeCommand('killall', ['ns', 'node']).then(() => {
                             let opts = []
                             opts.push(runCmd)
                             opts.push(platform)
