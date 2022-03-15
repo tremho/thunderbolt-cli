@@ -10,7 +10,6 @@ const splashRiot =
 
     <script>
       import pageComp from 'Framework/app-core/PageComp'
-      // import * as activity from '../../src/pages/splash-page'
       const pc =  Object.assign({}, pageComp)
       const cm = pc.cm
       pc.activity = {
