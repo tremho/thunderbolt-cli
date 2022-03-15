@@ -66,6 +66,8 @@ function enumerateRiotPages() {
                             console.error('Missing .ts code file for ' + pageName)
                             throw Error()
                         }
+                    } else {
+                        pageOut.push(pageId) // include splash in the list
                     }
                 } else {
                     console.warn(`non-page .riot file "${name}" found in "pages" folder`)
