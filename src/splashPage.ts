@@ -1,6 +1,5 @@
 
-import {PageInfo} from "./tbFiles/PageInfo";
-import {writeRiotPage} from "./tbFiles/PageWriterRiot";
+import * as fs from 'fs'
 
 const splashRiot =
 `
@@ -26,16 +25,7 @@ const splashRiot =
 </splash-page>
 `
 
-export function copySplashPage() {
-
-    let pageInfo = new PageInfo()
-    pageInfo.id = 'splash'
-    pageInfo.noTitle = true
-    pageInfo.content =
-`
-<grid-layout class="splash-back">
-    <stack-layout class="splash-content"/>
-</grid-layout>
- `
-    writeRiotPage(pageInfo, 'splash')
+export function copySplashPage(toPageFile:string) {
+    fs.writeFileSync(toPageFile, splashRiot)
 }
+

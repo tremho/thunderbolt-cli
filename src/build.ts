@@ -605,7 +605,8 @@ function copyAssets() {
     }
 
     if(splashExpected) {
-        copySplashPage()
+        let dirpath = path.join(projPath, '.gen')
+        copySplashPage(path.join(dirpath, 'pages', 'splash-page.riot'))
     }
 }
 
