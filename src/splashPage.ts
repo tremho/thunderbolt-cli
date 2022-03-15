@@ -13,7 +13,14 @@ const splashRiot =
       const pc =  Object.assign({}, pageComp)      
       pc.onMounted = () => {
           console.log('splash riot starting')
-          cm.app.splashDance(this)      
+          const boundTag = document.body.querySelector('[is="app"]')
+          if (!boundTag) {
+            throw Error('riot app not bound to page')
+          }
+          const rootComp = this.getComponent(boundTag)
+          const app = rootComp.props.app;
+            
+          app.splashDance(this)      
       }
       const cm = pc.cm
       export default pc
