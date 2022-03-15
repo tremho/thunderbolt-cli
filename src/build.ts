@@ -29,9 +29,8 @@ import * as riot from 'riot'
 import * as AppFront from 'Project/joveAppFront'
 // @ts-ignore
 import App from 'RiotMain/app.riot'
-import {exec} from "child_process";
-// import {AppCore, setTheApp} from 'Framework/app-core/AppCore'
-// import registerGlobalComponents from 'BuildPack/register-global-components'
+
+import {copySplashPage} from "./splashPage";
 
 
 // Variables resolved and used in build functions
@@ -587,8 +586,31 @@ function copyAssets() {
             }
         })
     }
+    // if we have a splash, copy the background and content files to the ./build/front (buildPath, web root)
+    src = path.join(projPath, 'launch-icons')
+    dest = buildPath
+    let splashExpected = false
+    let sb = path.join(src, 'splash-background.png')
+    if(fs.existsSync(sb)) {
+        trace('copying '+sb)
+        splashExpected = true // we will use splash.jpg as content if splash-content.png is not there
+        fs.copyFileSync(sb, path.join(dest, 'splash-background.png'))
+    }
+    let sc = path.join(src, 'splash-content.png')
+    if(!fs.existsSync(sc) && splashExpected) sc = path.join(src, 'splash.jpg')
+    if(fs.existsSync(sc)) {
+        splashExpected = true
+        trace('copying '+sc)
+        fs.copyFileSync(sc, path.join(dest, 'splash-content.png')) // even if we copy the jpg, we use this name. Ext doesn't matter to browser.
+    }
 
+    if(splashExpected) {
+        copySplashPage()
+    }
 }
+
+
+//------------------
 
 function doClean() {
     trace('cleaning .gen')
