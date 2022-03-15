@@ -59,11 +59,13 @@ function enumerateRiotPages() {
                 let di = pageName.indexOf('-page')
                 if(di !== -1) {
                     const pageId = pageName.substring(0, di)
-                    if(fs.existsSync(path.join(srcpages, pageName+'.ts'))) { // we must have a code page too
-                        pageOut.push(pageId)
-                    } else {
-                        console.error('Missing .ts code file for '+pageName)
-                        throw Error()
+                    if(pageId !== 'splash') {
+                        if (fs.existsSync(path.join(srcpages, pageName + '.ts'))) { // we must have a code page too
+                            pageOut.push(pageId)
+                        } else {
+                            console.error('Missing .ts code file for ' + pageName)
+                            throw Error()
+                        }
                     }
                 } else {
                     console.warn(`non-page .riot file "${name}" found in "pages" folder`)
