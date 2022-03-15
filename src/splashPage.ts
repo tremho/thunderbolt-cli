@@ -10,7 +10,7 @@ const splashRiot =
 
     <script>
       import pageComp from 'Framework/app-core/PageComp'
-      const pc =  Object.assign({}, pageComp)
+      const pc =  Object.assign({}, pageComp)      
       pc.onMounted = () => {
           console.log('splash riot starting')
           cm.app.splashDance(this)      
