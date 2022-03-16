@@ -480,6 +480,7 @@ export function doBuild() {
             generateBuildEnvironment()
             enumerateFonts()
             compileScss()
+            copyAssets()
             makeRiotComponents()
             makePageList()
         }
@@ -488,7 +489,6 @@ export function doBuild() {
                 return doWebpackBuild().then(() => {
                     console.log('completing build...')
                     createSMX()
-                    copyAssets()
                     return mainAndExec().then(() => {
                         return summary()
                     })

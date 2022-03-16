@@ -10,15 +10,12 @@ const splashRiot =
 
     <script>
       import pageComp from 'Framework/app-core/PageComp'
+      import {newCommon} from 'Framework/app-core/ComCommon'
       const pc =  Object.assign({}, pageComp)      
       pc.onMounted = () => {
           console.log('splash riot starting')
-          const boundTag = document.body.querySelector('[is="app"]')
-          if (!boundTag) {
-            throw Error('riot app not bound to page')
-          }
-          const rootComp = this.getComponent(boundTag)
-          const app = rootComp.props.app;
+          const com = newCommon(this) 
+          const app = com.app;
             
           app.splashDance(this)      
       }
