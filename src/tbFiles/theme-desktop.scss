@@ -137,6 +137,38 @@ body {
 
 }
 
+// ------------ Splash
+// styles for our generated splash
+// ==================
+.splash-back {
+  background-image: url('./splash-background.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width:100%;
+}
+
+.splash-content {
+  background-image: url('./splash-content.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width:75%;
+  height:50%;
+  min-width:100px;
+  min-height:100px;
+  max-width:100%;
+  max-height:100%;
+  position: fixed;
+  left:50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
 // ------------ Basic controls
 // styles applied to basic UI components
 // =============
