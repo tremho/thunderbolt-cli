@@ -19,6 +19,6 @@ export async function onNavigatedTo(args: EventData) {
 
     let page: any = args.object
     AppCore.setTheApp(coreApp, page.frame)
-    // console.log('we will now navigate to main-page')
-    coreApp.navigateToPage('main')
+    // handle splash dismissal and launch to main
+    coreApp.splashDance()
 }
