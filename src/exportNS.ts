@@ -593,6 +593,7 @@ function copyJoveSplash() {
     // if we have a splash, copy the background and content files to the ./build/front (buildPath, web root)
     let src = path.join(projPath, 'launch-icons')
     let dest = path.join(outPath, 'app')
+    if(!fs.existsSync(dest)) fs.mkdirSync(dest)
     let splashExpected = false
     let sb = path.join(src, 'splash-background.png')
     if(fs.existsSync(sb)) {
