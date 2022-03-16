@@ -89,7 +89,7 @@ export function doNativeScript() {
         // migrate metadata
         metaMigrateNS(path.join(outPath, projName))
         // make icons
-        return iconPrepNS(projPath, path.join(outPath, projName)).then(() => {
+        return iconPrepNS(projPath, path.join(outPath, projName), pkgInfo.splash?.background).then(() => {
             return migrateExtras().then(()=> {
                 return npmInstall().then(() => {
                     console.log(ac.bold.green('Project ' + projName + ' exported to Nativescript project at ' + path.join(outPath, projName)))

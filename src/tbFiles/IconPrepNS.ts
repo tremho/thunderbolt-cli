@@ -16,7 +16,7 @@ copy launch-icons
  * @param srcDir our Jove project root
  * @param destDir the nativescript destination root
  */
-export function iconPrepNS(srcDir:string, destDir:string) {
+export function iconPrepNS(srcDir:string, destDir:string, bgcolor:string) {
 
     const srcLiDir = path.join(srcDir, 'launch-icons')
     const dstLiDir = path.join(destDir, 'launch-icons')
@@ -55,8 +55,14 @@ export function iconPrepNS(srcDir:string, destDir:string) {
     }
     const wait:any[] = []
     if(hasSplash) {
+
         // console.log('generating splash screens')
-        wait.push(executeCommand('ns resources generate splashes', [path.join('launch-icons', 'splash.jpg')], destDir))
+        let args = [path.join('launch-icons', 'splash.jpg')]
+        if(bgcolor) {
+            args.push('--background')
+            args.push(bgcolor)
+        }
+        wait.push(executeCommand('ns resources generate splashes', args, destDir))
 
         const iconsrc = hasIcon ? path.join('launch-icons','icon.png') : path.join('launch-icons','splash.jpg')
         // console.log('generating icons')
