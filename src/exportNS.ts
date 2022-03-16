@@ -90,6 +90,8 @@ export function doNativeScript() {
         metaMigrateNS(path.join(outPath, projName))
         // make icons
         return iconPrepNS(projPath, path.join(outPath, projName), pkgInfo.splash?.background).then(() => {
+            // copy jove-level splash images
+            copyJoveSplash()
             return migrateExtras().then(()=> {
                 return npmInstall().then(() => {
                     console.log(ac.bold.green('Project ' + projName + ' exported to Nativescript project at ' + path.join(outPath, projName)))
@@ -584,6 +586,28 @@ export default {
     }
 
     console.log('project id written as ', appId)
+}
+
+// copy the jove-level splash-background.png and splash-content.png to the app folder
+function copyJoveSplash() {
+    // if we have a splash, copy the background and content files to the ./build/front (buildPath, web root)
+    let src = path.join(projPath, 'launch-icons')
+    let dest = path.join(outPath, 'app')
+    let splashExpected = false
+    let sb = path.join(src, 'splash-background.png')
+    if(fs.existsSync(sb)) {
+        trace('copying '+sb)
+        splashExpected = true // we will use splash.jpg as content if splash-content.png is not there
+        fs.copyFileSync(sb, path.join(dest, 'splash-background.png'))
+    }
+    let sc = path.join(src, 'splash-content.png')
+    if(!fs.existsSync(sc) && splashExpected) sc = path.join(src, 'splash.jpg')
+    if(fs.existsSync(sc)) {
+        splashExpected = true
+        trace('copying '+sc)
+        fs.copyFileSync(sc, path.join(dest, 'splash-content.png')) // even if we copy the jpg, we use this name. Ext doesn't matter to browser.
+    }
+
 }
 
 let firstTrace = 0
