@@ -324,6 +324,7 @@ function copySources() {
     copySourceDirectory(src, dst)
 }
 
+// Copy if newer
 function copySourceFile(src:string, dest:string) {
     if(testForUpdate(src,dest)) {
         trace('copying ', src, dest)
@@ -336,6 +337,7 @@ function copySourceFile(src:string, dest:string) {
         trace('skipping ', src)
     }
 }
+// coppy files in the directory if newer
 function copySourceDirectory(src:string, dest:string) {
     trace('copySourceDirectory')
     const files = fs.readdirSync(src)
