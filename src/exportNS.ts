@@ -88,10 +88,10 @@ export function doNativeScript() {
 
         // migrate metadata
         metaMigrateNS(path.join(outPath, projName))
+        // copy jove-level splash images
+        copyJoveSplash()
         // make icons
         return iconPrepNS(projPath, path.join(outPath, projName), pkgInfo.splash?.background).then(() => {
-            // copy jove-level splash images
-            copyJoveSplash()
             return migrateExtras().then(()=> {
                 return npmInstall().then(() => {
                     console.log(ac.bold.green('Project ' + projName + ' exported to Nativescript project at ' + path.join(outPath, projName)))
@@ -592,6 +592,7 @@ export default {
 
 // copy the jove-level splash-background.png and splash-content.png to the app folder
 function copyJoveSplash() {
+    console.log(ac.gray('copyJoveSplash'))
     // if we have a splash, copy the background and content files to the ./build/front (buildPath, web root)
     let src = path.join(projPath, 'launch-icons')
     let dest = path.join(outPath, 'app')
