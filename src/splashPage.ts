@@ -13,11 +13,12 @@ const splashRiot =
       import {newCommon} from 'Framework/app-core/ComCommon'
       const pc =  Object.assign({}, pageComp)      
       pc.onMounted = () => {
+        // note: we have no 'this' when this is called 
           console.log('splash riot starting')
-          const com = newCommon(this) 
+          const com = newCommon() 
           const app = com.app;
             
-          app.splashDance(this)      
+          app.splashDance()      
       }
       const cm = pc.cm
       export default pc
