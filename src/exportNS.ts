@@ -603,6 +603,7 @@ function copyJoveSplash() {
         trace('copying '+sb)
         splashExpected = true // we will use splash.jpg as content if splash-content.png is not there
         fs.copyFileSync(sb, path.join(dest, 'splash-background.png'))
+        console.log(ac.blue('copied '+sb+' to '+path.join(dest, 'splash-background.png')))
     }
     let sc = path.join(src, 'splash-content.png')
     if(!fs.existsSync(sc) && splashExpected) sc = path.join(src, 'splash.jpg')
@@ -610,6 +611,7 @@ function copyJoveSplash() {
         splashExpected = true
         trace('copying '+sc)
         fs.copyFileSync(sc, path.join(dest, 'splash-content.png')) // even if we copy the jpg, we use this name. Ext doesn't matter to browser.
+        console.log(ac.blue('copied '+sc+' to '+path.join(dest, 'splash-content.png')))
     }
 
 }
