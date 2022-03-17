@@ -80,24 +80,35 @@ export function iconPrepNS(srcDir:string, destDir:string, bgcolor:string) {
 
 // copy the jove-level splash-background.png and splash-content.png to the app folder
 function copyJoveSplash(src:string, dest:string) {
-    console.log(ac.gray('copyJoveSplash'))
+    console.log(ac.gray('copyJoveSplash', src, dest))
     // if we have a splash, copy the background and content files to the ./build/front (buildPath, web root)
-    if(!fs.existsSync(dest)) fs.mkdirSync(dest)
+    if(!fs.existsSync(dest)) {
+        console.log('making dest at ', dest)
+        fs.mkdirSync(dest)
+    }
     let splashExpected = false
     let sb = path.join(src, 'splash-background.png')
-    if(fs.existsSync(sb)) {
-        console.log(ac.gray('copying '+sb))
-        splashExpected = true // we will use splash.jpg as content if splash-content.png is not there
-        fs.copyFileSync(sb, path.join(dest, 'splash-background.png'))
-        console.log(ac.blue('copied '+sb+' to '+path.join(dest, 'splash-background.png')))
-    }
-    let sc = path.join(src, 'splash-content.png')
-    if(!fs.existsSync(sc) && splashExpected) sc = path.join(src, 'splash.jpg')
-    if(fs.existsSync(sc)) {
-        splashExpected = true
-        console.log(ac.gray('copying '+sc))
-        fs.copyFileSync(sc, path.join(dest, 'splash-content.png')) // even if we copy the jpg, we use this name. Ext doesn't matter to browser.
-        console.log(ac.blue('copied '+sc+' to '+path.join(dest, 'splash-content.png')))
+    try {
+        if (fs.existsSync(sb)) {
+            console.log(ac.gray('copying ' + sb))
+            splashExpected = true // we will use splash.jpg as content if splash-content.png is not there
+            fs.copyFileSync(sb, path.join(dest, 'splash-background.png'))
+            console.log(ac.blue('copied ' + sb + ' to ' + path.join(dest, 'splash-background.png')))
+        } else {
+            console.log("didn't fucking find", sb)
+        }
+        let sc = path.join(src, 'splash-content.png')
+        if (!fs.existsSync(sc) && splashExpected) sc = path.join(src, 'splash.jpg')
+        if (fs.existsSync(sc)) {
+            splashExpected = true
+            console.log(ac.gray('copying ' + sc))
+            fs.copyFileSync(sc, path.join(dest, 'splash-content.png')) // even if we copy the jpg, we use this name. Ext doesn't matter to browser.
+            console.log(ac.blue('copied ' + sc + ' to ' + path.join(dest, 'splash-content.png')))
+        } else {
+            console.log("didn't fucking find", sc)
+        }
+    } catch(e) {
+        console.error(ac.bold.red('shit hits fan'),e)
     }
 
 }
