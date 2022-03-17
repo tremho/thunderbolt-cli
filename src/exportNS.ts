@@ -86,6 +86,7 @@ export function doNativeScript() {
         migrateLaunch()
         unifyProjectId()
 
+        console.log('----- doing additional preps----')
         // migrate metadata
         metaMigrateNS(path.join(outPath, projName))
         // make icons

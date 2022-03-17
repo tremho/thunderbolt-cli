@@ -19,6 +19,8 @@ copy launch-icons
  */
 export function iconPrepNS(srcDir:string, destDir:string, bgcolor:string) {
 
+    console.log(ac.blue('starting icon and splash preparation steps'))
+
     const srcLiDir = path.join(srcDir, 'launch-icons')
     const dstLiDir = path.join(destDir, 'launch-icons')
     // console.log('preparing for icon generation...')
