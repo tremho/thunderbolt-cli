@@ -9,7 +9,8 @@ import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
 
-const {TEST_ENABLED} = require( '../../../../settings/enabled')
+// @ts-ignore
+import {TEST_ENABLED} from "../../../settings/enabled"
 
 // import {registerAppiumHandler, clientAppium} from "./appiumWSClient";
 
