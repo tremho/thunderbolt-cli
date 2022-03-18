@@ -10,7 +10,7 @@ import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
 
 // @ts-ignore
-import {TEST_ENABLED} from "../../../settings/enabled"
+import {TEST_ENABLED} from "`~/tbd/settings/enabled"
 
 // import {registerAppiumHandler, clientAppium} from "./appiumWSClient";
 
