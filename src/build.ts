@@ -519,12 +519,14 @@ function npmInstall() {
         const modStat = fs.lstatSync('node_modules')
         mtime = modStat.mtimeMs
     }
+    // trace(`package.json time ${ptime} node_modules time ${mtime}`)
     if(ptime > mtime) {
         return executeCommand('npm', ['install']).then(rt => {
             if(rt.code) {
                 console.error(rt.errStr)
                 throw Error()
             }
+            return executeCommand('touch', ['node_modules'])
         })
     } else {
         return Promise.resolve()

@@ -9,9 +9,17 @@ import * as fs from 'fs'
 import * as ac from 'ansi-colors'
 import { networkInterfaces } from 'os'
 
+const {TEST_ENABLED} = require('~/tbd/settings/enabled')
+
 // import {registerAppiumHandler, clientAppium} from "./appiumWSClient";
 
 export function doTest() {
+
+    if(!TEST_ENABLED) {
+        console.log(ac.bold.red('TESTING IS NOT ENABLED in this Jove build'))
+        return Promise.resolve()
+    }
+
     console.log('setting up for test...')
     let p:any
 

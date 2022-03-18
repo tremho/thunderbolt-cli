@@ -80,7 +80,9 @@ export function iconPrepNS(srcDir:string, destDir:string, bgcolor:string) {
 
 // copy the jove-level splash-background.png and splash-content.png to the app folder
 function copyJoveSplash(src:string, dest:string) {
-    console.log(ac.gray('copyJoveSplash', src, dest))
+    src = path.join(src, 'launch-icons')
+    dest = path.join(dest, 'app')
+    console.log(ac.gray('copyJoveSplash'), src, dest)
     // if we have a splash, copy the background and content files to the ./build/front (buildPath, web root)
     if(!fs.existsSync(dest)) {
         console.log('making dest at ', dest)
