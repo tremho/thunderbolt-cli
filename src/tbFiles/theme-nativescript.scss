@@ -340,6 +340,7 @@
 // so are different from desktop version
 // ==================
 .splash-back {
+  background-color: black;
   background-image: url('~/splash-background.png');
   background-repeat: no-repeat;
   background-position: center;
@@ -353,6 +354,7 @@
 }
 
 .splash-content {
+  background-color: black;
   background-image: url('~/splash-content.png');
   background-repeat: no-repeat;
   background-position: center;
