@@ -104,7 +104,9 @@ import * as ac from 'ansi-colors'
 export function metaMigrateNS(outPath:string) {
     console.log(ac.dim.italic('metaMigrateNS...'))
     const pkgJson = readPackageJSON()
-    let {version, displayName, shortDisplayName, projId} = pkgJson
+    let {version, displayName, shortDisplayName, projId, android} = pkgJson
+
+    let {minSDK, targetSDK, compileSDK} = (android || {})
 
     // make version transmogrifications
     if(!version) version = '0.0.1-pre-release.1'
@@ -158,7 +160,7 @@ export function metaMigrateNS(outPath:string) {
     // update the plist items
     updatePListItems(outPath, version, displayName, shortDisplayName)
     // update settings.json and res/values/strings.xml (can we make this titles.xml?) and AndroidManifest.ml
-    updateAndroidMeta(outPath, version, avc, projId, displayName, shortDisplayName)
+    updateAndroidMeta(outPath, version, avc, projId, displayName, shortDisplayName, minSDK, targetSDK, compileSDK)
 
     // write build.xcconfig if we have data for it and there is an ios platform
     makeXCBuildSettings(outPath, pkgJson.ios)
@@ -209,7 +211,7 @@ function updatePListItems(outPath:string, version:string, displayName:string, sh
 
 }
 
-function updateAndroidMeta(outPath:string, version:string, avc:number, appId:string, displayName:string, shortName?:string, minSDK?:string, targetSDK?:string) {
+function updateAndroidMeta(outPath:string, version:string, avc:number, appId:string, displayName:string, shortName?:string, minSDK?:string, targetSDK?:string, compileSDK?:string) {
     if(!shortName) shortName = shortFromDisplay(displayName)
 
     let error = false
@@ -237,7 +239,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
     // write out settings.json
     try {
         const settingsFile = path.join(outPath, 'App_Resources', 'Android', 'settings.json')
-        const set = {appId: appId, minSdkVersion: minSDK || null, targetSdkVersion: targetSDK || null}
+        const set = {appId: appId, minSdkVersion: minSDK || null, targetSdkVersion: targetSDK || null, compileSDKVersion: compileSDK || null}
         const setstr = JSON.stringify(set)
         fs.writeFileSync(settingsFile, setstr)
     } catch(e) {
@@ -288,7 +290,7 @@ function makeXCBuildSettings(outPath:string, options:any) {
 // "ios": {
 //   "teamId":  --> becomes DEVELOPMENT_TEAM
 //   "provisioning": --> becomes PROVISIONING_PROFILE
-//   "useCodeSign": --> becomes CODE_SIGN_IDENTITY
+//   "codeSignFor": --> becomes CODE_SIGN_IDENTITY
 // }    
 // always generated:    
 //    ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
