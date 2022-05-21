@@ -2,6 +2,7 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd"
       loaded="onLoaded" navigatedTo="onNavigatedTo"
       actionBarHidden="true"
+      enableSwipeBackNavigation="false"
 >
     <StackLayout class="splash-back">
         <StackLayout class="splash-content"></StackLayout>

@@ -36,6 +36,7 @@ export function writeNativeScriptPage(info:PageInfo, srcpath:string, outDir:stri
     let out = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatedTo="onNavigatedTo"\n`
     out += `      xmlns:tb="~/components/tb-components"\n`
     out += `      actionBarHidden="true"\n`
+    if(info.id === 'main') out += `      enableSwipeBackNavigation="false"\n`
     out += '>\n'
     if(!info.noTitle || info.menuId || info.toolbarId || info.indicatorsId || info.orientationReload) {
         out += `    <tb:TBPage id="${info.id}" title="${info.title}"`
