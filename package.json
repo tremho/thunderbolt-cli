@@ -1,6 +1,6 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.439",
+  "version": "0.6.9-pre-release.440",
   "description": "tbx command line utility for Jove development",
   "main": "build/index.js",
   "bin": {
@@ -52,6 +52,7 @@
     "@types/sass": "^1.16.0",
     "ansi-colors": "^4.1.1",
     "conversion_cargo": "^2.1.21",
+    "dotenv": "^16.0.1",
     "fork-ts-checker-notifier-webpack-plugin": "^4.0.0",
     "fork-ts-checker-webpack-plugin": "^6.3.3",
     "hjson": "^3.2.2",
