@@ -116,7 +116,8 @@ export function doNativeScript() {
                         opts.push('--no-hmr')
                         if(release) {
                             const keypath = path.join(projPath, `.keys-${platform}`)
-                            dotenv.config(keypath)
+                            const aabdist = path.join(projPath, 'dist', `${projName}.aab`)
+                            dotenv.config({path: keypath})
                             console.log('keys from ',keypath, process.env)
                             if(platform === 'android') {
                                 opts.push('--release')
@@ -124,6 +125,8 @@ export function doNativeScript() {
                                 opts.push(`--key-store-password ${process.env.KEY_STORE_PASSWORD}`)
                                 opts.push(`--key-store-alias ${process.env.KEY_STORE_ALIAS}`)
                                 opts.push(`--key-store-alias-password ${process.env.KEY_STORE_ALIAS_PASSWORD}`)
+                                opts.push('--aab')
+                                opts.push(`--copy-to ${aabdist}`)
                             }
                         }
                         executeCommand('ns', opts, nsRoot, true)
