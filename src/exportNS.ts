@@ -10,7 +10,8 @@ import * as pageReader from "./tbFiles/PageReader";
 import {translateScss} from "./tbFiles/MigrateScss";
 import {iconPrepNS} from "./tbFiles/IconPrepNS";
 import {metaMigrateNS} from "./tbFiles/MetadataMover"
-import {exec} from "child_process";
+
+const dotenv = require('dotenv')
 
 const spinner = require('text-spinner')({
     interval: 100,
@@ -44,7 +45,7 @@ function readCommandOptions() {
         if(opt === '--clean') {
             wantClean = true;
         }
-        if(opt === 'run' || opt === 'debug') {
+        if(opt === 'run' || opt === 'debug' || opt === 'dist') {
             runCmd = opt
             platform = opts[++i]
         }
@@ -54,6 +55,7 @@ function readCommandOptions() {
         if(opt === '--debug-brk') {
             debugBrk = true
         }
+
         i++
     }
 }
@@ -95,7 +97,12 @@ export function doNativeScript() {
                 return npmInstall().then(() => {
                     console.log(ac.bold.green('Project ' + projName + ' exported to Nativescript project at ' + path.join(outPath, projName)))
 
+                    let release = false
                     if (runCmd) {
+                        if(runCmd === 'dist') {
+                            runCmd = 'build'
+                            release = true
+                        }
                         let opts = []
                         opts.push(runCmd)
                         opts.push(platform)
@@ -107,6 +114,18 @@ export function doNativeScript() {
                             opts.push(device)
                         }
                         opts.push('--no-hmr')
+                        if(release) {
+                            const keypath = path.join(projPath, `.keys-${platform}`)
+                            dotenv.config(keypath)
+                            console.log('keys from ',keypath, process.env)
+                            if(platform === 'android') {
+                                opts.push('--release')
+                                opts.push(`--key-store-path ${process.env.KEY_STORE_FILE}`)
+                                opts.push(`--key-store-password ${process.env.KEY_STORE_PASSWORD}`)
+                                opts.push(`--key-store-alias ${process.env.KEY_STORE_ALIAS}`)
+                                opts.push(`--key-store-alias-password ${process.env.KEY_STORE_ALIAS_PASSWORD}`)
+                            }
+                        }
                         executeCommand('ns', opts, nsRoot, true)
                     }
 
