@@ -761,8 +761,11 @@ async function releaseToMain(version:string) {
     fs.writeFileSync(path.join(projPath, 'package.json'), JSON.stringify(pkgInfo, null, 2))
     let ret = await executeCommand('git', ['commit', '-am', `"preparing for release version ${version}"`], projPath, verbose)
     if(ret.retcode) {
-        console.error(ac.bold.red(`Error (${ret.retcode}) committing project - `+ ret.errStr), '\n', ac.black(ret.stdStr))
-        return false
+        // we can expect this error
+        if(ret.stdStr.indexOf('nothing to commit, working tree clean') === -1) {
+            console.error(ac.bold.red(`Error (${ret.retcode}) committing project - ` + ret.errStr), '\n', ac.black(ret.stdStr))
+            return false
+        }
     }
     ret = await executeCommand('git', ['checkout', 'main'], projPath, verbose)
     if(ret.retcode) {
