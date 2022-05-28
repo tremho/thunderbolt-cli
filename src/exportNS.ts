@@ -755,47 +755,47 @@ async function releaseToMain(version:string) {
     console.log('committing and tagging version ',version, 'to main branch, from branch ', branchName)
     pkgInfo.version = version; // update the version
     fs.writeFileSync(path.join(projPath, 'package.json'), JSON.stringify(pkgInfo, null, 2))
-    let ret = await executeCommand('git', ['commit', '-am', `"preparing for release version ${version}"`], projPath)
+    let ret = await executeCommand('git', ['commit', '-am', `"preparing for release version ${version}"`], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error committing project - '+ ret.errStr), '\n', ac.black(ret.stdStr))
         return false
     }
-    ret = await executeCommand('git', ['checkout', 'main'], projPath)
+    ret = await executeCommand('git', ['checkout', 'main'], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error checking out main branch- '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['merge', branchName], projPath)
+    ret = await executeCommand('git', ['merge', branchName], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error merging - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['commit', '-m', `"merged from branch ${branchName} for version ${version} release"`], projPath)
+    ret = await executeCommand('git', ['commit', '-m', `"merged from branch ${branchName} for version ${version} release"`], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error committing merge - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['tag', version], projPath)
+    ret = await executeCommand('git', ['tag', version], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error tagging - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['push', '-u'], projPath)
+    ret = await executeCommand('git', ['push', '-u'], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error pushing - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['checkout', branchName], projPath)
+    ret = await executeCommand('git', ['checkout', branchName], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error returning to branch - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['merge', 'main'], projPath)
+    ret = await executeCommand('git', ['merge', 'main'], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error remerging with main - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['tag', '-l'], projPath)
+    ret = await executeCommand('git', ['tag', '-l'], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error retrieving tag list - '+ ret.errStr))
         return false
