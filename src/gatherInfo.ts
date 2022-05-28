@@ -80,15 +80,15 @@ function resolvePaths() {
     fwMobilePath = path.resolve(path.join(modulesPath, '@tremho', 'jove-mobile'))
     fwCliPath = path.resolve(path.join(modulesPath, '@tremho', 'jove-cli'))
 
-    // console.log('jovePath', jovePath)
-    // console.log('cmd', cmd)
-    // console.log('projPath',projPath)
-    //
-    // console.log('modulesPath', modulesPath)
-    // console.log('fwCommonPath', fwCommonPath)
-    // console.log('fwDesktopPath', fwDesktopPath)
-    // console.log('fwMobilePath', fwMobilePath)
-    // console.log('fwCliPath', fwCliPath)
+    console.log('jovePath', jovePath)
+    console.log('cmd', cmd)
+    console.log('projPath',projPath)
+
+    console.log('modulesPath', modulesPath)
+    console.log('fwCommonPath', fwCommonPath)
+    console.log('fwDesktopPath', fwDesktopPath)
+    console.log('fwMobilePath', fwMobilePath)
+    console.log('fwCliPath', fwCliPath)
 
     if(!fs.existsSync(fwCommonPath)) {
         console.warn('fwCommonPath', fwCommonPath)
