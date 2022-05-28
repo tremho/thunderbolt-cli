@@ -647,7 +647,8 @@ async function makeFastlane(previousVersion:string) {
 
     const cleanProjName = projName.replace(/[-_ .]/g, '')
 
-    const changeLog = await generateChangelog(previousVersion)
+    let changeLog = await generateChangelog(previousVersion)
+    changeLog = changeLog.replace(/"/g, '\\"').replace(/\n/g, '\\n')
 
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
     const flDest = path.join(nsRoot, 'fastlane')
@@ -670,7 +671,7 @@ CHANGELOG="${changeLog}"
 `
     fs.writeFileSync(envFile, envData)
 
-    await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
+    await executeCommand('bundle', ['exec', 'fastlane', 'ios', 'beta'], nsRoot, true)
 
 }
 
