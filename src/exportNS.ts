@@ -757,7 +757,7 @@ async function releaseToMain(version:string) {
     fs.writeFileSync(path.join(projPath, 'package.json'), JSON.stringify(pkgInfo, null, 2))
     let ret = await executeCommand('git', ['commit', '-am', `"preparing for release version ${version}"`], projPath)
     if(ret.retcode) {
-        console.error(ac.bold.red('Error committing project - '+ ret.errStr))
+        console.error(ac.bold.red('Error committing project - '+ ret.errStr), '\n', ac.black(ret.stdStr))
         return false
     }
     ret = await executeCommand('git', ['checkout', 'main'], projPath)
