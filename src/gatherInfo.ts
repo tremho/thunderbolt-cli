@@ -63,7 +63,9 @@ function resolvePaths() {
                 verbose = true
             }
             else if(val) {
-                projPath = val
+                if(cmd !== 'nativescript') { // nativescript target has its own subcommand structure
+                    projPath = val
+                }
             }
             i++
         }
