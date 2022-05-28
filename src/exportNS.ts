@@ -120,8 +120,12 @@ export function doNativeScript() {
                         if(release) {
                             return getPreviousPublishedVersion().then(preVersion => {
                                 const version = versionBump(preVersion)
-                                return releaseToMain(version).then(() => {
-                                    return makeFastlane(preVersion)
+                                return releaseToMain(version).then((success) => {
+                                    if(success) {
+                                        return makeFastlane(preVersion)
+                                    } else {
+                                        console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
+                                    }
                                 })
                             })
                         }
