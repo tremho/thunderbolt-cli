@@ -118,8 +118,11 @@ export function doNativeScript() {
                         }
                         opts.push('--no-hmr')
                         if(release) {
-                            return getPreviousPublishedVersion().then(versionBump).then(version => {
-                                return releaseToMain(version).then(makeFastlane)
+                            return getPreviousPublishedVersion().then(preVersion => {
+                                const version = versionBump(preVersion)
+                                return releaseToMain(version).then(() => {
+                                    return makeFastlane(preVersion)
+                                })
                             })
                         }
                         executeCommand('ns', opts, nsRoot, true)
@@ -608,7 +611,7 @@ export default {
  * Copy the boilerplate and generate the environment
  * for a Fastlane deployment
  */
-function makeFastlane() {
+async function makeFastlane(previousVersion:string) {
     // first, read secrets from .dist.secrets
     const dsFile = path.join(projPath, '.dist.secrets');
     if(fs.existsSync(dsFile)) {
@@ -640,6 +643,8 @@ function makeFastlane() {
 
     const cleanProjName = projName.replace(/[-_ .]/g, '')
 
+    const changeLog = await generateChangelog(previousVersion)
+
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
     const flDest = path.join(nsRoot, 'fastlane')
     copySourceDirectory(flSrcDir, flDest, true)
@@ -661,7 +666,8 @@ CHANGELOG="${changeLog}"
 `
     fs.writeFileSync(envFile, envData)
 
-    executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
+    await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
+
 }
 
 // previous version
