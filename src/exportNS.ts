@@ -766,7 +766,7 @@ async function releaseToMain(version:string) {
         console.error(ac.bold.red('Error merging - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['commit', '-m', `merged from branch ${branchName} for version ${version} release`], projPath)
+    ret = await executeCommand('git', ['commit', '-m', `"merged from branch ${branchName} for version ${version} release"`], projPath)
     if(ret.retcode) {
         console.error(ac.bold.red('Error committing merge - '+ ret.errStr))
         return false
