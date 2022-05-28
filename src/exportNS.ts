@@ -704,11 +704,17 @@ async function getPreviousPublishedVersion() {
 function versionBump(version:string, type= 'build') {
     let n = version.lastIndexOf('-')
     let build = 0
-    if(n !== -1) build = Number(version.substring(n+1))
+    if(n !== -1) {
+        build = Number(version.substring(n+1))
+        n = version.indexOf('-')
+        if(n !== -1) {
+            version = version.substring(0, n)
+        }
+    }
     const parts = version.split('.')
-    let major = Number(parts[0])
-    let minor = Number(parts[1])
-    let patch = Number(parts[2])
+    let major = Number(parts[0] ?? 0)
+    let minor = Number(parts[1] ?? 0)
+    let patch = Number(parts[2] ?? 0)
     if(type === 'major') {
         major++
         minor = 0
@@ -760,9 +766,9 @@ async function releaseToMain(version:string) {
         console.error(ac.bold.red('Error merging - '+ ret.errStr))
         return false
     }
-    ret = await executeCommand('git', ['commit', '-am', `merged from branch ${branchName} for version ${version} release`], projPath)
+    ret = await executeCommand('git', ['commit', '-m', `merged from branch ${branchName} for version ${version} release`], projPath)
     if(ret.retcode) {
-        console.error(ac.bold.red('Error merging - '+ ret.errStr))
+        console.error(ac.bold.red('Error committing merge - '+ ret.errStr))
         return false
     }
     ret = await executeCommand('git', ['tag', version], projPath)
