@@ -786,7 +786,7 @@ async function releaseToMain(version:string) {
             return false
         }
     }
-    ret = await executeCommand('git', ['tag', version], projPath, verbose)
+    ret = await executeCommand('git', ['tag', '-f', version], projPath, verbose)
     if(ret.retcode) {
         console.error(ac.bold.red('Error tagging - '+ ret.errStr))
         return false
