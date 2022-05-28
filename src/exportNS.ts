@@ -648,6 +648,8 @@ function makeFastlane() {
     const contactLine = process.env['CONTACT_INFO'] ?? ''
     let cparts = contactLine.split(' ')
 
+    const cleanProjName = projName.replace(/[-_ .]/g, '')
+
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
     const flDest = path.join(nsRoot, 'fastlane')
     copySourceDirectory(flSrcDir, flDest)
@@ -658,7 +660,7 @@ FASTLANE_ITC_TEAM_NAME="${process.env['APPLE_TEAM_NAME']}"
 APP_BUNDLE_ID="${appId}"
 APPLE_ID="${process.env['APPLE_ID']}"
 APP_NAME="${process.env['APP_NAME'] || projName}"
-XC_WORKSPACE_REL_PATH="./platforms/ios/${projName}.xcworkspace"
+XC_WORKSPACE_REL_PATH="./platforms/ios/${cleanProjName}.xcworkspace"
 CONTACT_FIRST_NAME="${cparts[0] || ''}"
 CONTACT_LAST_NAME="${cparts[1] || ''}"
 CONTACT_EMAIL="${cparts[2] || ''}"

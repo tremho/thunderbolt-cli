@@ -15,6 +15,7 @@ platform :ios do
 
  desc 'Build the iOS application.'
  lane :build do
+    sh("ns", "build", "ios", "--release", "--clean", "--env.production")
     sh("ns", "prepare", "ios", "--release", "--clean", "--env.production")
 
     match(type: "appstore")
@@ -29,7 +30,7 @@ platform :ios do
  desc 'Ship to Testflight.'
  lane :beta do
      build
-     ß
+
      upload_to_testflight(
        beta_app_feedback_email: ENV["CONTACT_EMAIL"],
        beta_app_description: ENV["BETA_DESCRIPTION"],
