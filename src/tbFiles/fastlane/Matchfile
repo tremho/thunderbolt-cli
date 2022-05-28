@@ -1,0 +1,11 @@
+
+git_url("git@github.com:tremho/match_keys.git")
+storage_mode("git")
+
+type("development") # The default type
+
+app_identifier(ENV["APP_BUNDLE_ID"])
+username(ENV["APPLE_ID"]) # Your Apple Developer Portal username
+
+team_id(ENV["FASTLANE_ITC_TEAM_NAME"])
+team_name(ENV["FASTLANE_ITC_TEAM_NAME"])

@@ -115,6 +115,7 @@ export function doNativeScript() {
                         }
                         opts.push('--no-hmr')
                         if(release) {
+                            /* Ironically, this works, but we'll be using fastlane, so we don't need this
                             const keypath = path.join(projPath, `.keys-${platform}`)
                             const aabdist = path.join(projPath, 'dist', `${projName}.aab`)
                             dotenv.config({path: keypath})
@@ -128,6 +129,8 @@ export function doNativeScript() {
                                 opts.push('--aab')
                                 opts.push(`--copy-to ${aabdist}`)
                             }
+                             */
+                            return makeFastlane()
                         }
                         executeCommand('ns', opts, nsRoot, true)
                     }
@@ -609,6 +612,63 @@ export default {
     }
 
     console.log('project id written as ', appId)
+}
+
+/**
+ * Copy the boilerplate and generate the environment
+ * for a Fastlane deployment
+ */
+function makeFastlane() {
+    // first, read secrets from .dist.secrets
+    const dsFile = path.join(projPath, '.dist.secrets');
+    if(fs.existsSync(dsFile)) {
+        dotenv.config({path: dsFile})
+    } else {
+        return false; // can't make fastlane without the secrets file
+    }
+    // read the release notes
+    const rnFile = path.join(projPath, 'Release_Notes.md')
+    let mdContent = ''
+    try {
+        mdContent = fs.readFileSync(rnFile).toString()
+    } catch(e) {
+        mdContent = ''
+    }
+    let b = mdContent.indexOf('# Release Notes')
+    if(b !== -1) b = mdContent.indexOf('\n', b)
+    let n = mdContent.indexOf('#', b)
+    if (n === -1) n = mdContent.length;
+    const releaseNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"')
+    b = mdContent.indexOf('# Reviewer Notes', n)
+    if(b !== -1) b = mdContent.indexOf('\n', b)
+    n = mdContent.indexOf('#', b)
+    if (n === -1) n = mdContent.length;
+    const reviewNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"')
+
+    const contactLine = process.env['CONTACT_INFO'] ?? ''
+    let cparts = contactLine.split(' ')
+
+    const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
+    const flDest = path.join(nsRoot, 'fastlane')
+    copySourceDirectory(flSrcDir, flDest)
+    const envFile = path.join(flDest, '.env.default')
+    const envData = `
+FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD="${process.env['APPLE_DIST_CI_PASSWORD']}"
+FASTLANE_ITC_TEAM_NAME="${process.env['APPLE_TEAM_NAME']}"
+APP_BUNDLE_ID="${appId}"
+APPLE_ID="${process.env['APPLE_ID']}"
+APP_NAME="${process.env['APP_NAME'] || projName}"
+XC_WORKSPACE_REL_PATH="./platforms/ios/${projName}.xcworkspace"
+CONTACT_FIRST_NAME="${cparts[0] || ''}"
+CONTACT_LAST_NAME="${cparts[1] || ''}"
+CONTACT_EMAIL="${cparts[2] || ''}"
+CONTACT_PHONE="${cparts[3] || ''}"
+BETA_DESCRIPTION="${releaseNotes}"
+REVIEW_NOTES="${reviewNotes}"    
+`
+    fs.writeFileSync(envFile, envData)
+
+    executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
 }
 
 let firstTrace = 0
