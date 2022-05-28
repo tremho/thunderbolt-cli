@@ -15,7 +15,6 @@ platform :ios do
 
  desc 'Build the iOS application.'
  lane :build do
-    sh("ns", "build", "ios", "--release", "--clean", "--env.production")
     sh("ns", "prepare", "ios", "--release", "--clean", "--env.production")
 
     match(type: "appstore")

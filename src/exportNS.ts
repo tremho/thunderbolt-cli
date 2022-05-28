@@ -27,7 +27,7 @@ let runCmd = ''
 let platform = ''
 let device = ''
 let debugBrk = false
-
+let updateType = 'build' // default.  Pass 'major', 'minor', 'patch', or 'build' along with dist to specify version type
 let verbose = false
 
 function readCommandOptions() {
@@ -54,6 +54,9 @@ function readCommandOptions() {
         }
         if(opt === '--debug-brk') {
             debugBrk = true
+        }
+        if(opt === 'major' || opt === 'minor' || opt === 'patch') {
+            updateType = opt
         }
 
         i++
@@ -115,22 +118,9 @@ export function doNativeScript() {
                         }
                         opts.push('--no-hmr')
                         if(release) {
-                            /* Ironically, this works, but we'll be using fastlane, so we don't need this
-                            const keypath = path.join(projPath, `.keys-${platform}`)
-                            const aabdist = path.join(projPath, 'dist', `${projName}.aab`)
-                            dotenv.config({path: keypath})
-                            console.log('keys from ',keypath, process.env)
-                            if(platform === 'android') {
-                                opts.push('--release')
-                                opts.push(`--key-store-path ${process.env.KEY_STORE_FILE}`)
-                                opts.push(`--key-store-password ${process.env.KEY_STORE_PASSWORD}`)
-                                opts.push(`--key-store-alias ${process.env.KEY_STORE_ALIAS}`)
-                                opts.push(`--key-store-alias-password ${process.env.KEY_STORE_ALIAS_PASSWORD}`)
-                                opts.push('--aab')
-                                opts.push(`--copy-to ${aabdist}`)
-                            }
-                             */
-                            return makeFastlane()
+                            return getPreviousPublishedVersion().then(versionBump).then(version => {
+                                return releaseToMain(version).then(makeFastlane)
+                            })
                         }
                         executeCommand('ns', opts, nsRoot, true)
                     }
@@ -349,8 +339,8 @@ function copySources() {
 }
 
 // Copy if newer
-function copySourceFile(src:string, dest:string) {
-    if(testForUpdate(src,dest)) {
+function copySourceFile(src:string, dest:string, always=false) {
+    if(always || testForUpdate(src,dest)) {
         trace('copying ', src, dest)
         let destdir = dest.substring(0, dest.lastIndexOf(path.sep))
         if(!fs.existsSync(destdir)) {
@@ -361,8 +351,8 @@ function copySourceFile(src:string, dest:string) {
         trace('skipping ', src)
     }
 }
-// coppy files in the directory if newer
-function copySourceDirectory(src:string, dest:string) {
+// copy files in the directory if newer
+function copySourceDirectory(src:string, dest:string, always=false) {
     trace('copySourceDirectory')
     const files = fs.readdirSync(src)
     files.forEach(file => {
@@ -374,7 +364,7 @@ function copySourceDirectory(src:string, dest:string) {
                 copySourceDirectory(srcpath, dstpath)
             }
         } else {
-            copySourceFile(srcpath, dstpath)
+            copySourceFile(srcpath, dstpath, always)
         }
     })
 }
@@ -652,7 +642,7 @@ function makeFastlane() {
 
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
     const flDest = path.join(nsRoot, 'fastlane')
-    copySourceDirectory(flSrcDir, flDest)
+    copySourceDirectory(flSrcDir, flDest, true)
     const envFile = path.join(flDest, '.env.default')
     const envData = `
 FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD="${process.env['APPLE_DIST_CI_PASSWORD']}"
@@ -667,10 +657,160 @@ CONTACT_EMAIL="${cparts[2] || ''}"
 CONTACT_PHONE="${cparts[3] || ''}"
 BETA_DESCRIPTION="${releaseNotes}"
 REVIEW_NOTES="${reviewNotes}"    
+CHANGELOG="${changeLog}"
 `
     fs.writeFileSync(envFile, envData)
 
     executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
+}
+
+// previous version
+async function getPreviousPublishedVersion() {
+    const ret = await executeCommand('bundle', ['exec', 'fastlane', 'pilot', 'builds'], nsRoot, true)
+    if(!ret.retcode) {
+        const lines = ret.stdStr.split('\n')
+        let ready = false
+        for(let ln of lines) {
+            ln = ln.trim()
+            if(ln.charAt(0) === '|') {
+                if(ready) {
+                    ln = ln.substring(1, ln.length-1)
+                    const vbi = ln.split('|')
+                    const version = (vbi[0] ?? '').trim()
+                    const build = (vbi[1] ?? '').trim()
+                    // const installs = (vbi[2] ?? '').trim()
+                    let ver = version
+                    if(build && build !== version) ver += '-pre-release-'+build
+                    return ver
+                }
+                if(ln.indexOf('Version #') !== -1) ready=true
+            }
+        }
+    }
+    return ''
+}
+
+/**
+ * Bump version to next increment of build, patch, minor, or major
+ * @param version - existing version string
+ * @param type - one of 'build', 'patch', 'minor', or 'major'  default is 'build'
+ */
+function versionBump(version:string, type= 'build') {
+    let n = version.lastIndexOf('-')
+    let build = 0
+    if(n !== -1) build = Number(version.substring(n+1))
+    const parts = version.split('.')
+    let major = Number(parts[0])
+    let minor = Number(parts[1])
+    let patch = Number(parts[2])
+    if(type === 'major') {
+        major++
+        minor = 0
+        patch = 0
+        build = 0
+    }
+    if(type === 'minor') {
+        minor++
+        patch = 0
+        build = 0
+    }
+    if(type === 'patch') {
+        patch++
+        build = 0
+    }
+    if(type === 'build') build++
+
+    let pre = ''
+    if(build) pre = `-pre-release-${build}`
+    return `${major}.${minor}.${patch}${pre}`
+}
+// generate changelog since previous version tag
+async function generateChangelog(sinceTag:string) {
+    if(!sinceTag) sinceTag = '--since=10.years'
+    const ret = await executeCommand('git', ['log', '--pretty="- %s"', sinceTag+'..HEAD'], projPath)
+    let log = ''
+    if(!ret.retcode) log = ret.stdStr;
+    return log
+}
+
+// Write version to package.json, commit, tag, and push to master
+async function releaseToMain(version:string) {
+    const branchName = await getBranchName()
+    console.log('committing and tagging version ',version, 'to main branch, from branch ', branchName)
+    pkgInfo.version = version; // update the version
+    fs.writeFileSync(path.join(projPath, 'package.json'), JSON.stringify(pkgInfo, null, 2))
+    let ret = await executeCommand('git', ['commit', '-am', `"preparing for release version ${version}"`], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error committing project - '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['checkout', 'main'], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error checking out main branch- '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['merge', branchName], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error merging - '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['commit', '-am', `merged from branch ${branchName} for version ${version} release`], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error merging - '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['tag', version], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error tagging - '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['push', '-u'], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error pushing - '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['checkout', branchName], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error returning to branch - '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['merge', 'main'], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error remerging with main - '+ ret.errStr))
+        return false
+    }
+    ret = await executeCommand('git', ['tag', '-l'], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error retrieving tag list - '+ ret.errStr))
+        return false
+    }
+    const lines = ret.stdStr.split('\n')
+    for(let i=0; i<lines.length; i++) {
+        let ln = lines[i].trim()
+        if (!i) console.log(ac.bold.green(ln))
+        else    console.log(ac.italic.black(ln))
+    }
+    return true
+}
+
+/**
+ * get the current branch we are working under in the project
+ */
+async function getBranchName() {
+    const ret = await executeCommand('git', ['branch'], projPath)
+    if(ret.retcode) {
+        console.error(ac.bold.red('Error getting branch - '+ ret.errStr))
+        return ''
+    }
+    let branch = ''
+    const lines = ret.stdStr.split('\n')
+    for(let ln of lines) {
+        ln = ln.trim()
+        if(ln.charAt(0) === '*') {
+            branch = ln.substring(1).trim()
+        }
+    }
+    return branch
 }
 
 let firstTrace = 0
