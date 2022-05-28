@@ -674,6 +674,7 @@ CHANGELOG="${changeLog}"
 `
     fs.writeFileSync(envFile, envData)
 
+    await executeCommand('bundle', ['exec', 'fastlane', 'ios', 'certificates'], nsRoot, true)
     await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
 
 }

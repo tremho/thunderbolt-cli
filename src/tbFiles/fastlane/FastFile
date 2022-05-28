@@ -37,6 +37,7 @@ platform :ios do
        distribute_external: true,
        groups: ["beta testers"],
        notify_external_testers: true,
+       changelog: ENV["CHANGELOG"],
        beta_app_review_info: {
          contact_email: ENV["CONTACT_EMAIL"],
          contact_first_name: ENV["CONTACT_FIRST_NAME"],
