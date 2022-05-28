@@ -119,7 +119,7 @@ export function doNativeScript() {
                         opts.push('--no-hmr')
                         if(release) {
                             return getPreviousPublishedVersion().then(preVersion => {
-                                const version = versionBump(preVersion)
+                                const version = versionBump(preVersion, updateType)
                                 return releaseToMain(version).then((success) => {
                                     if(success) {
                                         return makeFastlane(preVersion)
@@ -706,6 +706,7 @@ async function getPreviousPublishedVersion() {
  * @param type - one of 'build', 'patch', 'minor', or 'major'  default is 'build'
  */
 function versionBump(version:string, type= 'build') {
+    trace(`bumping version ${version} by ${type} number`)
     let n = version.lastIndexOf('-')
     let build = 0
     if(n !== -1) {
@@ -738,7 +739,9 @@ function versionBump(version:string, type= 'build') {
 
     let pre = ''
     if(build) pre = `-pre-release-${build}`
-    return `${major}.${minor}.${patch}${pre}`
+    const newVer = `${major}.${minor}.${patch}${pre}`
+    trace('new version: '+newVer)
+    return newVer
 }
 // generate changelog since previous version tag
 async function generateChangelog(sinceTag:string) {
@@ -753,11 +756,12 @@ async function generateChangelog(sinceTag:string) {
 async function releaseToMain(version:string) {
     const branchName = await getBranchName()
     console.log('committing and tagging version ',version, 'to main branch, from branch ', branchName)
+    console.log('verbosity is', verbose)
     pkgInfo.version = version; // update the version
     fs.writeFileSync(path.join(projPath, 'package.json'), JSON.stringify(pkgInfo, null, 2))
     let ret = await executeCommand('git', ['commit', '-am', `"preparing for release version ${version}"`], projPath, verbose)
     if(ret.retcode) {
-        console.error(ac.bold.red('Error committing project - '+ ret.errStr), '\n', ac.black(ret.stdStr))
+        console.error(ac.bold.red(`Error (${ret.retcode}) committing project - `+ ret.errStr), '\n', ac.black(ret.stdStr))
         return false
     }
     ret = await executeCommand('git', ['checkout', 'main'], projPath, verbose)
