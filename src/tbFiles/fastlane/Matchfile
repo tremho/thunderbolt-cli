@@ -7,5 +7,5 @@ type("development") # The default type
 app_identifier(ENV["APP_BUNDLE_ID"])
 username(ENV["APPLE_ID"]) # Your Apple Developer Portal username
 
-team_id(ENV["FASTLANE_ITC_TEAM_NAME"])
+team_id("Apple Development")
 team_name(ENV["FASTLANE_ITC_TEAM_NAME"])

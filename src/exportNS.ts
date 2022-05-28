@@ -614,6 +614,9 @@ export default {
 /**
  * Copy the boilerplate and generate the environment
  * for a Fastlane deployment
+ *
+ * TODO for this:
+ *  - in MatchFile, the git url should be dynamically populated
  */
 async function makeFastlane(previousVersion:string) {
     // first, read secrets from .dist.secrets
