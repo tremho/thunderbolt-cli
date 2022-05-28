@@ -638,12 +638,12 @@ function makeFastlane() {
     if(b !== -1) b = mdContent.indexOf('\n', b)
     let n = mdContent.indexOf('#', b)
     if (n === -1) n = mdContent.length;
-    const releaseNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"')
+    const releaseNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"').replace(/\n/g, '\\n')
     b = mdContent.indexOf('# Reviewer Notes', n)
     if(b !== -1) b = mdContent.indexOf('\n', b)
     n = mdContent.indexOf('#', b)
     if (n === -1) n = mdContent.length;
-    const reviewNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"')
+    const reviewNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"').replace(/\n/g, '\\n')
 
     const contactLine = process.env['CONTACT_INFO'] ?? ''
     let cparts = contactLine.split(' ')
