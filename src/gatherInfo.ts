@@ -42,7 +42,7 @@ function resolvePaths() {
     prepare = compile = true
     jovePath = process.argv[1]
     let cmd = process.argv[2]
-    if(cmd === 'build' || cmd === 'run') {
+    if(cmd === 'build' || cmd === 'run' || cmd === 'nativescript') {
         let i = 3
         while(process.argv[i]) {
             let val = process.argv[i].trim()
