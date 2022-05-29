@@ -27,7 +27,7 @@ let runCmd = ''
 let platform = ''
 let device = ''
 let debugBrk = false
-let updateType = 'build' // default.  Pass 'major', 'minor', 'patch', or 'build' along with dist to specify version type
+let updateType = 'build' // default.  Pass 'major', 'minor', 'patch', or 'build' along with dist to specify version type, or 'mark' to promote from pre-release.
 let verbose = false
 
 function readCommandOptions() {
@@ -764,6 +764,9 @@ function versionBump(version:string, type= 'build') {
     }
     if(type === 'build') build++
 
+    if(type === 'mark') {
+        build = 0 // just remove the pre-release stuff
+    }
     let pre = ''
     if(build) pre = `-pre-release-${build}`
     const newVer = `${major}.${minor}.${patch}${pre}`

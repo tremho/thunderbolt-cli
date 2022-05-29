@@ -56,21 +56,21 @@ platform :android do
 
  desc 'Build the Android application.'
  lane :build do
-     sh("ns", "build", "android", "--release", "--clean", "--env.production",
-         "--key-store-path", ENV["KEY_STORE_FILE"],
-         "--key-store-password", ENV["KEYSTORE_PASSWORD"],
-         "--key-store-alias", ENV["KEYSTORE_ALIAS"],
-         "--key-store-alias-password", ENV["KEYSTORE_ALIAS_PASSWORD"]
-         "--aab"
+     sh("ns", "build", "android", "--release", "--clean", "--env.production", "--aab",
+         "--key-store-path" + ENV["KEY_STORE_FILE"],
+         "--key-store-password" +  ENV["KEYSTORE_PASSWORD"],
+         "--key-store-alias" + ENV["KEYSTORE_ALIAS"],
+         "--key-store-alias-password" + ENV["KEYSTORE_ALIAS_PASSWORD"]
        )
  end
 
  desc 'Ship to Playstore Alpha track.'
  lane :alpha do
-     json_key_file(ENV["PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY"])
-     package_name(ENV["APP_BUNDLE_ID"])
-     gradle(task: 'assemble', build_type: 'Release')
-     upload_to_play_store(track: 'beta')
+    upload_to_play_store(
+        track: 'alpha',
+        json_key: ENV["PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY"],
+        package_name: ENV["APP_BUNDLE_ID"]
+    )
  end
 
 end
