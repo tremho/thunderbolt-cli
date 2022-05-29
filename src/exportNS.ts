@@ -121,6 +121,10 @@ export function doNativeScript() {
                             const preVersion = pkgInfo.version
                             const version = versionBump(preVersion, updateType)
                             const syncVersion = makeSyncVersion(version)
+
+                            console.log(ac.bold.black(`\n -- tagging semantic version ${version} -- \n`))
+                            console.log(ac.italic.black.bgYellowBright(`submitting to store as a build of ${syncVersion}`))
+                            console.log('')
                             // release to main will write the new version, commit it, and merge to main
                             // we'll end up in our original branch in the end
                             return releaseToMain(version).then((success) => {
