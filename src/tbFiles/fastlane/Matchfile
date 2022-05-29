@@ -1,5 +1,5 @@
 
-git_url("git@github.com:tremho/match_keys.git")
+git_url(ENV["MATCH_REPOSITORY"])
 storage_mode("git")
 
 type("development") # The default type

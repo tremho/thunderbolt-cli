@@ -665,6 +665,7 @@ async function makeFastlane(previousVersion:string) {
     copySourceDirectory(flSrcDir, flDest, true)
     const envFile = path.join(flDest, '.env.default')
     const envData = `
+MATCH_REPOSITORY=${process.env['MATCH_REPOSITORY']}    
 FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD="${process.env['APPLE_DIST_CI_PASSWORD']}"
 FASTLANE_ITC_TEAM_NAME="${process.env['APPLE_TEAM_NAME']}"
 APP_BUNDLE_ID="${appId}"
@@ -678,11 +679,20 @@ CONTACT_PHONE="${cparts[3] || ''}"
 BETA_DESCRIPTION="${releaseNotes}"
 REVIEW_NOTES="${reviewNotes}"    
 CHANGELOG="${changeLog}"
+
+KEY_STORE_FILE=${process.env['KEY_STORE_FILE']}
+KEY_STORE_PASSWORD=${process.env['KEY_STORE_PASSWORD']}
+KEY_STORE_ALIAS=${process.env['KEY_STORE_ALIAS']}
+KEY_STORE_ALIAS_PASSWORD=${process.env['KEY_STORE_ALIAS_PASSWORD']}
+PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY']}
+
 `
     fs.writeFileSync(envFile, envData)
 
-    await executeCommand('fastlane', ['ios', 'certificates'], nsRoot, true)
-    await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
+    // await executeCommand('fastlane', ['ios', 'certificates'], nsRoot, true)
+    // await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
+    await executeCommand('fastlane', ['android', 'build'], nsRoot, true)
+    await executeCommand('fastlane', ['android', 'beta'], nsRoot, true)
 
 }
 
