@@ -689,10 +689,14 @@ PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_
 `
     fs.writeFileSync(envFile, envData)
 
-    // await executeCommand('fastlane', ['ios', 'certificates'], nsRoot, true)
-    // await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
-    await executeCommand('fastlane', ['android', 'build'], nsRoot, true)
-    await executeCommand('fastlane', ['android', 'beta'], nsRoot, true)
+    if(platform === 'ios') {
+        await executeCommand('fastlane', ['ios', 'certificates'], nsRoot, true)
+        await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
+    }
+    if(platform === 'android') {
+        await executeCommand('fastlane', ['android', 'build'], nsRoot, true)
+        await executeCommand('fastlane', ['android', 'alpha'], nsRoot, true)
+    }
 
 }
 
