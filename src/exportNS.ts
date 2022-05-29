@@ -125,11 +125,8 @@ export function doNativeScript() {
                             // we'll end up in our original branch in the end
                             return releaseToMain(version).then((success) => {
                                 if(success) {
-                                    console.log(ac.bold.black(`\n -- at this point, we would publish ${version}, up from ${preVersion} --\n`))
-                                    console.log(ac.italic('check the logs and tags in main branch'))
-                                    return
                                     // publish to app store
-                                    // return makeFastlane(syncVersion)
+                                    return makeFastlane(syncVersion)
                                 } else {
                                     console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
                                 }
