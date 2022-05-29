@@ -118,15 +118,18 @@ export function doNativeScript() {
                         }
                         opts.push('--no-hmr')
                         if(release) {
-                            return getPreviousPublishedVersion().then(preVersion => {
-                                const version = versionBump(preVersion, updateType)
-                                return releaseToMain(version).then((success) => {
-                                    if(success) {
-                                        return makeFastlane(preVersion)
-                                    } else {
-                                        console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
-                                    }
-                                })
+                            const preVersion = pkgInfo.version
+                            const version = versionBump(preVersion, updateType)
+                            const syncVersion = makeSyncVersion(version)
+                            // release to main will write the new version, commit it, and merge to main
+                            // we'll end up in our original branch in the end
+                            return releaseToMain(version).then((success) => {
+                                if(success) {
+                                    // publish to app store
+                                    return makeFastlane(syncVersion)
+                                } else {
+                                    console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
+                                }
                             })
                         }
                         executeCommand('ns', opts, nsRoot, true)
@@ -680,6 +683,7 @@ CHANGELOG="${changeLog}"
 }
 
 // previous version
+// we don't do this anymore, but maybe it would be helpful for an advanced sync version revision
 async function getPreviousPublishedVersion() {
     const ret = await executeCommand('fastlane', ['pilot', 'builds'], nsRoot, true)
     if(!ret.retcode) {
@@ -748,6 +752,41 @@ function versionBump(version:string, type= 'build') {
     trace('new version: '+newVer)
     return newVer
 }
+
+/**
+ * In order to bridge the semantics of a semantic version
+ * and the 3-dot + build sensibility of the app store, we need
+ * to make any pre-release versions a later build of the former patch.
+ * This could get weird if things go out of sync.
+ * Will return the semantically previous version, sans pre-release.
+ * If we have builds in this version, we'll be adding a new one with this.
+ * If not, this will become the mark of the previous semantic, which is not in sync with the repo,
+ * but it's not semantically incorrect from the perspective of the distribution.
+ * Moral of the story is: keep the synchronization tight. Don't do anything out of band and avoid errors.
+ *
+ * @param version
+ */
+function makeSyncVersion(version:string) {
+    let n = version.lastIndexOf('-')
+    if(n === -1) {
+        // this is a mark version, so our sync version is the same
+        return version
+    }
+
+    n = version.indexOf('-')
+    if(n === -1) n = version.length
+    const rootVersion = version.substring(0, n)
+    const parts = rootVersion.split('.')
+    let major = Number(parts[0] ?? 0)
+    let minor = Number(parts[1] ?? 0)
+    let patch = Number(parts[2] ?? 0)
+    if (patch) patch--
+    else if (minor) minor--
+    else if (major) major--
+
+    return `${major}.${minor}.${patch}`  // return the previous semantic version
+}
+
 // generate changelog since previous version tag
 async function generateChangelog(sinceTag:string) {
     if(!sinceTag) sinceTag = '--since=10.years'
