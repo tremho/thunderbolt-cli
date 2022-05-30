@@ -55,7 +55,7 @@ function readCommandOptions() {
         if(opt === '--debug-brk') {
             debugBrk = true
         }
-        if(opt === 'major' || opt === 'minor' || opt === 'patch') {
+        if(opt === 'major' || opt === 'minor' || opt === 'patch' || opt === 'mark') {
             updateType = opt
         }
 
@@ -689,11 +689,12 @@ PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_
 `
     fs.writeFileSync(envFile, envData)
 
-    if(platform === 'ios') {
+    // support isolating a lane, or doing both
+    if(!platform || platform === 'ios') {
         await executeCommand('fastlane', ['ios', 'certificates'], nsRoot, true)
         await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
     }
-    if(platform === 'android') {
+    if(!platform || platform === 'android') {
         await executeCommand('fastlane', ['android', 'build'], nsRoot, true)
         await executeCommand('fastlane', ['android', 'alpha'], nsRoot, true)
     }
