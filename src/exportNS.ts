@@ -690,11 +690,11 @@ PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_
     fs.writeFileSync(envFile, envData)
 
     // support isolating a lane, or doing both
-    if(!platform || platform === 'ios') {
+    if(!platform || platform === 'ios' || platform === 'all') {
         await executeCommand('fastlane', ['ios', 'certificates'], nsRoot, true)
         await executeCommand('fastlane', ['ios', 'beta'], nsRoot, true)
     }
-    if(!platform || platform === 'android') {
+    if(!platform || platform === 'android' || platform === 'all') {
         await executeCommand('fastlane', ['android', 'build'], nsRoot, true)
         await executeCommand('fastlane', ['android', 'alpha'], nsRoot, true)
     }
