@@ -114,6 +114,11 @@ export function metaMigrateNS(outPath:string) {
     if(!displayName) displayName = shortDisplayName
     if(!projId) projId = 'org.jove.'+pkgJson.name
 
+    let n = version.lastIndexOf('-')
+    if(n !== -1 && isFinite(Number(version.substring(n+1)))) {
+        version = version.substring(0, n)+'.'+version.substring(n+1) // replace - with . for rest of this to work
+    }
+
     let prc = 0 // pre-release
     let vparts:string[] = version.split('.') //'1.2.3-pre-release.x' => [1,2,3-pre-release, x]
     if(vparts.length > 2) {
@@ -143,10 +148,8 @@ export function metaMigrateNS(outPath:string) {
             prc = 9 // release
         }
     }
-    version = vparts.slice(0, 2).join('.')
-    if(prc !== 9) {
-        version += '.'+prc
-    }
+    version = vparts.join('.')
+
     let maj = vparts[0] || 0
     let min = vparts[1] || 0
     let rev = vparts[2] || 0

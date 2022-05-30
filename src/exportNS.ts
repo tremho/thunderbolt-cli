@@ -657,7 +657,9 @@ async function makeFastlane(previousVersion:string) {
 
     const cleanProjName = projName.replace(/[-_ .]/g, '')
 
-    let changeLog = await generateChangelog(previousVersion)
+    const prepub = await getPreviousPublishedVersion()
+
+    let changeLog = await generateChangelog(prepub)
     changeLog = changeLog.replace(/"/g, '\\"').replace(/\n/g, '\\n')
 
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
@@ -702,7 +704,7 @@ PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_
 }
 
 // previous version
-// we don't do this anymore, but maybe it would be helpful for an advanced sync version revision
+// We use this for changelog references
 async function getPreviousPublishedVersion() {
     const ret = await executeCommand('fastlane', ['pilot', 'builds'], nsRoot, true)
     if(!ret.retcode) {
