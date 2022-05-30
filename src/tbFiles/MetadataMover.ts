@@ -179,6 +179,7 @@ function readPackageJSON() {
 function updatePListItems(outPath:string, version:string, displayName:string, shortName?:string) {
     if(!shortName) shortName = shortFromDisplay(displayName)
 
+
     // common function to replace a string value in the plist
     const replaceSpot = (plist:string, keySpot:number, value:string):string => {
         if(keySpot !== -1) {
@@ -201,8 +202,10 @@ function updatePListItems(outPath:string, version:string, displayName:string, sh
         // CFBundleName comes from NS project; leave as is
         keySpot = plist.indexOf('<key>CFBundleShortVersionString</key>')
         plist = replaceSpot(plist, keySpot, version)
+        console.log(ac.green.italic(`plist CFBundleShortVersionString -> ${version}`))
         keySpot = plist.indexOf('<key>CFBundleVersion</key>')
         plist = replaceSpot(plist, keySpot, version)
+        console.log(ac.green.italic(`plist CFBundleVersion -> ${version}`))
         fs.writeFileSync(plistPath, plist)
     } catch(e) {
         // @ts-ignore
@@ -226,7 +229,7 @@ function updateAndroidMeta(outPath:string, version:string, avc:number, appId:str
             let front = xmlData.substring(0, spot)
             let back = xmlData.substring(endspot)
             let insert = `android:versionCode="${avc}"\n    android:versionName="${version}"`
-
+            console.log(ac.green.italic(insert))
             xmlData = front+insert+back
         }
         fs.writeFileSync(xmlPath, xmlData)
