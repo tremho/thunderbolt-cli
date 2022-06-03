@@ -70,7 +70,7 @@ function appendBuildInfo(pkgJson:any):any {
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
         mac: {
-            "category": pkgJson.macOS.category ?? "public.app-category.developer-tools",
+            "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
             "entitlements": "build/entitlements.mac.plist",
             "target": macTargets,
             ... pkgJson.macOS
@@ -167,10 +167,15 @@ function copyAdditional() {
 function copyCertificates(pkgJson:any) {
     const buildDir = path.resolve('build')
     const certfolder = pkgJson.certificateFolder
+    if(!certfolder) {
+        console.error(ac.bold.red('\npackage.json must define a certificatesfolder property'))
+        console.error(ac.gray('this absolute system path contains the Certificates.p12 and the named entitlements and provision files'))
+        throw Error('no cert folder')
+    }
     fs.copyFileSync(path.join(certfolder, 'Certificates.p12'), path.join(buildDir, 'Certificates.p12'))
-    fs.copyFileSync(path.join(certfolder, `${pkgJson.projName}-entitlements.mac.plist`), path.join(buildDir, 'entitlements.mac.plist'))
-    fs.copyFileSync(path.join(certfolder, `${pkgJson.projName}-entitlements.mas.plist`), path.join(buildDir, 'entitlements.mas.plist'))
-    fs.copyFileSync(path.join(certfolder, `${pkgJson.projName.replace(/-/g, '')}MacOS.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.name}.entitlements.mac.plist`), path.join(buildDir, 'entitlements.mac.plist'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.name}.entitlements.mas.plist`), path.join(buildDir, 'entitlements.mas.plist'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}MacOS.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
 }
 
 function convertToPng(imagePath:string, pngOutPath:string) {
