@@ -31,6 +31,7 @@ export function doDist(args:string[]) {
         // copy icons and other resources
         prepareIcons()
         copyAdditional()
+        copyCertificates(pkgJson)
 
         // execute electron builder
         return makeDistribution().then(() => {
@@ -43,6 +44,8 @@ export function doDist(args:string[]) {
                 // @ts-ignore
                 console.error(ac.bold.red('problem renaming package files'), e)
             }
+            // now we can use fastlane to put to appstore
+            runFastlane()
         })
     })
 }
@@ -58,13 +61,20 @@ function readPackageJSON() {
 
 const electronVersion = "12.0.5"
 
+const macTargets = ['mas']
+
 function appendBuildInfo(pkgJson:any):any {
     const build = {
         appId: pkgJson.projId,
         productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
-        mac: pkgJson.macOS,
+        mac: {
+            "category": pkgJson.macOS.category ?? "public.app-category.developer-tools",
+            "entitlements": "build/entitlements.mac.plist",
+            "target": macTargets,
+            ... pkgJson.macOS
+        },
         directories: {
             output: "dist",
             buildResources: "build"
@@ -152,8 +162,17 @@ function copyAdditional() {
             fs.copyFileSync(path.join(extras, f), path.join(buildDir, f))
         }
     }
-
 }
+
+function copyCertificates(pkgJson:any) {
+    const buildDir = path.resolve('build')
+    const certfolder = pkgJson.certificateFolder
+    fs.copyFileSync(path.join(certfolder, 'Certificates.p12'), path.join(buildDir, 'Certificates.p12'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.projName}-entitlements.mac.plist`), path.join(buildDir, 'entitlements.mac.plist'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.projName}-entitlements.mas.plist`), path.join(buildDir, 'entitlements.mas.plist'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.projName.replace(/-/g, '')}MacOS.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
+}
+
 function convertToPng(imagePath:string, pngOutPath:string) {
     // TODO: still need to find a decent utility for this
     // read image and convert it to PNG, ideally converting background (pixel 0,0) to transparency
@@ -184,4 +203,8 @@ function makeDistribution() {
         })
 
     })
+}
+
+function runFastlane() {
+    console.log(ac.bold.green('Cool. Now get Fastlane going and send to app store'))
 }
