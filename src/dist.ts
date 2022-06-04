@@ -79,6 +79,15 @@ function appendBuildInfo(pkgJson:any):any {
                 "**/*"
             ]
         },
+        mas: {
+            "type": "distribution",
+            "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
+            "entitlements": "build/entitlements.mac.plist",
+            "target": macTargets,
+            asarUnpack: [
+                "**/*"
+            ]
+        },
         directories: {
             output: "dist",
             buildResources: "build"
@@ -127,6 +136,11 @@ function appendBuildInfo(pkgJson:any):any {
             }
             build.files.push(entry)
         }
+        build.files.push({
+            filter: 'embedded.provisionprofile',
+            from: 'build',
+            to: '.'
+        })
     }
     pkgJson.build = build
     const scripts = pkgJson.scripts || {}
