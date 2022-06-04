@@ -74,8 +74,7 @@ function appendBuildInfo(pkgJson:any):any {
         productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
-        // note that in former versions, we copied this from
-        // pkgJSON.mac, so this is hardcoded for the MAS context
+
         mac: {
             "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
             "hardenedRuntime": true,
@@ -84,9 +83,6 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlementsInherit": "build/entitlements.mac.plist",
             "icon": "build/icon.png",
             "target": macTargets,
-            asarUnpack: [
-                "**/*"
-            ]
         },
         mas: {
             "type": "distribution",
@@ -95,9 +91,6 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlements": "build/entitlements.mas.plist",
             "entitlementsInherit": "build/entitlements.mas.inherit.plist",
             "entitlementsLoginHelper": "build/entitlements.mas.loginhelper.plist",
-            // asarUnpack: [
-            //     "**/*"
-            // ]
         },
         directories: {
             output: "dist",
@@ -111,17 +104,27 @@ function appendBuildInfo(pkgJson:any):any {
            ]
         },
         nsis: pkgJson.nsis,
-        // dmg: pkgJson.dmg,
+        dmg: pkgJson.dmg,
 
-        files: [
+        "files": [
             {
-                filter: "package.json",
-                from: ".",
-                to: "."
+                "filter": "package.json",
+                "from": ".",
+                "to": "."
+            },
+            {
+                "filter": "embedded.provisionprofile",
+                "from": "build",
+                "to": "."
+            },
+            {
+                "filter": "joveAppBack.js",
+                "from": "build",
+                "to": "."
             }
         ],
-        extraMetadata: {
-            main: "joveAppBack.js"
+        "extraMetadata": {
+            "main": "joveAppBack.js"
         }
     }
     const win = pkgJson.win || {
@@ -147,11 +150,6 @@ function appendBuildInfo(pkgJson:any):any {
             }
             build.files.push(entry)
         }
-        build.files.push({
-            filter: 'embedded.provisionprofile',
-            from: 'build',
-            to: '.'
-        })
     }
     pkgJson.build = build
     const scripts = pkgJson.scripts || {}
@@ -202,8 +200,7 @@ function copyCertificates(pkgJson:any) {
     fs.copyFileSync(path.join(certfolder, `${pkgJson.name}.entitlements.mas.plist`), path.join(buildDir, 'entitlements.mas.plist'))
     fs.copyFileSync(path.join(certfolder, `entitlements.mas.inherit.plist`), path.join(buildDir, 'entitlements.mas.inherit.plist'))
     fs.copyFileSync(path.join(certfolder, `entitlements.mas.loginhelper.plist`), path.join(buildDir, 'entitlements.mas.loginhelper.plist'))
-    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}MacOS.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
-    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}MacOS.provisionprofile`), 'embedded.provisionprofile') // also put at root, because I'm confused which is used now
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}-macos-distribution.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
 }
 
 function convertToPng(imagePath:string, pngOutPath:string) {
