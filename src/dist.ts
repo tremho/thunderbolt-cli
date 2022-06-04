@@ -82,7 +82,7 @@ function appendBuildInfo(pkgJson:any):any {
             "gatekeeperAssess": false,
             "entitlements": "build/entitlements.mac.plist",
             "entitlementsInherit": "build/entitlements.mac.plist",
-            // "icon": "build/icon.icns",
+            "icon": "build/icon.png",
             "target": macTargets,
             asarUnpack: [
                 "**/*"
@@ -235,7 +235,7 @@ function makeDistribution() {
                 } else {
                     console.log(ac.bold.green('Electron Builder reports success'))
                 }
-                resolve(rt.retCode)
+                resolve(rt.retcode)
             }, 500)
         })
 
