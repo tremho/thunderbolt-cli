@@ -39,7 +39,7 @@ export function doDist(args:string[]) {
                 // rename package.json dist-package.json
                 fs.renameSync('package.json', 'dist-package.json')
                 // rename app-package.json package.json
-                // fs.renameSync('app-package.json', 'package.json')
+                fs.renameSync('app-package.json', 'package.json')
             } catch(e) {
                 // @ts-ignore
                 console.error(ac.bold.red('problem renaming package files'), e)
@@ -69,10 +69,15 @@ function appendBuildInfo(pkgJson:any):any {
         productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
+        // note that in former versions, we copied this from
+        // pkgJSON.mac, so this is hardcoded for the MAS context
         mac: {
             "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
             "entitlements": "build/entitlements.mac.plist",
             "target": macTargets,
+            asarUnpack: [
+                "**/*"
+            ]
         },
         directories: {
             output: "dist",
@@ -99,17 +104,12 @@ function appendBuildInfo(pkgJson:any):any {
             main: "joveAppBack.js"
         }
     }
-    const mac = pkgJson.mac || {
-        asarUnpack: [
-            "**/*"
-        ]
-    }
     const win = pkgJson.win || {
         asarUnpack: [
             "**/*"
         ]
     }
-    build.mac = Object.assign(mac, pkgJson.mac || {})
+    // build.mac = Object.assign(mac, pkgJson.mac || {})
     build.win = Object.assign(win, pkgJson.win || {})
     const buildFiles = fs.readdirSync('build')
     for(let f of buildFiles) {
@@ -128,7 +128,6 @@ function appendBuildInfo(pkgJson:any):any {
             build.files.push(entry)
         }
     }
-    console.log('build = ', build)
     pkgJson.build = build
     const scripts = pkgJson.scripts || {}
     scripts.release = 'electron-builder'
