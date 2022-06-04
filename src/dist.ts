@@ -25,7 +25,7 @@ export function doDist(args:string[]) {
         appendBuildInfo(pkgJson)
         // rename package.json app-package.json
         fs.renameSync('package.json', 'app-package.json')
-        // write out data as package.json
+        // write out build appended data as package.json
         fs.writeFileSync('package.json', JSON.stringify(pkgJson, null, 2))
 
         // copy icons and other resources
@@ -39,7 +39,7 @@ export function doDist(args:string[]) {
                 // rename package.json dist-package.json
                 fs.renameSync('package.json', 'dist-package.json')
                 // rename app-package.json package.json
-                fs.renameSync('app-package.json', 'package.json')
+                // fs.renameSync('app-package.json', 'package.json')
             } catch(e) {
                 // @ts-ignore
                 console.error(ac.bold.red('problem renaming package files'), e)
@@ -73,7 +73,6 @@ function appendBuildInfo(pkgJson:any):any {
             "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
             "entitlements": "build/entitlements.mac.plist",
             "target": macTargets,
-            ... pkgJson.macOS
         },
         directories: {
             output: "dist",
