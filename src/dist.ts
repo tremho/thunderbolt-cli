@@ -68,6 +68,7 @@ const macTargets = ["mas"] // maybe we can do others later, by keyword
 function appendBuildInfo(pkgJson:any):any {
     const build = {
         appId: pkgJson.projId,
+        "afterSign": "electron-builder-notarize",
         productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
