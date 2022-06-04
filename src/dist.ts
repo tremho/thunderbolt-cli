@@ -63,10 +63,7 @@ function readPackageJSON() {
 
 const electronVersion = "12.0.5"
 
-const macTargets = [{
-    target:"mas",
-    arch:"universal"
-}] // maybe we can specify others later
+const macTargets = ["mas"] // maybe we can do others later, by keyword
 
 function appendBuildInfo(pkgJson:any):any {
     const build = {
