@@ -608,7 +608,9 @@ function copyAssets() {
 
     if(splashExpected) {
         let dirpath = path.join(projPath, '.gen')
-        copySplashPage(path.join(dirpath, 'pages', 'splash-page.riot'))
+        if(fs.existsSync(path.join(dirpath, 'pages', 'splash-page.riot'))) {
+            copySplashPage(path.join(dirpath, 'pages', 'splash-page.riot'))
+        }
     }
 }
 
