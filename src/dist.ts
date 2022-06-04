@@ -62,7 +62,7 @@ function readPackageJSON() {
 const electronVersion = "12.0.5"
 
 const macTargets = [{
-    target:"mac",
+    target:"mas",
     arch:"universal"
 }] // maybe we can specify others later
 
