@@ -93,9 +93,9 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlements": "build/entitlements.mas.plist",
             "entitlementsInherit": "build/entitlements.mas.inherit.plist",
             "entitlementsLoginHelper": "build/entitlements.mas.loginhelper.plist",
-            asarUnpack: [
-                "**/*"
-            ]
+            // asarUnpack: [
+            //     "**/*"
+            // ]
         },
         directories: {
             output: "dist",
