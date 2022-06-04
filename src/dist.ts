@@ -34,7 +34,7 @@ export function doDist(args:string[]) {
         copyCertificates(pkgJson)
 
         // execute electron builder
-        return makeDistribution().then(() => {
+        return makeDistribution().then((retcode) => {
             try {
                 // rename package.json dist-package.json
                 fs.renameSync('package.json', 'dist-package.json')
@@ -44,8 +44,10 @@ export function doDist(args:string[]) {
                 // @ts-ignore
                 console.error(ac.bold.red('problem renaming package files'), e)
             }
-            // now we can use a transporter app to put to appstore
-            transportApp()
+            if(!retcode) {
+                // now we can use a transporter app to put to appstore
+                transportApp()
+            }
         })
     })
 }
@@ -219,17 +221,21 @@ function makeDistribution() {
             setTimeout(() => {
                 spinner.stop()
                 if(rt.stdStr) {
-                    console.log(ac.green.dim(rt.stdStr))
+                    if(rt.retcode) {
+                        console.log(ac.red(rt.stdStr))
+                    } else {
+                        console.log(ac.green.dim(rt.stdStr))
+                    }
                 }
                 if(rt.errStr) {
                     console.log(ac.red(rt.errStr))
                 }
-                if(rt.code) {
-                    console.log(ac.bold.red('Electron Builder failed with code '+rt.code))
+                if(rt.retcode) {
+                    console.log(ac.bold.red('Electron Builder failed with code '+rt.retcode))
                 } else {
                     console.log(ac.bold.green('Electron Builder reports success'))
                 }
-                resolve()
+                resolve(rt.retCode)
             }, 500)
         })
 
