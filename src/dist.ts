@@ -128,6 +128,7 @@ function appendBuildInfo(pkgJson:any):any {
             build.files.push(entry)
         }
     }
+    console.log('build = ', build)
     pkgJson.build = build
     const scripts = pkgJson.scripts || {}
     scripts.release = 'electron-builder'
