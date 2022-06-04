@@ -44,8 +44,8 @@ export function doDist(args:string[]) {
                 // @ts-ignore
                 console.error(ac.bold.red('problem renaming package files'), e)
             }
-            // now we can use fastlane to put to appstore
-            runFastlane()
+            // now we can use a transporter app to put to appstore
+            transportApp()
         })
     })
 }
@@ -61,7 +61,10 @@ function readPackageJSON() {
 
 const electronVersion = "12.0.5"
 
-const macTargets = ['mas'] // maybe we can specify others later
+const macTargets = [{
+    target:"mac",
+    arch:"universal"
+}] // maybe we can specify others later
 
 function appendBuildInfo(pkgJson:any):any {
     const build = {
@@ -73,7 +76,11 @@ function appendBuildInfo(pkgJson:any):any {
         // pkgJSON.mac, so this is hardcoded for the MAS context
         mac: {
             "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
             "entitlements": "build/entitlements.mac.plist",
+            "entitlementsInherit": "build/entitlements.mac.plist",
+            // "icon": "build/icon.icns",
             "target": macTargets,
             asarUnpack: [
                 "**/*"
@@ -81,9 +88,11 @@ function appendBuildInfo(pkgJson:any):any {
         },
         mas: {
             "type": "distribution",
-            "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
-            "entitlements": "build/entitlements.mac.plist",
-            "target": macTargets,
+            "hardenedRuntime": false,
+            "provisioningProfile": "embedded.provisionprofile",
+            "entitlements": "build/entitlements.mas.plist",
+            "entitlementsInherit": "build/entitlements.mas.inherit.plist",
+            "entitlementsLoginHelper": "build/entitlements.mas.loginhelper.plist",
             asarUnpack: [
                 "**/*"
             ]
@@ -189,7 +198,10 @@ function copyCertificates(pkgJson:any) {
     fs.copyFileSync(path.join(certfolder, 'Certificates.p12'), path.join(buildDir, 'Certificates.p12'))
     fs.copyFileSync(path.join(certfolder, `${pkgJson.name}.entitlements.mac.plist`), path.join(buildDir, 'entitlements.mac.plist'))
     fs.copyFileSync(path.join(certfolder, `${pkgJson.name}.entitlements.mas.plist`), path.join(buildDir, 'entitlements.mas.plist'))
+    fs.copyFileSync(path.join(certfolder, `entitlements.mas.inherit.plist`), path.join(buildDir, 'entitlements.mas.inherit.plist'))
+    fs.copyFileSync(path.join(certfolder, `entitlements.mas.loginhelper.plist`), path.join(buildDir, 'entitlements.mas.loginhelper.plist'))
     fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}MacOS.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}MacOS.provisionprofile`), 'embedded.provisionprofile') // also put at root, because I'm confused which is used now
 }
 
 function convertToPng(imagePath:string, pngOutPath:string) {
@@ -224,6 +236,6 @@ function makeDistribution() {
     })
 }
 
-function runFastlane() {
-    console.log(ac.bold.green('Cool. Now get Fastlane going and send to app store'))
+function transportApp() {
+    console.log(ac.bold.green('Cool!\nNow get Transport going and send to app store!'))
 }
