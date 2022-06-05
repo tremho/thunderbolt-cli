@@ -63,12 +63,17 @@ function readPackageJSON() {
 
 const electronVersion = "12.0.5"
 
-const macTargets = ["mas"] // maybe we can do others later, by keyword
+const macTargets = [
+    {
+        target: "mas",
+        arch: "universal"
+    }
+] // maybe we can do others later, by keyword
 
 function appendBuildInfo(pkgJson:any):any {
     const build = {
         appId: pkgJson.projId,
-        "afterSign": "electron-builder-notarize",
+        "afterSign": "notarize.js",
         productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
