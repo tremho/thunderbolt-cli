@@ -87,6 +87,7 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlementsInherit": "build/entitlements.mac.plist",
             "icon": "build/icon.png",
             "target": macTargets,
+            "publish": "never"
         },
         mas: {
             "type": "distribution",
@@ -95,6 +96,7 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlements": "build/entitlements.mas.plist",
             "entitlementsInherit": "build/entitlements.mas.inherit.plist",
             "entitlementsLoginHelper": "build/entitlements.mas.loginhelper.plist",
+            "publish": "never"
         },
         directories: {
             output: "dist",
@@ -105,7 +107,8 @@ function appendBuildInfo(pkgJson:any):any {
           "target": "nsis",
           "asarUnpack": [
             "build/front/assets/**/*"
-           ]
+           ],
+          "publish": "never"
         },
         nsis: pkgJson.nsis,
         dmg: pkgJson.dmg,
@@ -217,7 +220,7 @@ function convertToPng(imagePath:string, pngOutPath:string) {
 function makeDistribution() {
     return new Promise((resolve:any) => {
         spinner.start()
-        executeCommand('npm run release',[],'', true).then((rt:any)=> {
+        executeCommand('npm run release',[]).then((rt:any)=> {
             setTimeout(() => {
                 spinner.stop()
                 if(rt.stdStr) {
