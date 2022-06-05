@@ -29,10 +29,12 @@ export function doDist(args:string[]) {
         fs.writeFileSync('package.json', JSON.stringify(pkgJson, null, 2))
 
         // copy icons and other resources
+        console.log(ac.blue.bold('  • preparing for packaging...'))
         prepareIcons()
         copyAdditional()
         copyCertificates(pkgJson)
 
+        console.log(ac.blue.bold('  • packaging and signing...'))
         // execute electron builder
         return makeDistribution().then((retcode) => {
             try {
@@ -170,7 +172,7 @@ function prepareIcons() {
         convertToPng(splash, commonIcon)
     }
     if(fs.existsSync(commonIcon)) {
-        console.log('preparing icon')
+        console.log(ac.italic.red.dim('common icon exists, but not preparing icon -- TODO'))
         fs.copyFileSync(commonIcon, path.join(buildDir, 'icon.png'))
     }
     // todo: enable this only if we are supporting dmg targets again
@@ -204,7 +206,7 @@ function copyCertificates(pkgJson:any) {
     fs.copyFileSync(path.join(certfolder, `${pkgJson.name}.entitlements.mas.plist`), path.join(buildDir, 'entitlements.mas.plist'))
     fs.copyFileSync(path.join(certfolder, `entitlements.mas.inherit.plist`), path.join(buildDir, 'entitlements.mas.inherit.plist'))
     fs.copyFileSync(path.join(certfolder, `entitlements.mas.loginhelper.plist`), path.join(buildDir, 'entitlements.mas.loginhelper.plist'))
-    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}-macos-distribution.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}-macos-distribution.provisionprofile`), 'embedded.provisionprofile')
 }
 
 function convertToPng(imagePath:string, pngOutPath:string) {
