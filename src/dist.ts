@@ -36,6 +36,7 @@ export function doDist(args:string[]) {
         // execute electron builder
         return makeDistribution().then((retcode) => {
             try {
+                console.log(ac.green.italic.dim('cleaning up...'))
                 // rename package.json dist-package.json
                 fs.renameSync('package.json', 'dist-package.json')
                 // rename app-package.json package.json
@@ -66,14 +67,14 @@ const electronVersion = "12.0.5"
 const macTargets = [
     {
         target: "mas",
-        arch: "universal"
+        // arch: "universal"
     }
 ] // maybe we can do others later, by keyword
 
 function appendBuildInfo(pkgJson:any):any {
     const build = {
         appId: pkgJson.projId,
-        "afterSign": "notarize.js",
+        "afterSign": "/Users/sohmert/tbd/infection-2/notarize.js", // todo: put this somewhere and point to it
         productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
