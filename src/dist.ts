@@ -87,7 +87,7 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlementsInherit": "build/entitlements.mac.plist",
             "icon": "build/icon.png",
             "target": macTargets,
-            "publish": "never"
+            "publish": null
         },
         mas: {
             "type": "distribution",
@@ -96,7 +96,7 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlements": "build/entitlements.mas.plist",
             "entitlementsInherit": "build/entitlements.mas.inherit.plist",
             "entitlementsLoginHelper": "build/entitlements.mas.loginhelper.plist",
-            "publish": "never"
+            "publish": null
         },
         directories: {
             output: "dist",
@@ -108,7 +108,7 @@ function appendBuildInfo(pkgJson:any):any {
           "asarUnpack": [
             "build/front/assets/**/*"
            ],
-          "publish": "never"
+          "publish": null
         },
         nsis: pkgJson.nsis,
         dmg: pkgJson.dmg,
