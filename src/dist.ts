@@ -32,6 +32,7 @@ export function doDist(args:string[]) {
         console.log(ac.blue.bold('  • preparing for packaging...'))
         prepareIcons()
         copyAdditional()
+        console.log(ac.blue.bold('  • gathering certificates...'))
         copyCertificates(pkgJson)
 
         console.log(ac.blue.bold('  • packaging and signing...'))
