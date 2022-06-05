@@ -68,11 +68,8 @@ function readPackageJSON() {
 const electronVersion = "12.0.5"
 
 const macTargets = [
-    {
-        target: "mas",
-        // arch: "universal"
-    }
-] // maybe we can do others later, by keyword
+        "pkg", "dmg", "mas"
+]
 
 function appendBuildInfo(pkgJson:any):any {
     const build = {
@@ -168,19 +165,18 @@ function prepareIcons() {
     const buildDir = path.resolve('build')
     let splash = path.join('launch-icons','splash.jpg')
     let commonIcon = path.join('launch-icons','icon.png')
-    // let dmgBackground = path.join('launch-icons', 'dmgBackground.png')
+    let dmgBackground = path.join('launch-icons', 'dmgBackground.png')
     if(!fs.existsSync(commonIcon)) {
         convertToPng(splash, commonIcon)
     }
     if(fs.existsSync(commonIcon)) {
-        console.log(ac.italic.red.dim('common icon exists, but not preparing icon -- TODO'))
+        console.log(ac.italic.red.dim('preparing icon'))
         fs.copyFileSync(commonIcon, path.join(buildDir, 'icon.png'))
     }
-    // todo: enable this only if we are supporting dmg targets again
-    // if(fs.existsSync(dmgBackground)) {
-    //     console.log('preparing dmg background')
-    //     fs.copyFileSync(dmgBackground, path.join(buildDir, 'background.png'))
-    // }
+    if(fs.existsSync(dmgBackground)) {
+        console.log(ac.italic.red.dim('preparing dmg background'))
+        fs.copyFileSync(dmgBackground, path.join(buildDir, 'background.png'))
+    }
 }
 function copyAdditional() {
     const buildDir = path.resolve('build')
@@ -221,7 +217,7 @@ function convertToPng(imagePath:string, pngOutPath:string) {
 function makeDistribution() {
     return new Promise((resolve:any) => {
         spinner.start()
-        executeCommand('npm run release',[]).then((rt:any)=> {
+        executeCommand('npm run release',[],'', true).then((rt:any)=> {
             setTimeout(() => {
                 spinner.stop()
                 if(rt.stdStr) {
