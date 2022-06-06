@@ -74,7 +74,8 @@ const macTargets = [
 function appendBuildInfo(pkgJson:any):any {
     const build = {
         appId: pkgJson.projId,
-        "afterSign": "/Users/sohmert/tbd/infection-2/notarize.js", // todo: put this somewhere and point to it
+        "afterPack": "./fixBundles.js", // todo: put this somewhere and point to it
+        "afterSign": "./notarize.js", // todo: put this somewhere and point to it
         productName: pkgJson.displayName,
         copyright: pkgJson.copyright,
         electronVersion: electronVersion,
