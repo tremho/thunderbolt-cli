@@ -198,6 +198,8 @@ function updatePListItems(outPath:string, version:string, displayName:string, sh
 
     // read the plist contents
     try {
+        const vparts = version.split('.',3)
+        version = vparts.join('.') // reconstruct, limiting to 3 parts
         const plistPath = path.join(outPath, 'App_Resources', 'iOS', 'info.plist')
         let plist = fs.readFileSync(plistPath).toString()
         let keySpot = plist.indexOf('<key>CFBundleDisplayName</key>')
