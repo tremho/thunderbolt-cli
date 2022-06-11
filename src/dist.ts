@@ -238,7 +238,11 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                 dist: "electron-builder"
             },
             author: "tremho",
+            dependencies: {
+                ...pkgJson.dependencies
+            },
             devDependencies: {
+                ...pkgJson.devDependencies,
                 "electron": "^19.0.4",
                 "electron-builder": "^23.0.3"
             },
