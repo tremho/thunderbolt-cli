@@ -220,9 +220,13 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                 "electron-builder": "^23.0.3"
             },
             build: {
-                appId: "com.stormmason.infection2",
+                appId: pkgJson.projId,
+                productName: pkgJson.displayName,
+                copyright: pkgJson.copyright,
+                electronVersion: electronVersion,
+
                 mac: {
-                    category: "public.app-category.games",
+                    category: pkgJson.macOS?.category ?? "public.app-category.developer-tools",
                     target: ["pkg", "dmg", "mas"]
                 },
                 mas: {
@@ -239,7 +243,7 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                 }
             }
         }
-        const contents = JSON.stringify(buildPkg)
+        const contents = JSON.stringify(buildPkg, null, 2)
         fs.writeFileSync(outPath, contents)
     } catch(e) {
         console.error(ac.red.bold('Error setting up for dist'), e)
