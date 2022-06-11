@@ -198,6 +198,29 @@ function convertToPng(imagePath:string, pngOutPath:string) {
     // })
 }
 
+
+// see makeSyncVersion in nativescript dist
+function backVersion(version:string) {
+    let n = version.lastIndexOf('-')
+    if(n === -1) {
+        // this is a mark version, so our sync version is the same
+        return version
+    }
+
+    n = version.indexOf('-')
+    if(n === -1) n = version.length
+    const rootVersion = version.substring(0, n)
+    const parts = rootVersion.split('.')
+    let major = Number(parts[0] ?? 0)
+    let minor = Number(parts[1] ?? 0)
+    let patch = Number(parts[2] ?? 0)
+    if (patch) patch--
+    else if (minor) minor--
+    else if (major) major--
+
+    return `${major}.${minor}.${patch}`  // return the previous semantic version
+}
+
 async function packageAndDistribute(pkgJson:any):Promise<number> {
     const buildDir = path.resolve('build')
     // >>>>>>>>>>>>>>>>>>>>>>>>>> NEW BUILD APPROACH
@@ -206,7 +229,7 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
         const outPath = path.join(buildDir, 'package.json');
         const buildPkg = {
             name: pkgJson.name,
-            version: pkgJson.version,
+            version: backVersion(pkgJson.version),
             description: pkgJson.description,
             scripts: {
                 start: "electron .",
