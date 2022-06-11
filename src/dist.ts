@@ -21,6 +21,7 @@ export function doDist(args:string[]) {
 
         // read package.json
         const pkgJson = readPackageJSON()
+        copyCertificates(pkgJson)
         return packageAndDistribute(pkgJson).then((retcode) => {
             if(!retcode) {
                 console.log(ac.green.bold('packaging complete'))
@@ -186,7 +187,7 @@ function copyCertificates(pkgJson:any) {
     fs.copyFileSync(path.join(certfolder, `${pkgJson.name}.entitlements.mas.plist`), path.join(buildDir, 'entitlements.mas.plist'))
     fs.copyFileSync(path.join(certfolder, `entitlements.mas.inherit.plist`), path.join(buildDir, 'entitlements.mas.inherit.plist'))
     fs.copyFileSync(path.join(certfolder, `entitlements.mas.loginhelper.plist`), path.join(buildDir, 'entitlements.mas.loginhelper.plist'))
-    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}-macos-distribution.provisionprofile`), 'embedded.provisionprofile')
+    fs.copyFileSync(path.join(certfolder, `${pkgJson.name.replace(/-/g, '')}-macos-distribution.provisionprofile`), path.join(buildDir, 'embedded.provisionprofile'))
 }
 
 function convertToPng(imagePath:string, pngOutPath:string) {
