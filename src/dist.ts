@@ -21,36 +21,15 @@ export function doDist(args:string[]) {
 
         // read package.json
         const pkgJson = readPackageJSON()
-        // append build info
-        appendBuildInfo(pkgJson)
-        // rename package.json app-package.json
-        fs.renameSync('package.json', 'app-package.json')
-        // write out build appended data as package.json
-        fs.writeFileSync('package.json', JSON.stringify(pkgJson, null, 2))
-
-        // copy icons and other resources
-        console.log(ac.blue.bold('  • preparing for packaging...'))
-        prepareIcons()
-        copyAdditional()
-        console.log(ac.blue.bold('  • gathering certificates...'))
-        copyCertificates(pkgJson)
-
-        console.log(ac.blue.bold('  • packaging and signing...'))
-        // execute electron builder
-        return makeDistribution().then((retcode) => {
-            try {
-                console.log(ac.green.italic.dim('cleaning up...'))
-                // rename package.json dist-package.json
-                fs.renameSync('package.json', 'dist-package.json')
-                // rename app-package.json package.json
-                fs.renameSync('app-package.json', 'package.json')
-            } catch(e) {
-                // @ts-ignore
-                console.error(ac.bold.red('problem renaming package files'), e)
-            }
+        return packageAndDistribute(pkgJson).then((retcode) => {
             if(!retcode) {
+                console.log(ac.green.bold('packaging complete'))
                 // now we can use a transporter app to put to appstore
-                transportApp()
+                return transportApp().then((retcode) => {
+                    if(!retcode) {
+                        console.log(ac.green.bold('distribution complete'))
+                    }
+                })
             }
         })
     })
@@ -218,34 +197,70 @@ function convertToPng(imagePath:string, pngOutPath:string) {
     // })
 }
 
-function makeDistribution() {
-    return new Promise((resolve:any) => {
-        spinner.start()
-        executeCommand('npm run release',[]).then((rt:any)=> {
-            setTimeout(() => {
-                spinner.stop()
-                if(rt.stdStr) {
-                    if(rt.retcode) {
-                        console.log(ac.red(rt.stdStr))
-                    } else {
-                        console.log(ac.green.dim(rt.stdStr))
-                    }
+async function packageAndDistribute(pkgJson:any):Promise<number> {
+    const buildDir = path.resolve('build')
+    // >>>>>>>>>>>>>>>>>>>>>>>>>> NEW BUILD APPROACH
+    // write a building package.json to build dir (include electron and electron-builder)
+    try {
+        const outPath = path.join(buildDir, 'package.json');
+        const buildPkg = {
+            name: pkgJson.name,
+            version: pkgJson.version,
+            description: pkgJson.description,
+            scripts: {
+                start: "electron .",
+                test: "echo \"Error: no test specified\" && exit 1",
+                pack: "electron-builder --dir",
+                dist: "electron-builder"
+            },
+            author: "tremho",
+            devDependencies: {
+                "electron": "^19.0.4",
+                "electron-builder": "^23.0.3"
+            },
+            build: {
+                appId: "com.stormmason.infection2",
+                mac: {
+                    category: "public.app-category.games",
+                    target: ["pkg", "dmg", "mas"]
+                },
+                mas: {
+                    type: "distribution",
+                    hardenedRuntime: false,
+                    provisioningProfile: "embedded.provisionprofile",
+                    entitlements: "entitlements.mas.plist",
+                    entitlementsInherit: "entitlements.mas.inherit.plist",
+                    entitlementsLoginHelper: "entitlements.mas.loginhelper.plist",
+                    publish: null
+                },
+                extraMetadata: {
+                    main: "joveAppBack.js"
                 }
-                if(rt.errStr) {
-                    console.log(ac.red(rt.errStr))
-                }
+            }
+        }
+        const contents = JSON.stringify(buildPkg)
+        fs.writeFileSync(outPath, contents)
+    } catch(e) {
+        console.error(ac.red.bold('Error setting up for dist'), e)
+        return -1
+    }
+    return executeCommand('npm', ['install'], buildDir, false).then(rt => {
+        if(rt.retcode) {
+            console.error(ac.red.bold('Error installing dependencies'), rt.errStr)
+        } else {
+            return executeCommand('npm', ['run', 'dist'], buildDir, true).then(rt => {
                 if(rt.retcode) {
-                    console.log(ac.bold.red('Electron Builder failed with code '+rt.retcode))
-                } else {
-                    console.log(ac.bold.green('Electron Builder reports success'))
+                    console.error(ac.red.bold('Error executing packaging'), rt.errStr)
                 }
-                resolve(rt.retcode)
-            }, 500)
-        })
-
+            })
+        }
+        return rt.retcode
     })
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 }
 
 function transportApp() {
     console.log(ac.bold.green('Cool!\nNow get Transport going and send to app store!'))
+    return Promise.resolve(0)
 }
