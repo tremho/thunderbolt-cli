@@ -49,6 +49,10 @@ function readCommandOptions() {
             runCmd = opt
             platform = opts[++i]
         }
+        // support alternative order
+        if(opt === 'ios' || opt === 'android' || opt === 'all') {
+            platform = opt
+        }
         if(opt === 'device') {
             device = opts[++i]
         }
@@ -651,9 +655,9 @@ async function makeFastlane(syncVersion:string) {
     if(b !== -1) b = mdContent.indexOf('\n', b)
     n = mdContent.indexOf('#', b)
     if (n === -1) n = mdContent.length;
-    const reviewNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"').replace(/\n/g, '\\n')
-
+    let reviewNotes = mdContent.substring(b, n).trim()
     console.log(ac.blue.dim(reviewNotes))
+    reviewNotes = reviewNotes.replace(/"/g, '\\"').replace(/\n/g, '\\n')
 
     const contactLine = process.env['CONTACT_INFO'] ?? ''
     let cparts = contactLine.split(' ')
@@ -662,10 +666,10 @@ async function makeFastlane(syncVersion:string) {
 
     const prepub = await getPreviousPublishedVersion()
     let changeLog = await generateChangelog(prepub)
+    console.log(ac.cyan.dim(changeLog))
     changeLog = changeLog.replace(/"/g, '\\"').replace(/\n/g, '\\n')
     // let changeLog = `Contact ${pkgInfo.author} for a changelog for this version`
 
-    console.log(ac.cyan.dim(changeLog))
 
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
     const flDest = path.join(nsRoot, 'fastlane')
