@@ -696,6 +696,10 @@ PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_
 `
     fs.writeFileSync(envFile, envData)
 
+    console.log('--------------')
+    console.log(`running fastlane for ${platform}`)
+    console.log('--------------')
+
     // support isolating a lane, or doing both
     if(!platform || platform === 'ios' || platform === 'all') {
         await executeCommand('fastlane', ['ios', 'certificates'], nsRoot, true)
