@@ -315,9 +315,11 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                 const filelist = fs.readdirSync(bpPath)
                 console.log(ac.red.dim('positioning binding files...'))
                 for(let f of filelist) {
-                    const spf = path.join(bpPath, f)
-                    const dpf = path.join(buildDir, f)
-                    fs.copyFileSync(spf, dpf)
+                    if (f !== 'package.json') {
+                        const spf = path.join(bpPath, f)
+                        const dpf = path.join(buildDir, f)
+                        fs.copyFileSync(spf, dpf)
+                    }
                 }
             } catch(e) {
                 console.error(ac.cyan('node install did not create electron dist to remove'), e)
