@@ -347,7 +347,7 @@ function testForUpdate(src:string, dest:string) {
     const sstat = fs.lstatSync(src)
     const dstat = fs.lstatSync(dest)
 
-    // return trye if source is newer
+    // return true if source is newer
     return (sstat.mtimeMs > dstat.mtimeMs)
 }
 
@@ -813,7 +813,7 @@ function versionBump(version:string, type= 'build') {
  */
 function makeSyncVersion(version:string) {
     let n = version.lastIndexOf('-')
-    if(n === -1 || platform === 'android') {
+    if(n === -1) {
         // this is a mark version, so our sync version is the same
         return version
     }
