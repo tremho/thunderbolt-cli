@@ -305,8 +305,12 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
             console.error(ac.red.bold('Error installing dependencies'), rt.errStr)
         } else {
             // nuke electron dist in jove desktop
-            const edistPath = path.join(buildDir, 'node_modules', '@tremho', 'jove-desktop', 'node_modules', 'electron', 'dist')
-            fs.rmdirSync(edistPath, {recursive: true})
+            try {
+                const edistPath = path.join(buildDir, 'node_modules', '@tremho', 'jove-desktop', 'node_modules', 'electron', 'dist')
+                fs.rmdirSync(edistPath, {recursive: true})
+            } catch(e) {
+                console.error(ac.cyan('node install did not create electron dist to remove'), e)
+            }
             return executeCommand('npm', ['run', 'dist'], buildDir, true).then(rt => {
                 if(rt.retcode) {
                     console.error(ac.red.bold('Error executing packaging'), rt.errStr)
