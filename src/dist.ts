@@ -69,7 +69,10 @@ function appendBuildInfo(pkgJson:any):any {
             "entitlementsInherit": "build/entitlements.mac.plist",
             "icon": "build/icon.png",
             "target": macTargets,
-            "publish": null
+            "publish": null,
+            "asarUnpack": [
+                "build/front/assets/**/*"
+            ],
         },
         mas: {
             "type": "distribution",
