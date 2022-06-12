@@ -48,103 +48,6 @@ function readPackageJSON() {
 
 const electronVersion = "12.0.5"
 
-const macTargets = [
-        "pkg", "dmg", "mas"
-]
-
-function appendBuildInfo(pkgJson:any):any {
-    const build = {
-        appId: pkgJson.projId,
-        "afterPack": "./fixBundles.js", // todo: put this somewhere and point to it
-        "afterSign": "./notarize.js", // todo: put this somewhere and point to it
-        productName: pkgJson.displayName,
-        copyright: pkgJson.copyright,
-        electronVersion: electronVersion,
-
-        mac: {
-            "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
-            "hardenedRuntime": true,
-            "gatekeeperAssess": false,
-            "icon": "build/icon.png",
-            "target": macTargets,
-            "publish": null,
-            "asarUnpack": ["**/*"]
-        },
-        mas: {
-            "type": "distribution",
-            "hardenedRuntime": false,
-            "provisioningProfile": "embedded.provisionprofile",
-            "entitlements": "build/entitlements.mas.plist",
-            "entitlementsInherit": "build/entitlements.mas.inherit.plist",
-            "entitlementsLoginHelper": "build/entitlements.mas.loginhelper.plist",
-            "publish": null
-        },
-        directories: {
-            output: "dist",
-            buildResources: "build"
-        },
-        asar: true,
-        win: {
-          "target": "nsis",
-          "asarUnpack": [
-            "build/front/assets/**/*"
-           ],
-          "publish": null
-        },
-        nsis: pkgJson.nsis,
-        dmg: pkgJson.dmg,
-
-        "files": [
-            {
-                "filter": "package.json",
-                "from": ".",
-                "to": "."
-            },
-            {
-                "filter": "embedded.provisionprofile",
-                "from": "build",
-                "to": "."
-            },
-            {
-                "filter": "joveAppBack.js",
-                "from": "build",
-                "to": "."
-            }
-        ],
-        "extraMetadata": {
-            "main": "joveAppBack.js"
-        }
-    }
-    const win = pkgJson.win || {
-        asarUnpack: [
-            "**/*"
-        ]
-    }
-    // build.mac = Object.assign(mac, pkgJson.mac || {})
-    build.win = Object.assign(win, pkgJson.win || {})
-    const buildFiles = fs.readdirSync('build')
-    for(let f of buildFiles) {
-        if(f !== pkgJson.name && f !== pkgJson.name+".bat") {
-            const st = fs.lstatSync(path.join('build', f))
-            const entry = {filter: '', from:'', to: ''}
-            if(st.isDirectory()) {
-                entry.filter = '**/*'
-                entry.from = "build/"+f
-                entry.to = f
-            } else {
-                entry.filter = f
-                entry.from = 'build'
-                entry.to = '.'
-            }
-            build.files.push(entry)
-        }
-    }
-    pkgJson.build = build
-    const scripts = pkgJson.scripts || {}
-    scripts.release = 'electron-builder'
-    pkgJson.scripts = scripts
-}
-
 function prepareIcons() {
     const buildDir = path.resolve('build')
     let splash = path.join('launch-icons','splash.jpg')
@@ -258,9 +161,8 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                     target: ["pkg", "dmg", "mas"],
                     "hardenedRuntime": true,
                     "gatekeeperAssess": false,
-                    "entitlements": "entitlements.mac.plist",
-                    "entitlementsInherit": "entitlements.mac.plist",
                     "icon": "icon.png",
+                    "asarUnpack": ["**/*"]
                 },
                 mas: {
                     type: "distribution",
