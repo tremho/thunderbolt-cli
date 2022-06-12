@@ -65,14 +65,10 @@ function appendBuildInfo(pkgJson:any):any {
             "category": pkgJson.macOS?.category ?? "public.app-category.developer-tools",
             "hardenedRuntime": true,
             "gatekeeperAssess": false,
-            "entitlements": "build/entitlements.mac.plist",
-            "entitlementsInherit": "build/entitlements.mac.plist",
             "icon": "build/icon.png",
             "target": macTargets,
             "publish": null,
-            "asarUnpack": [
-                "build/front/assets/**/*"
-            ],
+            "asarUnpack": ["**/*"]
         },
         mas: {
             "type": "distribution",
