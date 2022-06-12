@@ -812,7 +812,7 @@ function versionBump(version:string, type= 'build') {
  */
 function makeSyncVersion(version:string) {
     let n = version.lastIndexOf('-')
-    if(n === -1) {
+    if(n === -1 || platform === 'android') {
         // this is a mark version, so our sync version is the same
         return version
     }

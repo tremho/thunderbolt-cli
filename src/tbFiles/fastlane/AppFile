@@ -1,3 +1,6 @@
 app_identifier ENV["APP_BUNDLE_ID"]
 apple_id ENV["APPLE_ID"]
 team_id "Apple Development"
+
+json_key_file ENV["PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY"]
+package_name ENV["APP_BUNDLE_ID"]
