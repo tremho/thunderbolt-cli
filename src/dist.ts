@@ -22,6 +22,7 @@ export function doDist(args:string[]) {
         // read package.json
         const pkgJson = readPackageJSON()
         copyCertificates(pkgJson)
+        prepareIcons()
         return packageAndDistribute(pkgJson).then((retcode) => {
             if(!retcode) {
                 console.log(ac.green.bold('packaging complete'))
@@ -254,7 +255,12 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
 
                 mac: {
                     category: pkgJson.macOS?.category ?? "public.app-category.developer-tools",
-                    target: ["pkg", "dmg", "mas"]
+                    target: ["pkg", "dmg", "mas"],
+                    "hardenedRuntime": true,
+                    "gatekeeperAssess": false,
+                    "entitlements": "build/entitlements.mac.plist",
+                    "entitlementsInherit": "build/entitlements.mac.plist",
+                    "icon": "icon.png",
                 },
                 mas: {
                     type: "distribution",
@@ -265,6 +271,23 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                     entitlementsLoginHelper: "entitlements.mas.loginhelper.plist",
                     publish: null
                 },
+                files: [
+                    {
+                        "filter": "package.json",
+                        "from": ".",
+                        "to": "."
+                    },
+                    {
+                        "filter": "joveAppBack.js",
+                        "from": ".",
+                        "to": "."
+                    },
+                    {
+                        "filter": "BuildEnvironment.json",
+                        "from": ".",
+                        "to": "."
+                    }
+                ],
                 extraMetadata: {
                     main: "joveAppBack.js"
                 }
