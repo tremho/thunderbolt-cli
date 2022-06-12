@@ -698,6 +698,9 @@ KEY_STORE_ALIAS_PASSWORD=${process.env['KEY_STORE_ALIAS_PASSWORD']}
 PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY']}
 
 `
+    console.log('-------------')
+    console.log(envData)
+    console.log('-------------')
     fs.writeFileSync(envFile, envData)
 
     console.log('--------------')
