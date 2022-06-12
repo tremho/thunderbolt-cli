@@ -176,6 +176,7 @@ function copyAdditional() {
 }
 
 function copyCertificates(pkgJson:any) {
+    console.log(ac.italic.red.dim('preparing certificates'))
     const buildDir = path.resolve('build')
     const certfolder = pkgJson.certificateFolder
     if(!certfolder) {
@@ -224,8 +225,8 @@ function backVersion(version:string) {
 
 async function packageAndDistribute(pkgJson:any):Promise<number> {
     const buildDir = path.resolve('build')
-    // >>>>>>>>>>>>>>>>>>>>>>>>>> NEW BUILD APPROACH
-    // write a building package.json to build dir (include electron and electron-builder)
+    console.log(ac.italic.red.dim('creating packages'))
+
     try {
         const outPath = path.join(buildDir, 'package.json');
         const buildPkg = {
@@ -258,8 +259,8 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                     target: ["pkg", "dmg", "mas"],
                     "hardenedRuntime": true,
                     "gatekeeperAssess": false,
-                    "entitlements": "build/entitlements.mac.plist",
-                    "entitlementsInherit": "build/entitlements.mac.plist",
+                    "entitlements": "entitlements.mac.plist",
+                    "entitlementsInherit": "entitlements.mac.plist",
                     "icon": "icon.png",
                 },
                 mas: {
@@ -309,6 +310,7 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
             return executeCommand('npm', ['run', 'dist'], buildDir, true).then(rt => {
                 if(rt.retcode) {
                     console.error(ac.red.bold('Error executing packaging'), rt.errStr)
+                    return rt.retcode
                 }
             })
         }
