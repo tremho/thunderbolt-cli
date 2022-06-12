@@ -122,19 +122,20 @@ export function doNativeScript() {
                             const version = versionBump(preVersion, updateType)
                             const syncVersion = makeSyncVersion(version)
 
-                            console.log(ac.bold.black(`\n -- tagging semantic version ${version} -- \n`))
-                            console.log(ac.italic.black.bgYellowBright(`submitting to store as a build of ${syncVersion}`))
+                            // console.log(ac.bold.black(`\n -- tagging semantic version ${version} -- \n`))
+                            console.log(ac.italic.black.bgYellowBright(`submitting version ${version} to store as a build of ${syncVersion}`))
                             console.log('')
                             // release to main will write the new version, commit it, and merge to main
                             // we'll end up in our original branch in the end
-                            return releaseToMain(version).then((success) => {
-                                if(success) {
-                                    // publish to app store
-                                    return makeFastlane(syncVersion)
-                                } else {
-                                    console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
-                                }
-                            })
+                            return makeFastlane(syncVersion)
+                            // return releaseToMain(version).then((success) => {
+                            //     if(success) {
+                            //         // publish to app store
+                            //         return makeFastlane(syncVersion)
+                            //     } else {
+                            //         console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
+                            //     }
+                            // })
                         }
                         executeCommand('ns', opts, nsRoot, true)
                     }
@@ -625,7 +626,7 @@ export default {
  * TODO for this:
  *  - in MatchFile, the git url should be dynamically populated
  */
-async function makeFastlane(previousVersion:string) {
+async function makeFastlane(syncVersion:string) {
     // first, read secrets from .dist.secrets
     const dsFile = path.join(projPath, '.dist.secrets');
     if(fs.existsSync(dsFile)) {
@@ -652,15 +653,19 @@ async function makeFastlane(previousVersion:string) {
     if (n === -1) n = mdContent.length;
     const reviewNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"').replace(/\n/g, '\\n')
 
+    console.log(ac.blue.dim(reviewNotes))
+
     const contactLine = process.env['CONTACT_INFO'] ?? ''
     let cparts = contactLine.split(' ')
 
     const cleanProjName = projName.replace(/[-_ .]/g, '')
 
-    // const prepub = await getPreviousPublishedVersion()
-    // let changeLog = await generateChangelog(prepub)
-    // changeLog = changeLog.replace(/"/g, '\\"').replace(/\n/g, '\\n')
-    let changeLog = `Contact ${pkgInfo.author} for a changelog for this version`
+    const prepub = await getPreviousPublishedVersion()
+    let changeLog = await generateChangelog(prepub)
+    changeLog = changeLog.replace(/"/g, '\\"').replace(/\n/g, '\\n')
+    // let changeLog = `Contact ${pkgInfo.author} for a changelog for this version`
+
+    console.log(ac.cyan.dim(changeLog))
 
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')
     const flDest = path.join(nsRoot, 'fastlane')
@@ -781,12 +786,16 @@ function versionBump(version:string, type= 'build') {
  * In order to bridge the semantics of a semantic version
  * and the 3-dot + build sensibility of the app store, we need
  * to make any pre-release versions a later build of the former patch.
- * This could get weird if things go out of sync.
- * Will return the semantically previous version, sans pre-release.
- * If we have builds in this version, we'll be adding a new one with this.
- * If not, this will become the mark of the previous semantic, which is not in sync with the repo,
- * but it's not semantically incorrect from the perspective of the distribution.
- * Moral of the story is: keep the synchronization tight. Don't do anything out of band and avoid errors.
+ *
+ * revision 9999 will be used to designate "just before the minor/major update"
+ *
+ * Effectively this means that a 0.1.1-pre-release.1
+ * will be built as 0.1.0
+ * and 0.1.1-pre-release.n will be  built as 0.1.0 build next
+ * and a 0.2.0-pre-release.1 will be built as 0.1.9999
+ * and 0.2.0-pre-release.n will be  built as 0.1.9999 build next
+ *
+ * A major shift to 2.0.0-pre-release.1 would build as 1.0.9999 and onward
  *
  * @param version
  */
@@ -805,8 +814,14 @@ function makeSyncVersion(version:string) {
     let minor = Number(parts[1] ?? 0)
     let patch = Number(parts[2] ?? 0)
     if (patch) patch--
-    else if (minor) minor--
-    else if (major) major--
+    else if (minor) {
+        patch = 9999
+        minor--
+    }
+    else if (major) {
+        patch = 9999
+        major--
+    }
 
     return `${major}.${minor}.${patch}`  // return the previous semantic version
 }
@@ -823,7 +838,7 @@ async function generateChangelog(sinceTag:string) {
 // Write version to package.json, commit, tag, and push to master
 async function releaseToMain(version:string) {
     const branchName = await getBranchName()
-    console.log('committing and tagging version ',version, 'to main branch, from branch ', branchName)
+    // console.log('committing and tagging version ',version, 'to main branch, from branch ', branchName)
     console.log('verbosity is', verbose)
     pkgInfo.version = version; // update the version
     fs.writeFileSync(path.join(projPath, 'package.json'), JSON.stringify(pkgInfo, null, 2))
