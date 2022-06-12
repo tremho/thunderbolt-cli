@@ -97,7 +97,7 @@ export function doNativeScript() {
 
         console.log('----- doing additional preps----')
         // migrate metadata
-        metaMigrateNS(path.join(outPath, projName))
+        const avc = metaMigrateNS(path.join(outPath, projName))?.avc
         // make icons
         return iconPrepNS(projPath, path.join(outPath, projName), pkgInfo.splash?.background).then(() => {
             return migrateExtras().then(()=> {
@@ -131,7 +131,7 @@ export function doNativeScript() {
                             console.log('')
                             // release to main will write the new version, commit it, and merge to main
                             // we'll end up in our original branch in the end
-                            return makeFastlane(syncVersion)
+                            return makeFastlane(syncVersion, ''+avc)
                             // return releaseToMain(version).then((success) => {
                             //     if(success) {
                             //         // publish to app store
@@ -630,7 +630,7 @@ export default {
  * TODO for this:
  *  - in MatchFile, the git url should be dynamically populated
  */
-async function makeFastlane(syncVersion:string) {
+async function makeFastlane(syncVersion:string, avc:string) {
     // first, read secrets from .dist.secrets
     const dsFile = path.join(projPath, '.dist.secrets');
     if(fs.existsSync(dsFile)) {
@@ -696,6 +696,7 @@ KEY_STORE_PASSWORD=${process.env['KEY_STORE_PASSWORD']}
 KEY_STORE_ALIAS=${process.env['KEY_STORE_ALIAS']}
 KEY_STORE_ALIAS_PASSWORD=${process.env['KEY_STORE_ALIAS_PASSWORD']}
 PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY=${process.env['PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY']}
+VERSION_CODE=${avc}
 
 `
     console.log('-------------')

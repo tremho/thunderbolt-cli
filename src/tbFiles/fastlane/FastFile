@@ -69,7 +69,8 @@ platform :android do
     upload_to_play_store(
         track: 'alpha',
         json_key: ENV["PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY"],
-        package_name: ENV["APP_BUNDLE_ID"]
+        package_name: ENV["APP_BUNDLE_ID"],
+        version_code: ENV["VERSION_CODE"]
     )
  end
 

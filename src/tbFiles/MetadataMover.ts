@@ -168,6 +168,7 @@ export function metaMigrateNS(outPath:string) {
     // write build.xcconfig if we have data for it and there is an ios platform
     makeXCBuildSettings(outPath, pkgJson.ios)
 
+    return {avc}
 }
 
 function readPackageJSON() {
