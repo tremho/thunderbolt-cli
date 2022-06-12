@@ -18,11 +18,11 @@ export function executeCommand(cmd:string, args:any[],  cwd = '', consolePass = 
     const proc = exec(cmdstr, opts)
     if(proc.stdout) proc.stdout.on('data', data => {
       out.stdStr += data.toString()
-      if(consolePass) console.log(data.toString().trim())
+      if(consolePass) process.stdout.write(data.toString())
     })
     if(proc.stderr) proc.stderr.on('data', data => {
       out.errStr += data.toString()
-      if(consolePass) console.error(data.toString().trim())
+      if(consolePass) process.stdout.write(data.toString())
     })
     proc.on('error', error => {
       console.error(error)
