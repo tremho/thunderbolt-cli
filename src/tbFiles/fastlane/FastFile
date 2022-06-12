@@ -70,7 +70,8 @@ platform :android do
         track: 'alpha',
         json_key: ENV["PATH_TO_PLAY_STORE_UPLOADER_JSON_KEY"],
         package_name: ENV["APP_BUNDLE_ID"],
-        version_code: ENV["VERSION_CODE"]
+        version_code: ENV["VERSION_CODE"],
+        aab: "../platforms/android/app/build/outputs/bundle/release/app-release.aab"
     )
  end
 
