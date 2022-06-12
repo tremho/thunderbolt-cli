@@ -272,9 +272,17 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                     entitlementsLoginHelper: "entitlements.mas.loginhelper.plist",
                     publish: null
                 },
+                dmg: {
+                    background: "background.png"
+                },
                 files: [
                     {
                         "filter": "package.json",
+                        "from": ".",
+                        "to": "."
+                    },
+                    {
+                        "filter": "front/**/*",
                         "from": ".",
                         "to": "."
                     },
@@ -311,16 +319,16 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                 if(fs.existsSync(edistPath)) {
                     fs.rmSync(edistPath, {recursive: true})
                 }
-                const bpPath = path.join(buildDir, 'node_modules', '@tremho', 'jove-desktop', 'buildPack')
-                const filelist = fs.readdirSync(bpPath)
-                console.log(ac.red.dim('positioning binding files...'))
-                for(let f of filelist) {
-                    if (f !== 'package.json') {
-                        const spf = path.join(bpPath, f)
-                        const dpf = path.join(buildDir, f)
-                        fs.copyFileSync(spf, dpf)
-                    }
-                }
+                // const bpPath = path.join(buildDir, 'node_modules', '@tremho', 'jove-desktop', 'buildPack')
+                // const filelist = fs.readdirSync(bpPath)
+                // console.log(ac.red.dim('positioning binding files...'))
+                // for(let f of filelist) {
+                //     if (f !== 'package.json') {
+                //         const spf = path.join(bpPath, f)
+                //         const dpf = path.join(buildDir, f)
+                //         fs.copyFileSync(spf, dpf)
+                //     }
+                // }
             } catch(e) {
                 console.error(ac.cyan('node install did not create electron dist to remove'), e)
                 return -2
