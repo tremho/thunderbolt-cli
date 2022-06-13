@@ -265,7 +265,9 @@ async function transportApp() {
 
     // create a fastlane directory and create a FastFile with our actions
     const fastlane = path.join(distDir, 'fastlane')
-    fs.mkdirSync(fastlane)
+    if(!fs.existsSync(fastlane)) {
+        fs.mkdirSync(fastlane)
+    }
     const fastFile = path.join(fastlane, 'FastFile')
     fs.writeFileSync(fastFile, `
 default_platform(:mac)
