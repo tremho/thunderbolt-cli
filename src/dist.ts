@@ -278,10 +278,10 @@ platform :mac do
     set_github_release(
       repository_name: ENV["GITHUB_RELEASE_REPO"],
       api_token: ENV["GITHUB_TOKEN"],
-      name: ENV["GITHUB_MAC_RELEASE_NAME"]
-      tag_name: ENV["VERSION_TAG"]
-      description: ENV["RELEASE_DESCRIPTION"]
-      changelog: ENV["CHANGELOG"]
+      name: ENV["GITHUB_MAC_RELEASE_NAME"],
+      tag_name: ENV["VERSION_TAG"],
+      description: ENV["RELEASE_DESCRIPTION"],
+      changelog: ENV["CHANGELOG"],
       commitish: "main",
       upload_assets: [ENV["LATEST_DMG"]]
     )
