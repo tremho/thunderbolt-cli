@@ -261,6 +261,7 @@ async function transportApp() {
     const pkgJson = fs.readFileSync(pkgPath).toString()
     const pkgInfo = JSON.parse(pkgJson)
     const {projName, version} = pkgInfo
+    const backVer = backVersion(version)
     const distDir = path.join(projPath, 'build', 'dist')
 
     // create a fastlane directory and create a FastFile with our actions
@@ -324,7 +325,7 @@ end
         GITHUB_MAC_RELEASE_NAME: `MacOS ${projName} v${version}`,
         VERSION_TAG: `v${version}`,
         RELEASE_DESCRIPTION: reviewNotes,
-        LATEST_DMG:`${projName}=${version}.dmg`
+        LATEST_DMG:`${projName}=${backVer}.dmg`
     }
     return executeCommand('fastlane', ['mac', 'github'], distDir, true, env).then(rt => {
 
