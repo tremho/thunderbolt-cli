@@ -322,7 +322,7 @@ ${releaseNotes.comingSoon}
         GITHUB_MAC_RELEASE_NAME: `MacOS ${projName} v${version}`,
         VERSION_TAG: `v${version}`,
         RELEASE_DESCRIPTION: fmtNotes,
-        LATEST_DMG:`${projName}=${backVer}.dmg`
+        LATEST_DMG:`${distDir}/${projName}-${backVer}.dmg`
     }
     return executeCommand('fastlane', ['mac', 'github'], distDir, true, env).then(rt => {
 
