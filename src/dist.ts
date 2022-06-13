@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path"
 import {doBuild} from "./build";
 import {executeCommand} from "./execCmd";
+import {getReleaseNotes} from "./releaseNotes";
 
 const dotenv = require('dotenv')
 
@@ -300,31 +301,27 @@ end
     }
     // read the release notes
     const rnFile = path.join(projPath, 'Release_Notes.md')
-    let mdContent = ''
-    try {
-        mdContent = fs.readFileSync(rnFile).toString()
-    } catch(e) {
-        mdContent = ''
-    }
-    let b = mdContent.indexOf('# Release Notes')
-    if(b !== -1) b = mdContent.indexOf('\n', b)
-    let n = mdContent.indexOf('#', b)
-    if (n === -1) n = mdContent.length;
-    const releaseNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"').replace(/\n/g, '\\n')
-    b = mdContent.indexOf('# Reviewer Notes', n)
-    if(b !== -1) b = mdContent.indexOf('\n', b)
-    n = mdContent.indexOf('#', b)
-    if (n === -1) n = mdContent.length;
-    let reviewNotes = mdContent.substring(b, n).trim()
-    console.log(ac.blue.dim(reviewNotes))
-    reviewNotes = reviewNotes.replace(/"/g, '\\"').replace(/\n/g, '\\n')
+    const releaseNotes = getReleaseNotes(rnFile)
+    const fmtNotes = `
+Release Notes
+-------------
+${projName} v${version} (MacOS)
+${releaseNotes.common}
+- - -
+${releaseNotes.desktop}
+
+--------------
+Coming Soon:
+${releaseNotes.comingSoon}
+`
+    console.log(ac.blue.dim(fmtNotes))
 
     const env = {
         GITHUB_RELEASE_REPO: process.env.GITHUB_RELEASE_REPO || 'use package.json',
         GITHUB_TOKEN:process.env.GITHUB_TOKEN,
         GITHUB_MAC_RELEASE_NAME: `MacOS ${projName} v${version}`,
         VERSION_TAG: `v${version}`,
-        RELEASE_DESCRIPTION: reviewNotes,
+        RELEASE_DESCRIPTION: fmtNotes,
         LATEST_DMG:`${projName}=${backVer}.dmg`
     }
     return executeCommand('fastlane', ['mac', 'github'], distDir, true, env).then(rt => {
