@@ -664,11 +664,11 @@ async function makeFastlane(syncVersion:string, avc:string) {
 
     const cleanProjName = projName.replace(/[-_ .]/g, '')
 
-    const prepub = await getPreviousPublishedVersion()
-    let changeLog = await generateChangelog(prepub)
-    console.log(ac.cyan.dim(changeLog))
-    changeLog = changeLog.replace(/"/g, '\\"').replace(/\n/g, '\\n')
-    // let changeLog = `Contact ${pkgInfo.author} for a changelog for this version`
+    // const prepub = await getPreviousPublishedVersion()
+    // let changeLog = await generateChangelog(prepub)
+    // console.log(ac.cyan.dim(changeLog))
+    // changeLog = changeLog.replace(/"/g, '\\"').replace(/\n/g, '\\n')
+    let changeLog = `Contact ${pkgInfo.author} for a changelog for this version`
 
 
     const flSrcDir = path.join(jovePath, 'tbFiles', 'fastlane')

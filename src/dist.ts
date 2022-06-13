@@ -5,6 +5,9 @@ import path from "path"
 import {doBuild} from "./build";
 import {executeCommand} from "./execCmd";
 
+const dotenv = require('dotenv')
+
+
 // import * as imageConversion from 'conversion_cargo';
 
 const spinner = require('text-spinner')({
@@ -248,7 +251,86 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
 
 }
 
-function transportApp() {
-    console.log(ac.bold.green('Cool!\nNow get Transport going and send to app store!'))
-    return Promise.resolve(0)
+async function transportApp() {
+
+    const projPath = path.resolve('.')
+
+    console.log("TransportApp working from projPath=", projPath)
+
+    const pkgPath = path.join(projPath, 'package.json')
+    const pkgJson = fs.readFileSync(pkgPath).toString()
+    const pkgInfo = JSON.parse(pkgJson)
+    const {projName, version} = pkgInfo
+    const distDir = path.join(projPath, 'build', 'dist')
+
+    // create a fastlane directory and create a FastFile with our actions
+    const fastlane = path.join(distDir, 'fastlane')
+    fs.mkdirSync(fastlane)
+    const fastFile = path.join(fastlane, 'FastFile')
+    fs.writeFileSync(fastFile, `
+default_platform(:mac)
+
+platform :mac do
+  desc "copy to GitHub Releases"
+  lane :github do
+    set_github_release(
+      repository_name: ENV["GITHUB_RELEASE_REPO"],
+      api_token: ENV["GITHUB_TOKEN"],
+      name: ENV["GITHUB_MAC_RELEASE_NAME"]
+      tag_name: ENV["VERSION_TAG"]
+      description: ENV["RELEASE_DESCRIPTION"]
+      changelog: ENV["CHANGELOG"]
+      commitish: "main",
+      upload_assets: [ENV["LATEST_DMG"]]
+    )
+  end
+end    
+    `)
+
+    // set up the environment
+    // first, read secrets from .dist.secrets
+    const dsFile = path.join(projPath, '.dist.secrets');
+    if(fs.existsSync(dsFile)) {
+        dotenv.config({path: dsFile})
+    } else {
+        console.error('No secrets!')
+        return false; // can't make fastlane without the secrets file
+    }
+    // read the release notes
+    const rnFile = path.join(projPath, 'Release_Notes.md')
+    let mdContent = ''
+    try {
+        mdContent = fs.readFileSync(rnFile).toString()
+    } catch(e) {
+        mdContent = ''
+    }
+    let b = mdContent.indexOf('# Release Notes')
+    if(b !== -1) b = mdContent.indexOf('\n', b)
+    let n = mdContent.indexOf('#', b)
+    if (n === -1) n = mdContent.length;
+    const releaseNotes = mdContent.substring(b, n).trim().replace(/"/g, '\\"').replace(/\n/g, '\\n')
+    b = mdContent.indexOf('# Reviewer Notes', n)
+    if(b !== -1) b = mdContent.indexOf('\n', b)
+    n = mdContent.indexOf('#', b)
+    if (n === -1) n = mdContent.length;
+    let reviewNotes = mdContent.substring(b, n).trim()
+    console.log(ac.blue.dim(reviewNotes))
+    reviewNotes = reviewNotes.replace(/"/g, '\\"').replace(/\n/g, '\\n')
+
+    const env = {
+        GITHUB_RELEASE_REPO: process.env.GITHUB_RELEASE_REPO || 'use package.json',
+        GITHUB_TOKEN:process.env.GITHUB_TOKEN,
+        GITHUB_MAC_RELEASE_NAME: `MacOS ${projName} v${version}`,
+        VERSION_TAG: `v${version}`,
+        RELEASE_DESCRIPTION: reviewNotes,
+        CHANGELOG:'',
+        LATEST_DMG:`${projName}=${version}.dmg`
+    }
+    return executeCommand('fastlane', ['mac', 'github'], distDir, true, env).then(rt => {
+
+        console.log('returns retcode', rt.retcode)
+        return rt.retcode
+    })
+
 }
+
