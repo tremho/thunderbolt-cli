@@ -261,7 +261,7 @@ async function transportApp() {
     const pkgPath = path.join(projPath, 'package.json')
     const pkgJson = fs.readFileSync(pkgPath).toString()
     const pkgInfo = JSON.parse(pkgJson)
-    const {projName, version} = pkgInfo
+    const {projName, displayName, version} = pkgInfo
     const backVer = backVersion(version)
     const distDir = path.join(projPath, 'build', 'dist')
 
@@ -303,15 +303,18 @@ end
     const rnFile = path.join(projPath, 'Release_Notes.md')
     const releaseNotes = getReleaseNotes(rnFile)
     const fmtNotes = `
-Release Notes
+# Release Notes
 -------------
-${projName} v${version} (MacOS)
+#### ${projName} v${version} (MacOS)
+
 ${releaseNotes.common}
-- - -
+
+--------------
+
 ${releaseNotes.desktop}
 
 --------------
-Coming Soon:
+### Coming Soon:
 ${releaseNotes.comingSoon}
 `
     console.log(ac.blue.dim(fmtNotes))
@@ -319,10 +322,10 @@ ${releaseNotes.comingSoon}
     const env = {
         GITHUB_RELEASE_REPO: process.env.GITHUB_RELEASE_REPO || 'use package.json',
         GITHUB_TOKEN:process.env.GITHUB_TOKEN,
-        GITHUB_MAC_RELEASE_NAME: `MacOS ${projName} v${version}`,
+        GITHUB_MAC_RELEASE_NAME: `MacOS ${displayName} v${version}`,
         VERSION_TAG: `v${version}`,
         RELEASE_DESCRIPTION: fmtNotes,
-        LATEST_DMG:`${distDir}/${projName}-${backVer}.dmg`
+        LATEST_DMG:`${distDir}/${displayName}-${backVer}.dmg`
     }
     return executeCommand('fastlane', ['mac', 'github'], distDir, true, env).then(rt => {
 
