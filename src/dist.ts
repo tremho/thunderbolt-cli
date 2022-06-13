@@ -281,7 +281,6 @@ platform :mac do
       name: ENV["GITHUB_MAC_RELEASE_NAME"],
       tag_name: ENV["VERSION_TAG"],
       description: ENV["RELEASE_DESCRIPTION"],
-      changelog: ENV["CHANGELOG"],
       commitish: "main",
       upload_assets: [ENV["LATEST_DMG"]]
     )
@@ -325,7 +324,6 @@ end
         GITHUB_MAC_RELEASE_NAME: `MacOS ${projName} v${version}`,
         VERSION_TAG: `v${version}`,
         RELEASE_DESCRIPTION: reviewNotes,
-        CHANGELOG:'',
         LATEST_DMG:`${projName}=${version}.dmg`
     }
     return executeCommand('fastlane', ['mac', 'github'], distDir, true, env).then(rt => {
