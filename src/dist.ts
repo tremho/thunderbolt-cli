@@ -83,6 +83,10 @@ function copyAdditional() {
 
 function copyCertificates(pkgJson:any) {
     console.log(ac.italic.red.dim('preparing certificates'))
+    if(process.platform === 'win32') {
+        console.log(ac.italic.blue.bold('not applying certficates to Windows dist package'))
+        return
+    }
     const buildDir = path.resolve('build')
     const certfolder = pkgJson.certificateFolder
     if(!certfolder) {
@@ -271,6 +275,12 @@ async function transportApp() {
         fs.mkdirSync(fastlane)
     }
     const fastFile = path.join(fastlane, 'FastFile')
+
+    if(process.platform === 'win32') {
+        console.log(ac.blue.bold('Not creating fastFile for Windows'))
+        return 0
+    }
+
     fs.writeFileSync(fastFile, `
 default_platform(:mac)
 
