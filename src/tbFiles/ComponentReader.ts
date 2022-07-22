@@ -142,7 +142,7 @@ function readComponent(filepath:string): ComponentInfo {
         }
         let style = ''
         let sn = str.indexOf('<style>')
-        if(sn !== -1) {
+        // if(sn !== -1) {
             sn += 7;
             let sen = str.lastIndexOf('</style>')
             if (sen === -1) sen = str.length
@@ -157,7 +157,7 @@ function readComponent(filepath:string): ComponentInfo {
             //     info.params[am.name] = 'ev'
             // }
             info.bind = bindDeclarations
-        }
+        // }
         info.scss = style
 
     } catch(e) {
