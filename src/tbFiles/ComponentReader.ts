@@ -140,20 +140,24 @@ function readComponent(filepath:string): ComponentInfo {
                 }
             }
         }
-        let sn = str.indexOf('<style>')+7
-        let sen = str.lastIndexOf('</style>')
-        if(sen === -1) sen = str.length
-        sn = str.indexOf('\n', sn)
-        let style = str.substring(sn+1, sen).trim()
-        // now parse the xml
-        const xmlResult = convert.xml2js(layoutXml, {compact:true})
-        info.layout = setupAction(xmlResult)
-        // for(let i=0; i<actionMethods.length; i++) {
-        //     let am = actionMethods[i]
-        //     info.methods[am.name] = am.method
-        //     info.params[am.name] = 'ev'
-        // }
-        info.bind = bindDeclarations
+        let style = ''
+        let sn = str.indexOf('<style>')
+        if(sn !== -1) {
+            sn += 7;
+            let sen = str.lastIndexOf('</style>')
+            if (sen === -1) sen = str.length
+            sn = str.indexOf('\n', sn)
+            style = str.substring(sn + 1, sen).trim()
+            // now parse the xml
+            const xmlResult = convert.xml2js(layoutXml, {compact: true})
+            info.layout = setupAction(xmlResult)
+            // for(let i=0; i<actionMethods.length; i++) {
+            //     let am = actionMethods[i]
+            //     info.methods[am.name] = am.method
+            //     info.params[am.name] = 'ev'
+            // }
+            info.bind = bindDeclarations
+        }
         info.scss = style
 
     } catch(e) {
