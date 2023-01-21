@@ -93,6 +93,7 @@ function scriptInnards(codeBackFile:string) {
                 if(Date.now() !== lastInit) {
                     ccb = new CCB()
                     ccb.component = this
+                    this.controlApi = ccb;
                     lastInit = Date.now()
                 }
             } catch(e) {
@@ -102,14 +103,14 @@ function scriptInnards(codeBackFile:string) {
     script += `        
         preStdOnMounted() {
             try {
-                ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb, ccb)
+                ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb)
             } catch(e) {
                 console.error('error in beforeLayout for custom component '+this.root.tagName, e) 
             }
         },
         postStdOnMounted() {
             try {
-                ccb && ccb.afterLayout && ccb.afterLayout.call(ccb, ccb)
+                ccb && ccb.afterLayout && ccb.afterLayout.call(ccb)
             } catch(e) {
                 console.error('error in afterLayout for custom component '+this.root.tagName, e) 
             }
