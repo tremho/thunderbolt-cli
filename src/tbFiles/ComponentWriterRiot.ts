@@ -102,14 +102,14 @@ function scriptInnards(codeBackFile:string) {
     script += `        
         preStdOnMounted() {
             try {
-                ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb)
+                ccb && ccb.beforeLayout && ccb.beforeLayout.call(ccb, ccb)
             } catch(e) {
                 console.error('error in beforeLayout for custom component '+this.root.tagName, e) 
             }
         },
         postStdOnMounted() {
             try {
-                ccb && ccb.afterLayout && ccb.afterLayout.call(ccb)
+                ccb && ccb.afterLayout && ccb.afterLayout.call(ccb, ccb)
             } catch(e) {
                 console.error('error in afterLayout for custom component '+this.root.tagName, e) 
             }
