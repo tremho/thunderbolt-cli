@@ -201,7 +201,7 @@ function processContainer(container:any, name='container', level=0) {
         while(tag.charAt(tag.length-1).match(/[0-9]/)) {
             tag = tag.substring(0, tag.length-1)
         }
-        if(tag === 'div' || tag === 'span' || tag === 'img') {
+        if(tag === 'div' || tag === 'span' || tag === 'img' || tag === 'slot') {
             out += `${cname} = make${mappedComponent(tag)}('${abs}')\n`
         }  else {
             out += `${cname} = new ${mappedComponent(tag)}('${abs}')\n`
