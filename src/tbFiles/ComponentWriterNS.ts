@@ -146,7 +146,7 @@ function writeCodeBackFile(pathname:string, codeBack:string) {
 
 function mappedComponent(tag: string) {
     let type
-    if(tag === 'div') type = 'Div'
+    if(tag === 'div' || tag === 'slot') type = 'Div'
     else if(tag === 'span') type = 'Span'
     else if(tag === 'img') type = 'Img'
     else type = tag
