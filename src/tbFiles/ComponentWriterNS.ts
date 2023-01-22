@@ -44,6 +44,7 @@ export function writeNativeScriptFile(info:ComponentInfo, pathname:string) {
     if(codeBackRel) {
         out += `this.ccb = new CCB()
             this.ccb.component = this
+            this.controlApi = this.ccb
             `
     }
     out += `this.className = "${pascalCase(info.id)}"\n            `
