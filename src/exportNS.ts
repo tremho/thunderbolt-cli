@@ -110,7 +110,7 @@ export function doNativeScript() {
                             runCmd = 'build'
                             release = true
                         }
-                        let opts = []
+                        let opts: any[] = []
                         opts.push(runCmd)
                         opts.push(platform)
                         if (debugBrk && runCmd === 'debug') {
@@ -121,33 +121,41 @@ export function doNativeScript() {
                             opts.push(device)
                         }
                         opts.push('--no-hmr')
-                        if(release) {
-                            const preVersion = pkgInfo.version
-                            const version = versionBump(preVersion, updateType)
-                            const syncVersion = makeSyncVersion(version)
+                        var wait = Promise.resolve();
+                        if(platform === 'ios') wait = fixBrokenPrep();
+                        wait.then(() => {
+                            if (release) {
+                                const preVersion = pkgInfo.version
+                                const version = versionBump(preVersion, updateType)
+                                const syncVersion = makeSyncVersion(version)
 
-                            // console.log(ac.bold.black(`\n -- tagging semantic version ${version} -- \n`))
-                            console.log(ac.italic.black.bgYellowBright(`submitting version ${version} to store as a build of ${syncVersion}`))
-                            console.log('')
-                            // release to main will write the new version, commit it, and merge to main
-                            // we'll end up in our original branch in the end
-                            return makeFastlane(syncVersion, ''+avc)
-                            // return releaseToMain(version).then((success) => {
-                            //     if(success) {
-                            //         // publish to app store
-                            //         return makeFastlane(syncVersion)
-                            //     } else {
-                            //         console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
-                            //     }
-                            // })
-                        }
-                        executeCommand('ns', opts, nsRoot, true)
+                                // console.log(ac.bold.black(`\n -- tagging semantic version ${version} -- \n`))
+                                console.log(ac.italic.black.bgYellowBright(`submitting version ${version} to store as a build of ${syncVersion}`))
+                                console.log('')
+                                // release to main will write the new version, commit it, and merge to main
+                                // we'll end up in our original branch in the end
+                                return makeFastlane(syncVersion, '' + avc)
+                                // return releaseToMain(version).then((success) => {
+                                //     if(success) {
+                                //         // publish to app store
+                                //         return makeFastlane(syncVersion)
+                                //     } else {
+                                //         console.error(ac.bold.red('\n -- RELEASE ABANDONED -- \n'), ac.black.italic('address errors above and try again'))
+                                //     }
+                                // })
+                            }
+                            executeCommand('ns', opts, nsRoot, true)
+                        });
                     }
 
                 })
             })
         })
     })
+}
+
+function fixBrokenPrep() {
+    return executeCommand('touch', ['platforms/ios/build/Debug-iphonesimulator/metadata-x86_64.bin'], nscwd, verbose)
 }
 
 let nscwd = ''
