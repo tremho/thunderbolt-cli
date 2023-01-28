@@ -144,6 +144,8 @@ export function doNativeScript() {
                                 //     }
                                 // })
                             }
+                            let x = fs.existsSync(path.join(nscwd, 'platforms', 'ios', 'build', 'Debug-iphonesimulator', 'metadata-x86_64.bin'))
+                            console.log("Touch file exists? ", x)
                             executeCommand('ns', opts, nsRoot, true)
                         });
                     }
@@ -156,13 +158,12 @@ export function doNativeScript() {
 
 function fixBrokenPrep() {
     console.log(ac.bold.magenta('Fixing broken xcode build for input file BS'), {nscwd});
-    return executeCommand('touch', ['platforms/ios/build/Debug-iphonesimulator/metadata-x86_64.bin'], nscwd, verbose)
+    let touchfile = path.join(nscwd, 'platforms', 'ios', 'build', 'Debug-iphonesimulator', 'metadata-x86_64.bin');
+    return executeCommand('touch', [touchfile], nscwd, verbose)
 }
 
 let nscwd = ''
 function ns(...args:any) {
-    let x = fs.existsSync(path.join(nscwd, 'platforms', 'ios', 'build', 'Debug-iphonesimulator', 'metadata-x86_64.bin'))
-    console.log("Touch file exists? ", x)
     trace('executing ns', ...args)
     return executeCommand('ns', args, nscwd, verbose)
 }
