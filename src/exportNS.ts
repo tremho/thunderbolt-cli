@@ -158,10 +158,12 @@ export function doNativeScript() {
 
 function fixBrokenPrep() {
     console.log(ac.bold.magenta('Fixing broken xcode build for input file BS'), {nscwd});
-    let touchfile = path.join(nscwd, 'platforms', 'ios', 'build', 'Debug-iphonesimulator');
-    return executeCommand('mkdir', ['-p', touchfile]).then(() => {
-       touchfile = path.join(touchfile, 'metadata-x86_64.bin');
-       return executeCommand('touch', [touchfile], nscwd, verbose)
+    return ns(['prepare', 'ios']).then(() => {
+        let touchfile = path.join(nscwd, 'platforms', 'ios', 'build', 'Debug-iphonesimulator');
+        return executeCommand('mkdir', ['-p', touchfile]).then(() => {
+           touchfile = path.join(touchfile, 'metadata-x86_64.bin');
+           return executeCommand('touch', [touchfile], nscwd, verbose)
+        })
     })
 
 }
