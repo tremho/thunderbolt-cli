@@ -1,7 +1,7 @@
 {
   "name": "@tremho/jove-cli",
-  "version": "0.6.9-pre-release.1025",
-  "description": "tbx command line utility for Jove development",
+  "version": "0.6.9-pre-release.1026",
+  "description": "Command Line Interface for Jove development",
   "main": "build/index.js",
   "bin": {
     "jove": "build/jove.js"
