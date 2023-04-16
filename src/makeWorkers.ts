@@ -40,12 +40,19 @@ export function makeWorkers()
     for(let i=0; i<files.length; i++) {
         const file = files[i]
         if (file.substring(0, file.lastIndexOf('.')) === '.tsw') {
-            workerFiles.push(file)
+            let ren = file.replace(".tsw", ".ts")
+            fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
+            workerFiles.push(ren``)
         }
     }
     if(!workerFiles.length) return Promise.resolve();
     const outDir = path.join(info.buildPath, 'front')
-    return tscCompile({outDir, target: 'es5', lib: 'es2015,dom'}, workerFiles)
+    return tscCompile({outDir, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
+        for(let file in workerFiles) {
+            let ren = file.replace(".ts", ".tsw")
+            fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
+        }
+    })
 }
 
 // cd src/workerstuff
