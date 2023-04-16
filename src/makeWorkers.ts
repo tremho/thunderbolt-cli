@@ -59,9 +59,10 @@ export function makeWorkers()
         const outDir = info.buildPath;
         trace(`outdir: ${outDir}`)
         trace('executing tscCompile')
+        const keep = workerFiles.slice();
         return tscCompile({outDir, cwd: workerstuff, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
-            trace(`tscCompile complete, now doing verification and cleanup: ${workerFiles}`)
-            for (let file in workerFiles) {
+            trace(`tscCompile complete, now doing verification and cleanup: ${keep}`)
+            for (let file in keep) {
                 trace(file);
                 let verf = file.replace(".ts", '.js')
                 let dverf = path.join(outDir, verf);
