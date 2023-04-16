@@ -31,6 +31,7 @@ import * as AppFront from 'Project/joveAppFront'
 import App from 'RiotMain/app.riot'
 
 import {copySplashPage} from "./splashPage";
+import {makeWorkers} from "./makeWorkers";
 
 
 // Variables resolved and used in build functions
@@ -187,7 +188,7 @@ function doWebpackBuild() {
     })
 }
 
-function tscCompile(options:any, files:string[]) {
+export function tscCompile(options:any, files:string[]) {
 
     trace('tscCompile')
     const argList:string[] = []
@@ -272,7 +273,10 @@ function mainAndExec() {
             throw Error()
         }
     })
-    return p
+    // make workers as last step
+    return p.then(() => {
+        return makeWorkers()
+    })
 }
 
 function generateBuildEnvironment() {

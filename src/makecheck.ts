@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as os from "os"
 
-// check for an execcutable and record the date/time
+// check for an executable and record the date/time
 // then check all the project sources and check for a later date/time
 // and build only if sources are newer
 
@@ -39,7 +39,6 @@ function checkProjFiles(projPath:string) {
         } else {
             // console.log('...skip...')
         }
-
     })
     return result
 }
@@ -48,6 +47,18 @@ function checkProjFiles(projPath:string) {
 export function doCheckIsBuildNeeded(projPath:string, projName:string) {
     let buildNeeded = checkExecutable(projPath, projName)
     if(!buildNeeded) buildNeeded = checkProjFiles(projPath)
-    // console.log('build needed = ', buildNeeded)
+    if(!buildNeeded) {
+        let workerstuff = path.join(projPath, 'src', 'workerstuff')
+        const files = fs.readdirSync(workerstuff)
+        for(let i=0; i<files.length; i++) {
+            const file = files[i]
+            if (file.substring(0, file.lastIndexOf('.')) === '.tsw') {
+                const fi = fs.statSync(file)
+                buildNeeded = (fi.mtimeMs >= exeStats.ctimeMs)
+                if(buildNeeded) break;
+            }
+        }
+    }
+// console.log('build needed = ', buildNeeded)
     return buildNeeded
 }
