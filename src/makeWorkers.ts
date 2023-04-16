@@ -60,8 +60,16 @@ export function makeWorkers()
         trace(`outdir: ${outDir}`)
         trace('executing tscCompile')
         return tscCompile({outDir, cwd: workerstuff, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
-            trace("tscCompile complete, now doing cleanup")
+            trace(`tscCompile complete, now doing verification and cleanup: ${workerFiles}`)
             for (let file in workerFiles) {
+                let verf = file.replace(".ts", '.js')
+                verf = path.join(outDir, verf);
+                let v = fs.existsSync(verf)
+                if(v) {
+                    console.log(ac.blue.italic(verf),ac.green.bold("VERIFIED"));
+                } else {
+                    console.log(ac.blue.italic(verf),ac.red.bold("FAILED TO BUILD"));
+                }
                 let ren = file.replace(".ts", ".tsw")
                 trace(`renaming ${file} to ${ren}`)
                 fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
