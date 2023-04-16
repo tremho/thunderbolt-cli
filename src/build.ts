@@ -200,9 +200,10 @@ export function tscCompile(options:any, files:string[]) {
             argList.push('--lib ' + lib)
         })
     }
+    let cwd = options?.cwd ?? ''
     let f
     while((f=files.pop())) argList.push(f)
-    return executeCommand('tsc', argList, '', true)
+    return executeCommand('tsc', argList, cwd, true)
 }
 
 /**

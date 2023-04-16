@@ -29,27 +29,38 @@ import * as path from "path";
 import * as fs from "fs";
 import {gatherInfo} from './gatherInfo'
 import {tscCompile} from "./build";
+import * as ac from 'ansi-colors'
 
+function trace(msg:string) {
+    console.log(ac.green.bold("MakeWorker"),"-",ac.blue.italic(msg))
+}
 
 export function makeWorkers()
 {
+    trace("starting makeworker")
     const info = gatherInfo()
     const workerstuff = path.join(info.projPath, 'src', 'workerstuff')
+    trace(`workerstuff path = ${workerstuff}`);
     const workerFiles = []
     const files = fs.readdirSync(workerstuff)
     for(let i=0; i<files.length; i++) {
         const file = files[i]
         if (file.substring(0, file.lastIndexOf('.')) === '.tsw') {
             let ren = file.replace(".tsw", ".ts")
+            trace(`renaming ${file} to ${ren}`)
             fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
             workerFiles.push(ren``)
         }
     }
+    trace(`workerFiles: ${workerFiles}`)
     if(!workerFiles.length) return Promise.resolve();
     const outDir = path.join(info.buildPath, 'front')
-    return tscCompile({outDir, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
+    trace(`outdir: {outDir}`)
+    trace('executing tscCompile')
+    return tscCompile({outDir, cwd: workerstuff, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
         for(let file in workerFiles) {
             let ren = file.replace(".ts", ".tsw")
+            trace(`renaming ${file} to ${ren}`)
             fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
         }
     })
