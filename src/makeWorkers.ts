@@ -41,7 +41,7 @@ export function makeWorkers()
     const workerstuff = path.join(info.projPath, 'src', 'workerstuff')
     if(fs.existsSync(workerstuff)) {
         trace(`workerstuff path = ${workerstuff}`);
-        const workerFiles = []
+        const workerFiles:string[] = []
         const files = fs.readdirSync(workerstuff)
         for (let i = 0; i < files.length; i++) {
             const file = files[i]
@@ -51,7 +51,7 @@ export function makeWorkers()
                 let ren = file.replace(".tsw", ".ts")
                 trace(`renaming ${file} to ${ren}`)
                 fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
-                workerFiles.push(ren``)
+                workerFiles.push(ren)
             }
         }
         trace(`workerFiles: ${workerFiles}`)
