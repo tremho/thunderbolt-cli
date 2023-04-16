@@ -37,33 +37,37 @@ function trace(msg:string) {
 
 export function makeWorkers()
 {
-    trace("starting makeworker")
     const info = gatherInfo()
     const workerstuff = path.join(info.projPath, 'src', 'workerstuff')
-    trace(`workerstuff path = ${workerstuff}`);
-    const workerFiles = []
-    const files = fs.readdirSync(workerstuff)
-    for(let i=0; i<files.length; i++) {
-        const file = files[i]
-        if (file.substring(0, file.lastIndexOf('.')) === '.tsw') {
-            let ren = file.replace(".tsw", ".ts")
-            trace(`renaming ${file} to ${ren}`)
-            fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
-            workerFiles.push(ren``)
+    if(fs.existsSync(workerstuff)) {
+        trace(`workerstuff path = ${workerstuff}`);
+        const workerFiles = []
+        const files = fs.readdirSync(workerstuff)
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i]
+            trace(`considering ${file}`)
+            if (file.substring(file.lastIndexOf('.')) === '.tsw') {
+                trace(`queueing ${file}`)
+                let ren = file.replace(".tsw", ".ts")
+                trace(`renaming ${file} to ${ren}`)
+                fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
+                workerFiles.push(ren``)
+            }
         }
+        trace(`workerFiles: ${workerFiles}`)
+        if (!workerFiles.length) return Promise.resolve();
+        const outDir = path.join(info.buildPath, 'front')
+        trace(`outdir: {outDir}`)
+        trace('executing tscCompile')
+        return tscCompile({outDir, cwd: workerstuff, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
+            for (let file in workerFiles) {
+                let ren = file.replace(".ts", ".tsw")
+                trace(`renaming ${file} to ${ren}`)
+                fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
+            }
+        })
     }
-    trace(`workerFiles: ${workerFiles}`)
-    if(!workerFiles.length) return Promise.resolve();
-    const outDir = path.join(info.buildPath, 'front')
-    trace(`outdir: {outDir}`)
-    trace('executing tscCompile')
-    return tscCompile({outDir, cwd: workerstuff, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
-        for(let file in workerFiles) {
-            let ren = file.replace(".ts", ".tsw")
-            trace(`renaming ${file} to ${ren}`)
-            fs.renameSync(path.join(workerstuff, file), path.join(workerstuff, ren));
-        }
-    })
+    return Promise.resolve();
 }
 
 // cd src/workerstuff
