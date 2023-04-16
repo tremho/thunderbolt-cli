@@ -57,9 +57,10 @@ export function makeWorkers()
         trace(`workerFiles: ${workerFiles}`)
         if (!workerFiles.length) return Promise.resolve();
         const outDir = path.join(info.buildPath, 'front')
-        trace(`outdir: {outDir}`)
+        trace(`outdir: ${outDir}`)
         trace('executing tscCompile')
         return tscCompile({outDir, cwd: workerstuff, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
+            trace("tscCompile complete, now doing cleanup")
             for (let file in workerFiles) {
                 let ren = file.replace(".ts", ".tsw")
                 trace(`renaming ${file} to ${ren}`)
