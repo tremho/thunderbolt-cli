@@ -1,5 +1,3 @@
-import fs from "fs";
-
 /**
  * This implements the mechanism by which workers are created and accessed in Jove.
  * This technique works around some limitations of the environments, such as
