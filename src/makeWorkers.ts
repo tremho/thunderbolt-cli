@@ -56,7 +56,7 @@ export function makeWorkers()
         }
         trace(`workerFiles: ${workerFiles}`)
         if (!workerFiles.length) return Promise.resolve();
-        const outDir = path.join(info.buildPath, 'front')
+        const outDir = info.buildPath;
         trace(`outdir: ${outDir}`)
         trace('executing tscCompile')
         return tscCompile({outDir, cwd: workerstuff, target: 'es5', lib: 'es2015,dom'}, workerFiles).then(() => {
