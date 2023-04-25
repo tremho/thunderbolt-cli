@@ -156,7 +156,7 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
             devDependencies: {
                 ...pkgJson.devDependencies,
                 "electron": "^19.0.4",
-                "electron-builder": "^23.0.3"
+                "electron-builder": "^24.0.0-alpha.13"
             },
             build: {
                 appId: pkgJson.projId,
