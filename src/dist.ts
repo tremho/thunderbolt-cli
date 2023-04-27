@@ -196,8 +196,8 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                         "to": "."
                     },
                     {
-                        "filter": "**/**",
-                        "from": "front/assets",
+                        "filter": "front/assets/**/**",
+                        "from": ".",
                         "to": "assets"
                     },
                     {
