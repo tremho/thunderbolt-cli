@@ -198,7 +198,7 @@ async function packageAndDistribute(pkgJson:any):Promise<number> {
                     {
                         "filter": "front/assets/**/**",
                         "from": ".",
-                        "to": "assets"
+                        "to": "front/assets"
                     },
                     {
                         "filter": "joveAppBack.js",
